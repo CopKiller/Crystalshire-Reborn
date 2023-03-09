@@ -80,6 +80,7 @@ Public Type PlayerInvRec
     num As Long
     Value As Long
     bound As Byte
+    Frame As Byte ' Client Side Only
 End Type
 
 Public Type PlayerSpellRec
@@ -349,6 +350,9 @@ Private Type MapItemRec
     X As Byte
     Y As Byte
     bound As Byte
+    Gravity As Integer
+    yOffset As Integer
+    xOffset As Integer
 End Type
 
 Public Type NpcRec
@@ -380,6 +384,7 @@ Public Type NpcRec
     Percent_20 As Byte
     Shadow As Byte
     Balao As Byte
+    BlockChance As Byte
 End Type
 
 Private Type MapNpcRec
@@ -410,6 +415,7 @@ Public Type TradeItemRec
     ItemValue As Long
     CostItem As Long
     CostValue As Long
+    Frame As Byte
 End Type
 
 Private Type ShopRec

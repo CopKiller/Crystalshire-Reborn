@@ -129,7 +129,7 @@ Public Function GetPlayerDefence(ByVal Index As Long) As Long
 End Function
 
 Function GetPlayerSpellDamage(ByVal Index As Long, ByVal SpellNum As Long) As Long
-    Dim damage As Long
+    Dim Damage As Long
 
     ' Check for subscript out of range
     If IsPlaying(Index) = False Or Index <= 0 Or Index > Player_HighIndex Then
@@ -137,21 +137,23 @@ Function GetPlayerSpellDamage(ByVal Index As Long, ByVal SpellNum As Long) As Lo
     End If
 
     ' return damage
-    damage = Spell(SpellNum).Vital
+    Damage = Spell(SpellNum).Vital
     ' 10% modifier
-    If damage <= 0 Then damage = 1
-    GetPlayerSpellDamage = Rand(damage - ((damage / 100) * 10), damage + ((damage / 100) * 10))
+    If Damage <= 0 Then Damage = 1
+    GetPlayerSpellDamage = Rand(Damage - ((Damage / 100) * 10), Damage + ((Damage / 100) * 10))
 End Function
 
 ' ###############################
 ' ##      Luck-based rates     ##
 ' ###############################
-Public Function CanPlayerBlock(ByVal Index As Long, ByVal IsNpcAttacker As Boolean, Optional ByVal AttackerID As Byte) As Long
+Public Function CanPlayerBlock(ByVal Index As Long, ByVal Damage As Long) As Long
     Dim rndNum As Long
     Dim Rate As Single
-    Dim NpcNum As Integer
 
     CanPlayerBlock = 0
+
+    ' Se não tiver dano pra bloquear
+    If Damage <= 1 Then Exit Function
 
     ' Chance de block se estiver usando um shield
     If GetPlayerEquipmentNum(Index, Shield) <= 0 Then Exit Function
@@ -160,35 +162,27 @@ Public Function CanPlayerBlock(ByVal Index As Long, ByVal IsNpcAttacker As Boole
     Rate = Item(GetPlayerEquipmentNum(Index, Shield)).BlockChance
 
     rndNum = Rand(1, 100)
-
-    If IsNpcAttacker Then
-
-        NpcNum = MapNpc(GetPlayerMap(Index)).NPC(AttackerID).Num
-        If rndNum <= Rate Then
-            CanPlayerBlock = (NPC(NpcNum).Stat(Agility) / 2)
-        End If
-    Else
-        If rndNum <= Rate Then
-            CanPlayerBlock = (Player(Index).Stat(Agility) / 2)
-        End If
+    If rndNum <= Rate Then
+        CanPlayerBlock = (Damage / 2)
     End If
+
 End Function
 
 Public Function CanPlayerCrit(ByVal Attacker As Long, Optional ByVal VictimType As Byte, Optional ByVal VictimID As Long) As Boolean
     Dim rndNum As Long
-    Dim value As Long
+    Dim Value As Long
     Dim Rate As Single
     Dim NpcNum As Long
 
     ' Obtém a chance de acerto.
     If VictimType = TARGET_TYPE_PLAYER Then
-        value = GetPlayerRawStat(VictimID, Stats.Strength) - GetPlayerRawStat(Attacker, Stats.Strength)
-        Rate = CSng(value / GetPlayerRawStat(VictimID, Stats.Strength))
+        Value = GetPlayerRawStat(VictimID, Stats.Strength) - GetPlayerRawStat(Attacker, Stats.Strength)
+        Rate = CSng(Value / GetPlayerRawStat(VictimID, Stats.Strength))
 
     ElseIf VictimType = TARGET_TYPE_NPC Then
         NpcNum = MapNpc(GetPlayerMap(Attacker)).NPC(VictimID).Num
-        value = NPC(NpcNum).Stat(Stats.Strength) - GetPlayerRawStat(Attacker, Stats.Strength)
-        Rate = CSng(value / NPC(NpcNum).Stat(Stats.Strength))
+        Value = NPC(NpcNum).Stat(Stats.Strength) - GetPlayerRawStat(Attacker, Stats.Strength)
+        Rate = CSng(Value / NPC(NpcNum).Stat(Stats.Strength))
     End If
 
     ' Inverte os valores para obter a chance de esquiva.
@@ -207,7 +201,7 @@ End Function
 
 Public Function CanPlayerDodge(ByVal Victim As Long, Optional ByVal AttackerType As Byte, Optional ByVal AttackerID As Long) As Boolean
     Dim rndNum As Long
-    Dim value As Long
+    Dim Value As Long
     Dim Rate As Single
     Dim NpcNum As Long
 
@@ -215,13 +209,13 @@ Public Function CanPlayerDodge(ByVal Victim As Long, Optional ByVal AttackerType
 
     ' Obtém a chance de acerto do atacante.
     If AttackerType = TARGET_TYPE_PLAYER Then
-        value = GetPlayerRawStat(AttackerID, Stats.Agility) - GetPlayerRawStat(Victim, Stats.Agility)
-        Rate = CSng(value / GetPlayerRawStat(AttackerID, Stats.Agility))
+        Value = GetPlayerRawStat(AttackerID, Stats.Agility) - GetPlayerRawStat(Victim, Stats.Agility)
+        Rate = CSng(Value / GetPlayerRawStat(AttackerID, Stats.Agility))
 
     ElseIf AttackerType = TARGET_TYPE_NPC Then
         NpcNum = MapNpc(GetPlayerMap(Victim)).NPC(AttackerID).Num
-        value = NPC(NpcNum).Stat(Stats.Agility) - GetPlayerRawStat(Victim, Stats.Agility)
-        Rate = CSng(value / NPC(NpcNum).Stat(Stats.Agility))
+        Value = NPC(NpcNum).Stat(Stats.Agility) - GetPlayerRawStat(Victim, Stats.Agility)
+        Rate = CSng(Value / NPC(NpcNum).Stat(Stats.Agility))
     End If
 
     ' Inverte os valores para obter a chance de esquiva.

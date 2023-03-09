@@ -2255,7 +2255,7 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     
     ' Get Golds
     Call SetPlayerGold(Index, GetPlayerGold(Index) + tmpTradeGold2)
-    Call SetPlayerGold(tradeTarget, GetPlayerGold(tradeTarget) - tmpTradeGold)
+    Call SetPlayerGold(tradeTarget, GetPlayerGold(tradeTarget) + tmpTradeGold)
 
     SendGoldUpdate Index
     SendGoldUpdate tradeTarget

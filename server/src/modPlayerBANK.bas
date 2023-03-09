@@ -137,40 +137,40 @@ Sub PlayerSwitchBankSlots(ByVal Index As Long, ByVal OldSlot As Long, ByVal NewS
 End Sub
 
 Function FindOpenBankSlot(ByVal Index As Long, ByVal ItemNum As Long) As Long
-    Dim i As Long
+    Dim I As Long
 
     If ItemNum <= 0 Or ItemNum > MAX_ITEMS Then
         Exit Function
     End If
 
     If Item(ItemNum).Stackable > 0 Then
-        For i = 1 To MAX_BANK
-            If GetPlayerBankItemNum(Index, i) = ItemNum Then
-                FindOpenBankSlot = i
+        For I = 1 To MAX_BANK
+            If GetPlayerBankItemNum(Index, I) = ItemNum Then
+                FindOpenBankSlot = I
                 Exit Function
             End If
-        Next i
+        Next I
     End If
 
-    For i = 1 To MAX_BANK
-        If GetPlayerBankItemNum(Index, i) = 0 Then
-            FindOpenBankSlot = i
+    For I = 1 To MAX_BANK
+        If GetPlayerBankItemNum(Index, I) = 0 Then
+            FindOpenBankSlot = I
             Exit Function
         End If
-    Next i
+    Next I
 
 End Function
 
 Sub SendBank(ByVal Index As Long)
     Dim Buffer As clsBuffer
-    Dim i As Long
+    Dim I As Long
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SBank
 
-    For i = 1 To MAX_BANK
-        Buffer.WriteInteger Player(Index).Bank(i).Num
-        Buffer.WriteLong Player(Index).Bank(i).value
+    For I = 1 To MAX_BANK
+        Buffer.WriteInteger Player(Index).Bank(I).Num
+        Buffer.WriteLong Player(Index).Bank(I).Value
     Next
 
     SendDataTo Index, Buffer.ToArray()
@@ -267,22 +267,22 @@ End Sub
 
 Function GetPlayerBankItemNum(ByVal Index As Long, ByVal BankSlot As Long) As Long
     If BankSlot = 0 Then Exit Function
-    GetPlayerBankItemNum = Bank(Index).Item(BankSlot).Num
+    GetPlayerBankItemNum = Player(Index).Bank(BankSlot).Num
 End Function
 
 Sub SetPlayerBankItemNum(ByVal Index As Long, ByVal BankSlot As Long, ByVal ItemNum As Long)
     If BankSlot = 0 Then Exit Sub
-    Bank(Index).Item(BankSlot).Num = ItemNum
+    Player(Index).Bank(BankSlot).Num = ItemNum
 End Sub
 
 Function GetPlayerBankItemValue(ByVal Index As Long, ByVal BankSlot As Long) As Long
     If BankSlot = 0 Then Exit Function
-    GetPlayerBankItemValue = Bank(Index).Item(BankSlot).value
+    GetPlayerBankItemValue = Player(Index).Bank(BankSlot).Value
 End Function
 
 Sub SetPlayerBankItemValue(ByVal Index As Long, ByVal BankSlot As Long, ByVal ItemValue As Long)
     If BankSlot = 0 Then Exit Sub
-    Bank(Index).Item(BankSlot).value = ItemValue
+    Player(Index).Bank(BankSlot).Value = ItemValue
 End Sub
 
 Function GetPlayerBankItemBound(ByVal Index As Long, ByVal BankSlot As Long) As Byte
@@ -290,7 +290,7 @@ Function GetPlayerBankItemBound(ByVal Index As Long, ByVal BankSlot As Long) As 
         Exit Function
     End If
 
-    GetPlayerBankItemBound = Bank(Index).Item(BankSlot).Bound
+    GetPlayerBankItemBound = Player(Index).Bank(BankSlot).Bound
 End Function
 
 Sub SetPlayerBankItemBound(ByVal Index As Long, ByVal BankSlot As Long, ByVal ItemBound As Byte)
@@ -298,5 +298,5 @@ Sub SetPlayerBankItemBound(ByVal Index As Long, ByVal BankSlot As Long, ByVal It
         Exit Sub
     End If
 
-    Bank(Index).Item(BankSlot).Bound = ItemBound
+   Player(Index).Bank(BankSlot).Bound = ItemBound
 End Sub

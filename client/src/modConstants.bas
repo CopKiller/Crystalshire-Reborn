@@ -202,6 +202,7 @@ Public Const NPC_BEHAVIOUR_SHOPKEEPER As Byte = 3
 Public Const NPC_BEHAVIOUR_GUARD As Byte = 4
 Public Const NPC_BEHAVIOUR_GUILDMAKER As Byte = 5
 Public Const NPC_BEHAVIOUR_CLAIMSERIAL As Byte = 6
+Public Const NPC_BEHAVIOUR_BANK As Byte = 7
 ' Spell constants
 Public Const SPELL_TYPE_DAMAGEHP As Byte = 0
 Public Const SPELL_TYPE_DAMAGEMP As Byte = 1

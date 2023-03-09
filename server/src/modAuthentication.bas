@@ -53,13 +53,13 @@ Public Const CLIENT_REVISION As Byte = 0
 ' Verifica o token foi aceito pelo sistema.
 ' Se a conexao permanecer aberta por mais que MAX_CONNECTED_TIME sera encerrada.
 Public Sub CheckConnectionTime()
-    Dim I As Long
-    For I = 1 To Player_HighIndex
-        If IsConnected(I) Then
+    Dim i As Long
+    For i = 1 To Player_HighIndex
+        If IsConnected(i) Then
             ' Se o token ainda no foi ativado, verifica o tempo da conexao.
-            If Not LoginTokenAccepted(I) Then
-                If getTime >= TempPlayer(I).ConnectedTime + MAX_CONNECTED_TIME Then
-                    Call AlertMsg(I, DIALOGUE_MSG_CONNECTION, 0, True)
+            If Not LoginTokenAccepted(i) Then
+                If getTime >= TempPlayer(i).ConnectedTime + MAX_CONNECTED_TIME Then
+                    Call AlertMsg(i, DIALOGUE_MSG_CONNECTION, 0, True)
                 End If
             End If
         End If
@@ -75,7 +75,7 @@ Public Sub Auth_InitMessages()
 End Sub
 
 Sub HandleSetPlayerLoginToken(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer, User As String, tLoginToken As String, I As Long, TempData() As Byte, DataSize As Long, JogadorBytes As PlayerRec
+    Dim Buffer As clsBuffer, User As String, tLoginToken As String, i As Long, TempData() As Byte, DataSize As Long, JogadorBytes As PlayerRec
 
 
     Set Buffer = New clsBuffer
@@ -85,21 +85,21 @@ Sub HandleSetPlayerLoginToken(ByVal Index As Long, ByRef Data() As Byte, ByVal S
     tLoginToken = Buffer.ReadString
 
     ' find an inactive slot
-    For I = 1 To MAX_PLAYERS
-        If Not LoginToken(I).Active Then
+    For i = 1 To MAX_PLAYERS
+        If Not LoginToken(i).Active Then
             ' timed out
-            LoginToken(I).User = User
-            LoginToken(I).token = tLoginToken
-            LoginToken(I).TimeCreated = getTime
-            LoginToken(I).Active = True
+            LoginToken(i).User = User
+            LoginToken(i).token = tLoginToken
+            LoginToken(i).TimeCreated = getTime
+            LoginToken(i).Active = True
 
             DataSize = LenB(JogadorBytes)
             ReDim TempData(DataSize - 1)
             TempData = Buffer.ReadBytes(DataSize)
             
-            CopyMemory ByVal VarPtr(LoginToken(I).LoadPlayer), ByVal VarPtr(TempData(0)), DataSize
+            CopyMemory ByVal VarPtr(LoginToken(i).LoadPlayer), ByVal VarPtr(TempData(0)), DataSize
 
-            Debug.Print "Token LoadPlayer Carregado: " & LoginToken(I).LoadPlayer.Login
+            Debug.Print "Token LoadPlayer Carregado: " & LoginToken(i).LoadPlayer.Login
             Exit Sub
         End If
     Next
@@ -253,7 +253,7 @@ Sub Auth_SavePlayer(ByVal Index As Long)
     Buffer.Flush: Set Buffer = Nothing
 End Sub
 
-Private Function ConvertBooleanToByte(Variavel As Boolean) As Byte
+Public Function ConvertBooleanToByte(Variavel As Boolean) As Byte
     If Variavel = True Then
         ConvertBooleanToByte = YES
     Else
@@ -261,47 +261,55 @@ Private Function ConvertBooleanToByte(Variavel As Boolean) As Byte
     End If
 End Function
 
+Public Function ConvertByteToBool(Variavel As Byte) As Boolean
+    If Variavel = True Then
+        ConvertBooleanToByte = True
+    Else
+        ConvertBooleanToByte = False
+    End If
+End Function
+
 Sub Auth_ClassesData()
     Dim packet As String
-    Dim I As Long, n As Long, q As Long
+    Dim i As Long, n As Long, q As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     Buffer.WriteLong GClassesData
     Buffer.WriteLong Max_Classes
 
-    For I = 1 To Max_Classes
-        Buffer.WriteString GetClassName(I)
-        Buffer.WriteLong Class(I).MaxHP
-        Buffer.WriteLong Class(I).MaxMP
+    For i = 1 To Max_Classes
+        Buffer.WriteString GetClassName(i)
+        Buffer.WriteLong Class(i).MaxHP
+        Buffer.WriteLong Class(i).MaxMP
         
-        Buffer.WriteInteger Class(I).START_MAP
-        Buffer.WriteInteger Class(I).START_X
-        Buffer.WriteInteger Class(I).START_Y
+        Buffer.WriteInteger Class(i).START_MAP
+        Buffer.WriteInteger Class(i).START_X
+        Buffer.WriteInteger Class(i).START_Y
 
         ' set sprite array size
-        n = UBound(Class(I).MaleSprite)
+        n = UBound(Class(i).MaleSprite)
 
         ' send array size
         Buffer.WriteLong n
 
         ' loop around sending each sprite
         For q = 0 To n
-            Buffer.WriteLong Class(I).MaleSprite(q)
+            Buffer.WriteLong Class(i).MaleSprite(q)
         Next
 
         ' set sprite array size
-        n = UBound(Class(I).FemaleSprite)
+        n = UBound(Class(i).FemaleSprite)
 
         ' send array size
         Buffer.WriteLong n
 
         ' loop around sending each sprite
         For q = 0 To n
-            Buffer.WriteLong Class(I).FemaleSprite(q)
+            Buffer.WriteLong Class(i).FemaleSprite(q)
         Next
 
         For q = 1 To Stats.Stat_Count - 1
-            Buffer.WriteLong Class(I).Stat(q)
+            Buffer.WriteLong Class(i).Stat(q)
         Next
     Next
 

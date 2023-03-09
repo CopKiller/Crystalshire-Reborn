@@ -5,15 +5,15 @@ Dim IsNpc As Boolean
 Public Sub GameLoop()
     Dim TickFPS As Currency, FPS As Long, i As Long, WalkTimer As Currency, X As Long, Y As Long
     Dim tmr25 As Currency, tmr10000 As Currency, tmr100 As Currency, tmr1000 As Currency, mapTimer As Currency, chatTmr As Currency, targetTmr As Currency, fogTmr As Currency, barTmr As Currency
-    Dim barDifference As Long, stunTmr As Currency, f As Long
+    Dim barDifference As Long, stunTmr As Currency, f As Long, ItemPic As Integer, MaxFrames As Byte
 
     ' *** Start GameLoop ***
     Do While InGame
         Tick = getTime                            ' Set the inital tick
         ElapsedTime = Tick - FrameTime                 ' Set the time difference for time-based movement
         FrameTime = Tick                               ' Set the time second loop time to the first.
-        
-    '    Debug.Print Tick
+
+        '    Debug.Print Tick
 
         'espera 20 milisegundos pra executar o resto da sub se estiver minimizado
         If frmMain.WindowState = vbMinimized Then
@@ -73,9 +73,18 @@ Public Sub GameLoop()
                     End If
                 End If
             End If
-            
+
             ' Calcular se a quest em andamento tem tempo pra finalizar em segundos
             Call CalculateQuestTimer
+            
+            ' Calcular o tempo da loteria pelo client, e apenas receber atualizações do servidor caso haja algum imprevisto!
+            If LotteryInfo.LotteryTime > 0 And Not LotteryInfo.LotteryOn And Not LotteryInfo.BetOn Then
+                LotteryInfo.LotteryTime = LotteryInfo.LotteryTime - 1
+                
+                If Windows(GetWindowIndex("winLottery")).Window.visible Then
+                    Windows(GetWindowIndex("winLottery")).Controls(GetControlIndex("winLottery", "lblNLottery")).Text = "Next Lottery: " & ColourChar & GetColStr(BrightRed) & SecondsToHMS(LotteryInfo.LotteryTime)
+                End If
+            End If
 
             tmr1000 = Tick + 1000
         End If
@@ -89,7 +98,8 @@ Public Sub GameLoop()
         If tmr25 < Tick Then
             InGame = IsConnected
             Call CheckKeys    ' Check to make sure they aren't trying to auto do anything
-            
+
+            ' Check In Diary
             Call Graphic_ArrowInDay_Animated
 
             If GetForegroundWindow() = frmMain.hWnd Then
@@ -170,6 +180,141 @@ Public Sub GameLoop()
                         End If
                     End If
                 End If
+            End If
+
+            ' check for map animation changes#
+            If tmr100 < Tick Then
+                For i = 1 To MAX_MAP_ITEMS
+                    If MapItem(i).num > 0 Then
+                        ItemPic = Item(MapItem(i).num).Pic
+                        If ItemPic > 0 Or ItemPic <= Count_Item Then
+                            MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
+                            If MaxFrames > 1 Then
+                                If MapItem(i).Frame < MaxFrames Then
+                                    MapItem(i).Frame = MapItem(i).Frame + 1
+                                Else
+                                    MapItem(i).Frame = 1
+                                End If
+                            End If
+                        End If
+                    End If
+
+                Next i
+
+                ' Inventory visible? play animation item!
+                If Windows(GetWindowIndex("winInventory")).Window.visible Then
+                    For i = 1 To MAX_INV
+                        If GetPlayerInvItemNum(MyIndex, i) > 0 Then
+                            ItemPic = Item(GetPlayerInvItemNum(MyIndex, i)).Pic
+                            If ItemPic > 0 Or ItemPic <= Count_Item Then
+                                MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
+                                If MaxFrames > 1 Then
+                                    If PlayerInv(i).Frame < MaxFrames Then
+                                        PlayerInv(i).Frame = PlayerInv(i).Frame + 1
+                                    Else
+                                        PlayerInv(i).Frame = 1
+                                    End If
+                                End If
+                            End If
+                        End If
+
+                    Next i
+                End If
+
+                ' Bank visible? play animation item!
+                If Windows(GetWindowIndex("winBank")).Window.visible Then
+                    For i = 1 To MAX_BANK
+                        If GetBankItemNum(i) > 0 Then
+                            ItemPic = Item(GetBankItemNum(i)).Pic
+                            If ItemPic > 0 Or ItemPic <= Count_Item Then
+                                MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
+                                If MaxFrames > 1 Then
+                                    If Bank.Item(i).Frame < MaxFrames Then
+                                        Bank.Item(i).Frame = Bank.Item(i).Frame + 1
+                                    Else
+                                        Bank.Item(i).Frame = 1
+                                    End If
+                                End If
+                            End If
+                        End If
+
+                    Next i
+                End If
+
+                ' Shop visible? play animation item!
+                If Windows(GetWindowIndex("winShop")).Window.visible Then
+                    For i = 1 To MAX_TRADES
+                        If Shop(InShop).TradeItem(i).Item > 0 Then
+                            ItemPic = Item(Shop(InShop).TradeItem(i).Item).Pic
+                            If ItemPic > 0 Or ItemPic <= Count_Item Then
+                                MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
+                                If MaxFrames > 1 Then
+                                    If Shop(InShop).TradeItem(i).Frame < MaxFrames Then
+                                        Shop(InShop).TradeItem(i).Frame = Shop(InShop).TradeItem(i).Frame + 1
+                                    Else
+                                        Shop(InShop).TradeItem(i).Frame = 1
+                                    End If
+                                End If
+                            End If
+                        End If
+
+                    Next i
+                End If
+
+                ' In Trade visible? play animation item!
+                If Windows(GetWindowIndex("winTrade")).Window.visible Then
+                    For i = 1 To MAX_INV
+                        If GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).num) > 0 Then
+                            ItemPic = Item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).num)).Pic
+                            If ItemPic > 0 Or ItemPic <= Count_Item Then
+                                MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
+                                If MaxFrames > 1 Then
+                                    If TradeYourOffer(i).Frame < MaxFrames Then
+                                        TradeYourOffer(i).Frame = TradeYourOffer(i).Frame + 1
+                                    Else
+                                        TradeYourOffer(i).Frame = 1
+                                    End If
+                                End If
+                            End If
+                        End If
+                        If TradeTheirOffer(i).num > 0 Then
+                            ItemPic = Item(TradeTheirOffer(i).num).Pic
+                            If ItemPic > 0 Or ItemPic <= Count_Item Then
+                                MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
+                                If MaxFrames > 1 Then
+                                    If TradeTheirOffer(i).Frame < MaxFrames Then
+                                        TradeTheirOffer(i).Frame = TradeTheirOffer(i).Frame + 1
+                                    Else
+                                        TradeTheirOffer(i).Frame = 1
+                                    End If
+                                End If
+                            End If
+                        End If
+                    Next i
+                End If
+
+                ' Equipments visible? play animation item! ##UTILIZA UMA VARIÁVEL GLOBAL# -> EquipmentFrames As Byte
+                If Windows(GetWindowIndex("winCharacter")).Window.visible Then
+                    If Windows(GetWindowIndex("winCharacter")).Controls(GetControlIndex("winCharacter", "chkEquipamentos")).Value = 1 Then
+                        For i = 1 To Equipment.Equipment_Count - 1
+                            If GetPlayerEquipment(MyIndex, i) > 0 Then
+                                ItemPic = Item(GetPlayerEquipment(MyIndex, i)).Pic
+                                If ItemPic > 0 Or ItemPic <= Count_Item Then
+                                    MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
+                                    If MaxFrames > 1 Then
+                                        If EquipmentFrames(i) < MaxFrames Then
+                                            EquipmentFrames(i) = EquipmentFrames(i) + 1
+                                        Else
+                                            EquipmentFrames(i) = 1
+                                        End If
+                                    End If
+                                End If
+                            End If
+                        Next i
+                    End If
+                End If
+
+                tmr100 = Tick + 200
             End If
 
             tmr25 = Tick + 25
@@ -313,6 +458,10 @@ Public Sub GameLoop()
             Next i
 
             WalkTimer = Tick + 30    ' edit this value to change WalkTimer
+        End If
+
+        If LotteryBtnRandom Then
+            Call LotteryRand
         End If
 
         ' *********************
@@ -1357,8 +1506,6 @@ Public Sub DevMsg(ByVal Text As String, ByVal Color As Byte)
             Call AddText(Text, Color)
         End If
     End If
-
-    Debug.Print Text
 End Sub
 
 Public Function TwipsToPixels(ByVal twip_val As Long, ByVal XorY As Byte) As Long
@@ -1698,6 +1845,9 @@ Public Sub dialogueHandler(ByVal Index As Long)
         Case TypeTRADEGOLD
             Value = Val(diaInput)
             TradeGold Value
+        Case TypeSENDBET
+            Value = Val(diaInput)
+            SendBet Value
         End Select
 
     ElseIf Index = 2 Then    ' yes button
@@ -1856,8 +2006,8 @@ Public Sub UpdateCamera()
     GlobalY_Map = GlobalY + (TileView.top * PIC_Y) + Camera.top
 End Sub
 
-Public Function CensorWord(ByVal sString As String) As String
-    CensorWord = String$(Len(sString), "*")
+Public Function CensorWord(ByVal SString As String) As String
+    CensorWord = String$(Len(SString), "*")
 End Function
 
 Public Sub placeAutotile(ByVal layernum As Long, ByVal X As Long, ByVal Y As Long, ByVal tileQuarter As Byte, ByVal autoTileLetter As String)
@@ -3115,7 +3265,35 @@ Public Sub DialogueAlert(ByVal Index As Long)
         header = "Error, Birthday Incorrect"
         body = "Use o formato '##/##/####"
         body2 = "Pode usar '\' ou '/' ou '-' para separar o dia, mes e ano!"
-
+        
+    Case MsgLOTTERYMAXBID
+        header = "Invalid Bet"
+        body = "Exceeded the maximum value"
+        body2 = "Max " & LotteryInfo.Max_Bets_Value & "g"
+    Case MsgLOTTERYMINBID
+        header = "Invalid Bet"
+        body = "Exceeded the minimum value"
+        body2 = "Min " & LotteryInfo.Min_Bets_Value & "g"
+    Case MsgLOTTERYNUMBERS
+        header = "Invalid Bet"
+        body = "Invalid Number of Bet"
+        body2 = "Bets From 1 to " & MAX_BETS
+    Case MsgLOTTERYNUMBERALREADY
+        header = "Invalid Bet"
+        body = "This number already has a bet"
+        body2 = "Choose another"
+    Case MsgLOTTERYCLOSED
+        header = "Invalid Bet"
+        body = "The betting period is closed"
+        body2 = "Come back later"
+    Case MsgLOTTERYGOLD
+        header = "Invalid Bet"
+        body = "You do not own the amount"
+        body2 = "you are trying to bet"
+    Case MsgLOTTERYSUCCESS
+        header = "SUCCESS!"
+        body = "You made your bet"
+        body2 = "Good Lucky!!!"
     End Select
 
     ' set the dialogue up!
@@ -4615,6 +4793,13 @@ Public Function GetPlayerGold(ByVal Index As Long) As Long
     GetPlayerGold = Player(Index).Gold
 End Function
 
+Public Function ConvertByteToBool(Variavel As Byte) As Boolean
+    If Variavel = YES Then
+        ConvertByteToBool = True
+    Else
+        ConvertByteToBool = False
+    End If
+End Function
 
 
 

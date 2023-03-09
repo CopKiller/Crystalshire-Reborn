@@ -131,6 +131,7 @@ Public Sub InitMessages()
     ' Lottery
     HandleDataSub(SLotteryWindow) = GetAddress(AddressOf HandleLotteryWindow)
     HandleDataSub(SGoldUpdate) = GetAddress(AddressOf HandleGoldUpdate)
+    HandleDataSub(SLotteryInfo) = GetAddress(AddressOf HandleLotteryInfo)
 End Sub
 
 Sub HandleData(ByRef data() As Byte)
@@ -1157,7 +1158,7 @@ Private Sub HandleSpawnItem(ByVal Index As Long, ByRef data() As Byte, ByVal Sta
         .X = Buffer.ReadLong
         .Y = Buffer.ReadLong
         .bound = Buffer.ReadByte
-
+        .Gravity = -10
     End With
 
 End Sub
@@ -2216,7 +2217,7 @@ Private Sub HandleGoldUpdate(ByVal Index As Long, ByRef data() As Byte, ByVal St
 
     Set Buffer = Nothing
     
-    Call SetPlayerGold(Index, Golds)
+    Call SetPlayerGold(MyIndex, Golds)
     
     Call SetGoldLabel
 End Sub

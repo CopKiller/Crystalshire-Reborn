@@ -114,7 +114,7 @@ End Sub
 
 Public Sub DrawCharacter()
     Dim xO As Long, yO As Long, Width As Long, Height As Long, i As Long, Sprite As Long, itemNum As Long, ItemPic As Long, Value As Byte
-    Dim Colour As Long
+    Dim Colour As Long, rec As RECT
 
     'Chk Equipamentos non checked? exit
     If Windows(GetWindowIndex("winCharacter")).Controls(GetControlIndex("winCharacter", "chkEquipamentos")).Value = 0 Then Exit Sub
@@ -176,19 +176,22 @@ Public Sub DrawCharacter()
         If DragBox.Origin = origin_Inventory Then
             If DragBox.Type = Part_Item Then
                 If GetPlayerInvItemNum(MyIndex, DragBox.Slot) > 0 Then
-                If Item(GetPlayerInvItemNum(MyIndex, DragBox.Slot)).Type = i Then
-                    If IsPlayerItemRequerimentsOK(MyIndex, GetPlayerInvItemNum(MyIndex, DragBox.Slot)) Then
-                        Colour = DX8Colour(Green, 255)
-                    Else
-                        Colour = DX8Colour(Red, 255)
+                    If Item(GetPlayerInvItemNum(MyIndex, DragBox.Slot)).Type = i Then
+                        If IsPlayerItemRequerimentsOK(MyIndex, GetPlayerInvItemNum(MyIndex, DragBox.Slot)) Then
+                            Colour = DX8Colour(Green, 255)
+                        Else
+                            Colour = DX8Colour(Red, 255)
+                        End If
                     End If
-                End If
                 End If
             End If
         End If
 
-
-        RenderTexture ItemPic, xO, yO, 0, 0, 32, 32, 32, 32, Colour
+        If Options.ItemAnimation = YES Then
+            rec.top = 0
+            rec.Left = EquipmentFrames(i) * PIC_X
+        End If
+        RenderTexture ItemPic, xO, yO, rec.Left, rec.top, 32, 32, 32, 32, Colour
     Next
 End Sub
 

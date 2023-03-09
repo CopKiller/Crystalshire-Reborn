@@ -118,7 +118,7 @@ Public Sub InitServer()
     Call UpdateCaption
     time2 = getTime
     
-    Call SetStatus("Initialization complete. Server loaded in " & time2 - time1 & "ms.")
+    Call SetStatus("Initialization complete. Server loaded in " & Int(time2 - time1) & "ms.")
 
     ' reset shutdown value
     isShuttingDown = False
@@ -164,14 +164,14 @@ Public Sub SendAllSaves()
     End If
 End Sub
 
-Private Sub LoadAccount_SendAuthServer(ByVal FileName As String)
+Private Sub LoadAccount_SendAuthServer(ByVal filename As String)
     Dim F As Long
     Dim Jogador As PlayerRec
     Dim Buffer As clsBuffer, DataSize As Long, TempData() As Byte
 
-    If Trim$(FileName) = vbNullString Then Exit Sub
+    If Trim$(filename) = vbNullString Then Exit Sub
     F = FreeFile
-    Open FileName For Binary As #F
+    Open filename For Binary As #F
     Get #F, , Jogador
     Close #F
     DataSize = LenB(Jogador)
@@ -275,13 +275,13 @@ End Sub
 
 Sub SetHighIndex()
     Dim i As Integer
-    Dim x As Integer
+    Dim X As Integer
 
     For i = 0 To MAX_PLAYERS
-        x = MAX_PLAYERS - i
+        X = MAX_PLAYERS - i
 
-        If IsConnected(x) = True Then
-            Player_HighIndex = x
+        If IsConnected(X) = True Then
+            Player_HighIndex = X
             Exit Sub
         End If
 

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "Mswinsck.ocx"
 Begin VB.Form frmMain 
    BackColor       =   &H00FFFFFF&
    BorderStyle     =   1  'Fixed Single
@@ -27,6 +27,15 @@ Begin VB.Form frmMain
    ScaleWidth      =   921
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
+   Begin VB.CommandButton Command1 
+      Caption         =   "Command1"
+      Height          =   615
+      Left            =   240
+      TabIndex        =   1
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   855
+   End
    Begin MSWinsockLib.Winsock Socket 
       Left            =   0
       Top             =   0
@@ -59,6 +68,10 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
+
+Private Sub Command1_Click()
+    ShowWindow GetWindowIndex("winLottery"), True
+End Sub
 
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 

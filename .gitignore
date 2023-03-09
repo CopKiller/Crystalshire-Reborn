@@ -1,9 +1,9 @@
 *.txt
 **/*.vbw
 **/*.SCC
-/Eclipse-Origins-Destroyer-master
-/Encriptador de Arquivos
 client/data files/items
 client/data files/maps
 client/data files/npcs
-client/data files/items
+IGNORED/
+autenticador/accounts/
+server/data/accounts/

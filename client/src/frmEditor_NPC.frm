@@ -100,7 +100,7 @@ Begin VB.Form frmEditor_NPC
       Height          =   1935
       Left            =   6480
       TabIndex        =   40
-      Top             =   3960
+      Top             =   4440
       Width           =   3015
       Begin VB.TextBox txtLevel 
          Alignment       =   2  'Center
@@ -196,7 +196,7 @@ Begin VB.Form frmEditor_NPC
       Height          =   2415
       Left            =   6480
       TabIndex        =   32
-      Top             =   1560
+      Top             =   1920
       Width           =   3015
       Begin VB.ListBox lstItems 
          Height          =   1320
@@ -261,7 +261,7 @@ Begin VB.Form frmEditor_NPC
       Height          =   375
       Left            =   6480
       TabIndex        =   31
-      Top             =   6240
+      Top             =   6360
       Width           =   615
    End
    Begin VB.CommandButton cmdPaste 
@@ -269,7 +269,7 @@ Begin VB.Form frmEditor_NPC
       Height          =   375
       Left            =   7200
       TabIndex        =   30
-      Top             =   6240
+      Top             =   6360
       Width           =   615
    End
    Begin VB.Frame fraSpell 
@@ -409,7 +409,7 @@ Begin VB.Form frmEditor_NPC
          Height          =   300
          ItemData        =   "frmEditor_NPC.frx":3332
          Left            =   1200
-         List            =   "frmEditor_NPC.frx":334B
+         List            =   "frmEditor_NPC.frx":334E
          Style           =   2  'Dropdown List
          TabIndex        =   10
          Top             =   1680
@@ -514,11 +514,20 @@ Begin VB.Form frmEditor_NPC
    End
    Begin VB.Frame Frame2 
       Caption         =   "Atributos"
-      Height          =   1455
+      Height          =   1815
       Left            =   6480
       TabIndex        =   6
       Top             =   120
       Width           =   3015
+      Begin VB.HScrollBar scrlBlockChance 
+         Height          =   255
+         LargeChange     =   5
+         Left            =   120
+         Max             =   100
+         TabIndex        =   71
+         Top             =   1440
+         Width           =   2775
+      End
       Begin VB.TextBox txtStat 
          Alignment       =   2  'Center
          Height          =   270
@@ -569,6 +578,14 @@ Begin VB.Form frmEditor_NPC
          Top             =   960
          Width           =   855
       End
+      Begin VB.Label lblBlockChance 
+         Caption         =   "Block Chance:"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   70
+         Top             =   1200
+         Width           =   1095
+      End
       Begin VB.Label Label7 
          Caption         =   "STR"
          Height          =   255
@@ -615,7 +632,7 @@ Begin VB.Form frmEditor_NPC
       Height          =   375
       Left            =   3360
       TabIndex        =   5
-      Top             =   6240
+      Top             =   6360
       Width           =   1455
    End
    Begin VB.CommandButton cmdCancel 
@@ -623,7 +640,7 @@ Begin VB.Form frmEditor_NPC
       Height          =   375
       Left            =   7920
       TabIndex        =   4
-      Top             =   6240
+      Top             =   6360
       Width           =   1575
    End
    Begin VB.CommandButton cmdDelete 
@@ -631,7 +648,7 @@ Begin VB.Form frmEditor_NPC
       Height          =   375
       Left            =   4920
       TabIndex        =   3
-      Top             =   6240
+      Top             =   6360
       Width           =   1455
    End
    Begin VB.Frame Frame3 
@@ -849,6 +866,11 @@ Private Sub scrlBalao_Change()
     'Flashed       ' Cegado
 End Sub
 
+Private Sub scrlBlockChance_Change()
+    NPC(EditorIndex).BlockChance = scrlBlockChance
+    lblBlockChance = "Block Chance: " & scrlBlockChance & "%"
+End Sub
+
 Private Sub scrlConv_Change()
 
     If scrlConv.Value > 0 Then
@@ -873,10 +895,10 @@ Private Sub lstIndex_Click()
 End Sub
 
 Private Sub scrlAnimation_Change()
-    Dim SString As String
+    Dim sString As String
 
-    If scrlAnimation.Value = 0 Then SString = "None" Else SString = Trim$(Animation(scrlAnimation.Value).Name)
-    lblAnimation.caption = "Anim: " & SString
+    If scrlAnimation.Value = 0 Then sString = "None" Else sString = Trim$(Animation(scrlAnimation.Value).Name)
+    lblAnimation.caption = "Anim: " & sString
     NPC(EditorIndex).Animation = scrlAnimation.Value
 End Sub
 

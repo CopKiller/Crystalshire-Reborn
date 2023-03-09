@@ -117,6 +117,7 @@ Public Enum ServerPackets
     SCheckNpcCRC
     SLotteryWindow
     SGoldUpdate
+    SLotteryInfo
     ' Make sure SMSG_COUNT is below everything else
     SMSG_COUNT
 End Enum

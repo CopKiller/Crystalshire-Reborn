@@ -991,6 +991,7 @@ End Sub
 
 Public Sub Description_OnDraw()
     Dim xO As Long, yO As Long, texNum As Long, Y As Long, i As Long, Count As Long
+    ' dim rec As RECT
 
     ' exit out if we don't have a num
     If descItem = 0 Or descType = 0 Then Exit Sub
@@ -1001,6 +1002,8 @@ Public Sub Description_OnDraw()
     Select Case descType
     Case 1    ' Inventory Item
         texNum = Tex_Item(Item(descItem).Pic)
+        'rec.top = 0
+        'rec.Left = mTexture(Tex_Item(Item(descItem).Pic)).LeftFrames * PIC_X
     Case 2    ' Spell Icon
         texNum = Tex_Spellicon(Spell(descItem).Icon)
         ' render bar

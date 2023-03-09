@@ -27,18 +27,18 @@ Public Sub btnMenu_Bank()
 End Sub
 
 Sub Bank_MouseMove()
-    Dim ItemNum As Long, X As Long, Y As Long, i As Long
+    Dim itemNum As Long, X As Long, Y As Long, i As Long
     Dim SoulBound As Boolean
 
     ' exit out early if dragging
     If DragBox.Type <> part_None Then Exit Sub
 
-    ItemNum = IsBankItem(Windows(GetWindowIndex("winBank")).Window.Left, Windows(GetWindowIndex("winBank")).Window.top)
+    itemNum = IsBankItem(Windows(GetWindowIndex("winBank")).Window.Left, Windows(GetWindowIndex("winBank")).Window.top)
 
-    If ItemNum > 0 Then
+    If itemNum > 0 Then
 
         ' make sure we're not dragging the item
-        If DragBox.Type = Part_Item And DragBox.Value = ItemNum Then Exit Sub
+        If DragBox.Type = Part_Item And DragBox.Value = itemNum Then Exit Sub
         ' calc position
         X = Windows(GetWindowIndex("winBank")).Window.Left - Windows(GetWindowIndex("winDescription")).Window.Width
         Y = Windows(GetWindowIndex("winBank")).Window.top - 4
@@ -50,8 +50,8 @@ Sub Bank_MouseMove()
         End If
 
         ' go go go
-        If Bank.Item(ItemNum).bound > 0 Then: SoulBound = True
-        ShowItemDesc X, Y, Bank.Item(ItemNum).num, SoulBound
+        If Bank.Item(itemNum).bound > 0 Then: SoulBound = True
+        ShowItemDesc X, Y, Bank.Item(itemNum).num, SoulBound
     End If
 End Sub
 
@@ -118,7 +118,7 @@ End Function
 
 Sub DrawBank()
     Dim X As Long, Y As Long, xO As Long, yO As Long, Width As Long, Height As Long
-    Dim i As Long, ItemNum As Long, ItemPic As Long
+    Dim i As Long, itemNum As Long, ItemPic As Long, rec As RECT
 
     Dim Left As Long, top As Long
     Dim Colour As Long, skipItem As Boolean, Amount As Long, tmpItem As Long
@@ -148,19 +148,23 @@ Sub DrawBank()
 
     ' actually draw the icons
     For i = 1 To MAX_BANK
-        ItemNum = Bank.Item(i).num
+        itemNum = Bank.Item(i).num
 
-        If ItemNum > 0 And ItemNum <= MAX_ITEMS Then
+        If itemNum > 0 And itemNum <= MAX_ITEMS Then
             ' not dragging?
             If Not (DragBox.Origin = origin_Bank And DragBox.Slot = i) Then
-                ItemPic = Item(ItemNum).Pic
+                ItemPic = Item(itemNum).Pic
 
                 If ItemPic > 0 And ItemPic <= Count_Item Then
                     top = yO + BankTop + ((BankOffsetY + 32) * ((i - 1) \ BankColumns))
                     Left = xO + BankLeft + ((BankOffsetX + 32) * (((i - 1) Mod BankColumns)))
 
                     ' draw icon
-                    RenderTexture Tex_Item(ItemPic), Left, top, 0, 0, 32, 32, 32, 32
+                    If Options.ItemAnimation = YES Then
+                        rec.top = 0
+                        rec.Left = Bank.Item(i).Frame * PIC_X
+                    End If
+                    RenderTexture Tex_Item(ItemPic), Left, top, rec.Left, rec.top, 32, 32, 32, 32
 
                     ' If item is a stack - draw the amount you have
                     If Bank.Item(i).Value > 1 Then
@@ -305,8 +309,8 @@ Public Function GetBankItemNum(ByVal BankSlot As Long) As Long
     GetBankItemNum = Bank.Item(BankSlot).num
 End Function
 
-Public Sub SetBankItemNum(ByVal BankSlot As Long, ByVal ItemNum As Long)
-    Bank.Item(BankSlot).num = ItemNum
+Public Sub SetBankItemNum(ByVal BankSlot As Long, ByVal itemNum As Long)
+    Bank.Item(BankSlot).num = itemNum
 End Sub
 
 Public Function GetBankItemValue(ByVal BankSlot As Long) As Long

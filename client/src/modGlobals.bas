@@ -36,6 +36,8 @@ Public BarWidth_GuiEXP As Long
 Public BarWidth_GuiHP_Max As Long
 Public BarWidth_GuiSP_Max As Long
 Public BarWidth_GuiEXP_Max As Long
+' Equipment Animated
+Public EquipmentFrames(1 To Equipment.Equipment_Count - 1) As Byte
 ' fog
 Public fogOffsetX As Long
 Public fogOffsetY As Long

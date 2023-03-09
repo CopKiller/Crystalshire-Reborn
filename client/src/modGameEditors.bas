@@ -1028,6 +1028,9 @@ Public Sub NpcEditorInit()
         .opPercent_5.Value = CBool(NPC(EditorIndex).Percent_5)
         .opPercent_10.Value = CBool(NPC(EditorIndex).Percent_10)
         .opPercent_20.Value = CBool(NPC(EditorIndex).Percent_20)
+        
+        ' block chance
+        .scrlBlockChance.Value = NPC(EditorIndex).BlockChance
 
         ' find the sound we have set
         If .cmbSound.ListCount >= 0 Then

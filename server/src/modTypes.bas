@@ -473,6 +473,7 @@ Private Type NpcRec
     Percent_20 As Byte
     Shadow As Byte
     Balao As Byte
+    BlockChance As Byte
 End Type
 
 Private Type MapNpcRec
@@ -517,6 +518,7 @@ Private Type TradeItemRec
     ItemValue As Long
     costitem As Long
     costvalue As Long
+    Frame As Byte
 End Type
 
 Private Type ShopRec

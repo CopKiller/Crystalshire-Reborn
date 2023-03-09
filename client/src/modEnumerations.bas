@@ -116,6 +116,7 @@ Public Enum ServerPackets
     SCheckNpcCRC
     SLotteryWindow
     SGoldUpdate
+    SLotteryInfo
     ' Make sure SMSG_COUNT is below everything else
     SMSG_COUNT
 End Enum
@@ -347,6 +348,13 @@ Public Enum DialogueMsg
     MsgSERIALINCORRECT
     MsgSERIALCLAIMED
     MsgINVALIDBIRTHDAY
+    MsgLOTTERYMAXBID
+    MsgLOTTERYMINBID
+    MsgLOTTERYNUMBERS
+    MsgLOTTERYNUMBERALREADY
+    MsgLOTTERYCLOSED
+    MsgLOTTERYGOLD
+    MsgLOTTERYSUCCESS
 End Enum
 
 Public Enum DialogueType
@@ -363,6 +371,7 @@ Public Enum DialogueType
     TypeWITHDRAWITEM
     TypeGUILD
     TypeTRADEGOLD
+    TypeSENDBET
 End Enum
 
 Public Enum DialogueStyle
