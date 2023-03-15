@@ -51,6 +51,7 @@ Begin VB.Form frmServer
       Style           =   1
       Tab             =   2
       TabHeight       =   503
+      Enabled         =   0   'False
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Verdana"
          Size            =   8.25
@@ -63,12 +64,12 @@ Begin VB.Form frmServer
       TabCaption(0)   =   "Console"
       TabPicture(0)   =   "frmServer.frx":1708A
       Tab(0).ControlEnabled=   0   'False
-      Tab(0).Control(0)=   "chkMsgWindow"
-      Tab(0).Control(1)=   "Frame5"
-      Tab(0).Control(2)=   "txtChat"
-      Tab(0).Control(3)=   "txtText"
-      Tab(0).Control(4)=   "lblCpsLock"
-      Tab(0).Control(5)=   "lblCPS"
+      Tab(0).Control(0)=   "lblCPS"
+      Tab(0).Control(1)=   "lblCpsLock"
+      Tab(0).Control(2)=   "txtText"
+      Tab(0).Control(3)=   "txtChat"
+      Tab(0).Control(4)=   "Frame5"
+      Tab(0).Control(5)=   "chkMsgWindow"
       Tab(0).ControlCount=   6
       TabCaption(1)   =   "Players"
       TabPicture(1)   =   "frmServer.frx":170A6
@@ -138,7 +139,7 @@ Begin VB.Form frmServer
          TabIndex        =   1
          Top             =   360
          Width           =   3135
-         Begin VB.CommandButton Command3 
+         Begin VB.CommandButton cmdOpenLottery 
             Caption         =   "Open Lottery"
             Height          =   255
             Left            =   360
@@ -146,7 +147,7 @@ Begin VB.Form frmServer
             Top             =   2160
             Width           =   2415
          End
-         Begin VB.CommandButton Command1 
+         Begin VB.CommandButton cmdConfigs 
             Caption         =   "Mais Configurações"
             Height          =   255
             Left            =   360
@@ -276,7 +277,7 @@ Begin VB.Form frmServer
             Top             =   2520
             Width           =   615
          End
-         Begin VB.CommandButton Command2 
+         Begin VB.CommandButton cmdConjuntos 
             Caption         =   "Conjuntos"
             Height          =   255
             Left            =   1440
@@ -286,7 +287,6 @@ Begin VB.Form frmServer
          End
          Begin VB.CommandButton cmdCheckIn 
             Caption         =   "CheckIn"
-            Enabled         =   0   'False
             Height          =   255
             Left            =   120
             TabIndex        =   37
@@ -516,11 +516,11 @@ Private Sub cmdReloadSeriais_Click()
     Next
 End Sub
 
-Private Sub Command1_Click()
+Private Sub cmdConfigs_Click()
     frmConfiguration.Show vbModeless, frmServer
 End Sub
 
-Private Sub Command2_Click()
+Private Sub cmdConjuntos_Click()
     Dim i As Long
     Call LoadConjuntos
     Call TextAdd("All Conjuntos reloaded.")
@@ -531,7 +531,7 @@ Private Sub Command2_Click()
     Next
 End Sub
 
-Private Sub Command3_Click()
+Private Sub cmdOpenLottery_Click()
     Call StartLottery
 End Sub
 

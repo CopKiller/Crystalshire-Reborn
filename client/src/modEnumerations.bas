@@ -117,6 +117,7 @@ Public Enum ServerPackets
     SLotteryWindow
     SGoldUpdate
     SLotteryInfo
+    SEventMsg
     ' Make sure SMSG_COUNT is below everything else
     SMSG_COUNT
 End Enum
@@ -321,6 +322,7 @@ Public Enum ChatChannel
     chGuild
     chPrivate
     chQuest
+    chEvent
     ' last
     Channel_Count
 End Enum

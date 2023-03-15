@@ -75,7 +75,7 @@ Private Sub AddBetValue(ByVal Index As Long, ByVal BetID As Byte, ByVal BetValue
     End If
 
     Call AlertMsg(Index, DIALOGUE_LOTTERY_SUCCESS, , False)
-    Call GlobalMsg("Lottery: " & GetPlayerName(Index) & " bet on the number " & BetID & " value " & BetValue, Yellow)
+    Call SendEventMsgAll("[Lottery]", GetPlayerName(Index) & " bet on the number " & BetID & " value " & BetValue, White)
 
     Lottery.Bet(BetID).Owner = GetPlayerName(Index)
     Lottery.Bet(BetID).Value = Lottery.Bet(BetID).Value + BetValue
@@ -99,10 +99,14 @@ Public Sub SendLotteryInfosTo(ByVal Index As Long)
         Tmr = (Tmr * 60)    ' 180 min
         Tmr = (Tmr * 60)    ' 10.800 segs
         Tmr = (Tmr * 1000)    ' 10.800.000 Milisegundos
+        Debug.Print getTime
         Tmr = (Tmr + Lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
         Tmr = (Tmr - getTime)
+        Tmr = (Tmr / 1000)
         Buffer.WriteLong CLng(Tmr)
     End If
+    
+    Buffer.WriteLong Lottery.Acumulado
 
     Buffer.WriteLong MIN_BETS_VALUE
     Buffer.WriteLong MAX_BETS_VALUE
@@ -159,7 +163,7 @@ Public Sub CheckBetLoop()
                 If Lottery.BetTmr + ((LOTTERY_TIME_BET / MAX_AVISOS) * 1000) <= getTime Then
                     Lottery.Aviso(i) = True
                     Lottery.BetTmr = getTime
-                    Call GlobalMsg("Lottery: bets close in " & SecondsToHMS(LOTTERY_TIME_BET - ((getTime - Lottery.Started) / 1000)), Yellow)
+                    Call SendEventMsgAll("[Lottery]", "bets close in " & SecondsToHMS(LOTTERY_TIME_BET - ((getTime - Lottery.Started) / 1000)), Yellow)
                 End If
             End If
         Next i
@@ -167,7 +171,7 @@ Public Sub CheckBetLoop()
         ' Last Aviso
         If Not Lottery.Aviso(MAX_AVISOS) Then
             If Lottery.Started + (LOTTERY_TIME_BET * 1000) <= getTime Then
-                Call GlobalMsg("Lottery: Bets closed, Good Luck!!!", Green)
+                Call SendEventMsgAll("[Lottery]", " Bets closed, Good Luck!!!", Green)
                 Call CloseBets
                 Lottery.Aviso(MAX_AVISOS) = True
                 Call SendLotteryInfosAll
@@ -178,20 +182,20 @@ Public Sub CheckBetLoop()
             Number = ChooseLoteryNumber
             Accumulated = GetBetsAccumulated
 
-            Call GlobalMsg("Lottery: Drawn Number is " & Number, Yellow)
+            Call SendEventMsgAll("[Lottery]", "Drawn Number is " & Number, Yellow)
 
             If LenB(Trim$(Lottery.Bet(Number).Owner)) > 0 Then
                 PlayerID = FindPlayer(Trim$(Lottery.Bet(Number).Owner))
                 If PlayerID > 0 Then
                     Call SetPlayerGold(PlayerID, Accumulated)
                     Call SendGoldUpdate(PlayerID)
-                    Call GlobalMsg("Lottery: The winner is " & Trim$(Lottery.Bet(Number).Owner) & " Congratulations!!!", Green)
+                    Call SendEventMsgAll("[Lottery]", "The winner is " & Trim$(Lottery.Bet(Number).Owner) & " Congratulations!!!", Green)
 
                     Lottery.Acumulado = 0
                     Call ClearBets    ' Remove all apostas e all owners
                     Call ClearLottery
                 Else
-                    Call GlobalMsg("Lottery: Player " & Trim$(Lottery.Bet(Number).Owner) & " OFFLINE, jackpot in " & Accumulated, Green)
+                    Call SendEventMsgAll("[Lottery]", "Player " & Trim$(Lottery.Bet(Number).Owner) & " OFFLINE, jackpot in " & Accumulated, Green)
                     Call ClearBets    ' Remove all apostas e all owners
                     Call ClearLottery
                 End If
@@ -199,12 +203,12 @@ Public Sub CheckBetLoop()
                 Lottery.LastBetWinner = Trim$(Lottery.Bet(Number).Owner)
                 Lottery.LastBetNum = Number
             Else
-                Call GlobalMsg("Lottery: There were no winners, jackpot in " & Accumulated, Green)
+                Call SendEventMsgAll("[Lottery]", "There were no winners, jackpot in " & Accumulated, Green)
                 Call ClearBets    ' Remove all apostas e all owners
                 Call ClearLottery
             End If
 
-            Call GlobalMsg("Lottery: The lottery has ended, next lottery starts in " & LOTTERY_START_HOURS & " hours", BrightRed)
+            Call SendEventMsgAll("[Lottery]", "The lottery has ended, next lottery starts in " & LOTTERY_START_HOURS & " hours", BrightRed)
             
             Call SendLotteryInfosAll
         End If
@@ -235,11 +239,11 @@ Public Sub StartLottery()
     Lottery.Started = getTime
     Lottery.BetTmr = getTime
 
-    Call GlobalMsg("Lottery: Betting is on, place your bets in (" & SecondsToHMS(LOTTERY_TIME_BET) & ")", BrightGreen)
+    Call SendEventMsgAll("[Lottery]", "Betting is on, place your bets in (" & SecondsToHMS(LOTTERY_TIME_BET) & ")", BrightGreen)
     
     Accumulated = Lottery.Acumulado
     If Accumulated > 0 Then
-        Call GlobalMsg("Lottery: The prize is accumulated in " & Accumulated, BrightGreen)
+        Call SendEventMsgAll("[Lottery]", "The prize is accumulated in " & Accumulated, BrightGreen)
     End If
     
     Call SendLotteryInfosAll

@@ -73,6 +73,7 @@ Module=modConjuntos; src\modConjuntos.bas
 Module=modCheckIn; src\modCheckInDiary.bas
 Module=modCRC32; src\modCRC32.bas
 Module=modLottery; src\modLottery.bas
+Module=modEvent; src\modEvent.bas
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

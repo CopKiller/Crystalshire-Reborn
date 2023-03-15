@@ -190,14 +190,15 @@ Public Sub sendChat(ByVal Index As Long)
                 ClosePlayerChat Index
                 Exit Sub
             Case 9  ' Lottery
-                If VerifyLotteryStatus Then
+                'If VerifyLotteryStatus Then
+                    SendLotteryInfosTo Index
                     SendLotteryWindow Index
                     ClosePlayerChat Index
-                Else
-                    mainText = "Loteria nao esta funcionando ainda, volte em " & SecondsToHMS(((LOTTERY_START_HOURS * 60) * 60) - ((getTime - Lottery.Ended) / 1000))
-                    SendChatUpdate Index, TempPlayer(Index).inChatWith, mainText, optText(1), optText(2), optText(3), optText(4)
-                    Exit Sub
-                End If
+                'Else
+                    'mainText = "Loteria nao esta funcionando ainda, volte em " & SecondsToHMS(((LOTTERY_START_HOURS * 60) * 60) - ((getTime - Lottery.Ended) / 1000))
+                    'SendChatUpdate Index, TempPlayer(Index).inChatWith, mainText, optText(1), optText(2), optText(3), optText(4)
+                    'Exit Sub
+                'End If
                 Exit Sub
             End Select
         End If

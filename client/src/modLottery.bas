@@ -20,6 +20,7 @@ Private Type LotteryInfo
     LotteryTime As Long
     Min_Bets_Value As Long
     Max_Bets_Value As Long
+    Accumulated As Long
 End Type
 
 
@@ -45,11 +46,12 @@ Public Sub CreateWindow_Lottery()
     CreatePictureBox WindowCount, "picShadow_1", 142, 34, 150, 9, , , , , , , , DesignTypes.desBlackOval, DesignTypes.desBlackOval, DesignTypes.desBlackOval
     CreateLabel WindowCount, "lblInfo", 0, 30, 436, , "Informations", rockwellDec_15, Pink, Alignment.alignCentre
     
-    CreateLabel WindowCount, "lblLWinner", 40, 50, 200, , "Last Winner: - - -", rockwellDec_15, Yellow, Alignment.alignLeft
-    CreateLabel WindowCount, "lblBNumber", 40, 70, 200, , "Last Bet Number: - - -", rockwellDec_15, Yellow, Alignment.alignLeft
-    CreateLabel WindowCount, "lblLStatus", 40, 90, 200, , "Lottery Status: - - -", rockwellDec_15, Yellow, Alignment.alignLeft
+    CreateLabel WindowCount, "lblLWinner", 40, 40, 200, , "Last Winner: - - -", rockwellDec_15, Yellow, Alignment.alignLeft
+    CreateLabel WindowCount, "lblBNumber", 40, 60, 200, , "Last Bet Number: - - -", rockwellDec_15, Yellow, Alignment.alignLeft
+    CreateLabel WindowCount, "lblLStatus", 40, 80, 200, , "Lottery Status: - - -", rockwellDec_15, Yellow, Alignment.alignLeft
+    CreateLabel WindowCount, "lblNLottery", 40, 100, 200, , "Next Lottery: 00:00:00", rockwellDec_15, Yellow, Alignment.alignLeft
     
-    CreateLabel WindowCount, "lblNLottery", 250, 50, 200, , "Next Lottery: 00:00:00", rockwellDec_15, Yellow, Alignment.alignLeft
+    CreateLabel WindowCount, "lblAccumulated", 250, 50, 200, , "Accumulated: $$$", rockwellDec_15, Yellow, Alignment.alignLeft
     CreateLabel WindowCount, "lblMinBid", 250, 70, 200, , "Min Bid: $$$", rockwellDec_15, Yellow, Alignment.alignLeft
     CreateLabel WindowCount, "lblMaxBid", 250, 90, 200, , "Max Bid: $$$", rockwellDec_15, Yellow, Alignment.alignLeft
 
@@ -82,6 +84,7 @@ Public Sub HandleLotteryInfo(ByVal Index As Long, ByRef data() As Byte, ByVal St
     LotteryInfo.LotteryOn = ConvertByteToBool(Buffer.ReadByte)
     LotteryInfo.BetOn = ConvertByteToBool(Buffer.ReadByte)
     LotteryInfo.LotteryTime = Buffer.ReadLong
+    LotteryInfo.Accumulated = Buffer.ReadLong
     LotteryInfo.Min_Bets_Value = Buffer.ReadLong
     LotteryInfo.Max_Bets_Value = Buffer.ReadLong
     Set Buffer = Nothing
@@ -121,7 +124,8 @@ Public Sub HandleLotteryInfo(ByVal Index As Long, ByRef data() As Byte, ByVal St
         End If
         .Controls(GetControlIndex("winLottery", "lblNLottery")).Text = SString
 
-        ' Min Bid & Max Bid
+        ' Accumulated & Min Bid & Max Bid
+        .Controls(GetControlIndex("winLottery", "lblAccumulated")).Text = "Accumulated: " & ColourChar & GetColStr(BrightGreen) & LotteryInfo.Accumulated & " $$"
         .Controls(GetControlIndex("winLottery", "lblMinBid")).Text = "Min Bid: " & ColourChar & GetColStr(BrightGreen) & LotteryInfo.Min_Bets_Value & " $$"
         .Controls(GetControlIndex("winLottery", "lblMaxBid")).Text = "Max Bid: " & ColourChar & GetColStr(BrightGreen) & LotteryInfo.Max_Bets_Value & " $$"
 

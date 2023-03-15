@@ -132,6 +132,9 @@ Public Sub InitMessages()
     HandleDataSub(SLotteryWindow) = GetAddress(AddressOf HandleLotteryWindow)
     HandleDataSub(SGoldUpdate) = GetAddress(AddressOf HandleGoldUpdate)
     HandleDataSub(SLotteryInfo) = GetAddress(AddressOf HandleLotteryInfo)
+    
+    ' Event Msg
+    HandleDataSub(SEventMsg) = GetAddress(AddressOf HandleEventMessage)
 End Sub
 
 Sub HandleData(ByRef data() As Byte)
@@ -595,8 +598,8 @@ Private Sub HandlePlayerData(ByVal Index As Long, ByRef data() As Byte, ByVal St
 
     ' Make sure they aren't walking
     Player(i).Moving = 0
-    Player(i).xOffset = 0
-    Player(i).yOffset = 0
+    Player(i).XOffSet = 0
+    Player(i).YOffSet = 0
 End Sub
 
 Private Sub HandlePlayerMove(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -616,23 +619,23 @@ Private Sub HandlePlayerMove(ByVal Index As Long, ByRef data() As Byte, ByVal St
     Call SetPlayerX(i, X)
     Call SetPlayerY(i, Y)
     Call SetPlayerDir(i, dir)
-    Player(i).xOffset = 0
-    Player(i).yOffset = 0
+    Player(i).XOffSet = 0
+    Player(i).YOffSet = 0
     Player(i).Moving = n
 
     Select Case GetPlayerDir(i)
 
     Case DIR_UP
-        Player(i).yOffset = PIC_Y
+        Player(i).YOffSet = PIC_Y
 
     Case DIR_DOWN
-        Player(i).yOffset = PIC_Y * -1
+        Player(i).YOffSet = PIC_Y * -1
 
     Case DIR_LEFT
-        Player(i).xOffset = PIC_X
+        Player(i).XOffSet = PIC_X
 
     Case DIR_RIGHT
-        Player(i).xOffset = PIC_X * -1
+        Player(i).XOffSet = PIC_X * -1
     End Select
 End Sub
 
@@ -655,23 +658,23 @@ Private Sub HandleNpcMove(ByVal Index As Long, ByRef data() As Byte, ByVal Start
         .X = X
         .Y = Y
         .dir = dir
-        .xOffset = 0
-        .yOffset = 0
+        .XOffSet = 0
+        .YOffSet = 0
         .Moving = Movement
 
         Select Case .dir
 
         Case DIR_UP
-            .yOffset = PIC_Y
+            .YOffSet = PIC_Y
 
         Case DIR_DOWN
-            .yOffset = PIC_Y * -1
+            .YOffSet = PIC_Y * -1
 
         Case DIR_LEFT
-            .xOffset = PIC_X
+            .XOffSet = PIC_X
 
         Case DIR_RIGHT
-            .xOffset = PIC_X * -1
+            .XOffSet = PIC_X * -1
         End Select
 
     End With
@@ -689,8 +692,8 @@ Private Sub HandlePlayerDir(ByVal Index As Long, ByRef data() As Byte, ByVal Sta
     Call SetPlayerDir(i, dir)
 
     With Player(i)
-        .xOffset = 0
-        .yOffset = 0
+        .XOffSet = 0
+        .YOffSet = 0
         .Moving = 0
     End With
 
@@ -707,8 +710,8 @@ Private Sub HandleNpcDir(ByVal Index As Long, ByRef data() As Byte, ByVal StartA
 
     With MapNpc(i)
         .dir = dir
-        .xOffset = 0
-        .yOffset = 0
+        .XOffSet = 0
+        .YOffSet = 0
         .Moving = 0
     End With
 
@@ -729,8 +732,8 @@ Private Sub HandlePlayerXY(ByVal Index As Long, ByRef data() As Byte, ByVal Star
     Call SetPlayerDir(MyIndex, dir)
     ' Make sure they aren't walking
     Player(MyIndex).Moving = 0
-    Player(MyIndex).xOffset = 0
-    Player(MyIndex).yOffset = 0
+    Player(MyIndex).XOffSet = 0
+    Player(MyIndex).YOffSet = 0
 End Sub
 
 Private Sub HandlePlayerXYMap(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -750,8 +753,8 @@ Private Sub HandlePlayerXYMap(ByVal Index As Long, ByRef data() As Byte, ByVal S
     Call SetPlayerDir(thePlayer, dir)
     ' Make sure they aren't walking
     Player(thePlayer).Moving = 0
-    Player(thePlayer).xOffset = 0
-    Player(thePlayer).yOffset = 0
+    Player(thePlayer).XOffSet = 0
+    Player(thePlayer).YOffSet = 0
 End Sub
 
 Private Sub HandleAttack(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -1271,8 +1274,8 @@ Private Sub HandleSpawnNpc(ByVal Index As Long, ByRef data() As Byte, ByVal Star
         .Y = Buffer.ReadLong
         .dir = Buffer.ReadLong
         ' Client use only
-        .xOffset = 0
-        .yOffset = 0
+        .XOffSet = 0
+        .YOffSet = 0
         .Moving = 0
         .Dead = NO
     End With

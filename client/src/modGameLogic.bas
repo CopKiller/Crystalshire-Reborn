@@ -76,13 +76,15 @@ Public Sub GameLoop()
 
             ' Calcular se a quest em andamento tem tempo pra finalizar em segundos
             Call CalculateQuestTimer
-            
+
             ' Calcular o tempo da loteria pelo client, e apenas receber atualizações do servidor caso haja algum imprevisto!
-            If LotteryInfo.LotteryTime > 0 And Not LotteryInfo.LotteryOn And Not LotteryInfo.BetOn Then
-                LotteryInfo.LotteryTime = LotteryInfo.LotteryTime - 1
-                
-                If Windows(GetWindowIndex("winLottery")).Window.visible Then
-                    Windows(GetWindowIndex("winLottery")).Controls(GetControlIndex("winLottery", "lblNLottery")).Text = "Next Lottery: " & ColourChar & GetColStr(BrightRed) & SecondsToHMS(LotteryInfo.LotteryTime)
+            If Windows(GetWindowIndex("winLottery")).Window.visible Then
+                If LotteryInfo.LotteryTime > 0 And Not LotteryInfo.LotteryOn And Not LotteryInfo.BetOn Then
+                    LotteryInfo.LotteryTime = LotteryInfo.LotteryTime - 1
+
+                    If Windows(GetWindowIndex("winLottery")).Window.visible Then
+                        Windows(GetWindowIndex("winLottery")).Controls(GetControlIndex("winLottery", "lblNLottery")).Text = "Next Lottery: " & ColourChar & GetColStr(BrightRed) & SecondsToHMS(LotteryInfo.LotteryTime)
+                    End If
                 End If
             End If
 

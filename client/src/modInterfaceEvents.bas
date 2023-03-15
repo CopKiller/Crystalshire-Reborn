@@ -1450,6 +1450,11 @@ Public Sub OnDraw_ChatSmall()
     RenderChat
 End Sub
 
+Public Sub chkChat_Event()
+    Options.channelState(ChatChannel.chEvent) = Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "chkEvent")).Value
+    UpdateChat
+End Sub
+
 Public Sub chkChat_Game()
     Options.channelState(ChatChannel.chGame) = Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "chkGame")).Value
     UpdateChat

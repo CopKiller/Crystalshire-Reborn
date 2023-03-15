@@ -26,6 +26,9 @@ Public Sub InitServer()
     GameSeconds = Second(Now)
     GameMinutes = Minute(Now)
     GameHours = Hour(Now)
+    
+    ' Show Console Msgs
+    frmServer.SSTab1.Tab = 0
 
     ' cache packet pointers
     Call InitMessages
@@ -123,8 +126,8 @@ Public Sub InitServer()
     ' reset shutdown value
     isShuttingDown = False
     
-    Call DayRewardInit
-    frmServer.cmdCheckIn.Enabled = True
+    ' Enable Controls
+    frmServer.SSTab1.Enabled = True
 
     ' Starts the server loop
     ServerLoop
@@ -271,6 +274,8 @@ Private Sub LoadGameData()
     Call LoadQuests
     Call SetStatus("Loading Conjuntos...")
     Call LoadConjuntos
+    Call SetStatus("Loading DayReward...")
+    Call DayRewardInit
 End Sub
 
 Sub SetHighIndex()
