@@ -6,7 +6,7 @@ Public Sub Main()
 End Sub
 
 Public Sub InitServer()
-    Dim i As Long
+    Dim I As Long
     Dim F As Long
     Dim time1 As Currency
     Dim time2 As Currency
@@ -33,6 +33,7 @@ Public Sub InitServer()
     ' cache packet pointers
     Call InitMessages
     Call Auth_InitMessages
+    Call Event_InitMessages
 
     ' time the load
     time1 = getTime
@@ -79,13 +80,17 @@ Public Sub InitServer()
     ' Get the authentication socket going
     frmServer.AuthSocket.RemoteHost = AUTH_SERVER_IP
     frmServer.AuthSocket.LocalPort = SERVER_AUTH_PORT
+    
+    ' Get the event socket going
+    frmServer.EventSocket.RemoteHost = EVENT_SERVER_IP
+    frmServer.EventSocket.RemotePort = EVENT_SERVER_PORT
 
     ' Init all the player sockets
     Call SetStatus("Initializing player array...")
 
-    For i = 1 To MAX_PLAYERS
-        Call ClearPlayer(i)
-        Load frmServer.Socket(i)
+    For I = 1 To MAX_PLAYERS
+        Call ClearPlayer(I)
+        Load frmServer.Socket(I)
     Next
 
     ' Serves as a constructor
@@ -94,17 +99,17 @@ Public Sub InitServer()
     
     SetStatus "Caching map, items, npcs CRC32 checksums..."
     ' cache map crc32s
-    For i = 1 To MAX_MAPS
-        GetMapCRC32 i
-    Next i
+    For I = 1 To MAX_MAPS
+        GetMapCRC32 I
+    Next I
     ' cache item crc32s
-    For i = 1 To MAX_ITEMS
-        GetItemCRC32 i
-    Next i
+    For I = 1 To MAX_ITEMS
+        GetItemCRC32 I
+    Next I
     ' cache npc crc32s
-    For i = 1 To MAX_NPCS
-        GetNpcCRC32 i
-    Next i
+    For I = 1 To MAX_NPCS
+        GetNpcCRC32 I
+    Next I
     
     Call SetStatus("Spawning map items...")
     Call SpawnAllMapsItems
@@ -122,6 +127,8 @@ Public Sub InitServer()
     time2 = getTime
     
     Call SetStatus("Initialization complete. Server loaded in " & Int(time2 - time1) & "ms.")
+    
+    Call ConnectToEventServer
 
     ' reset shutdown value
     isShuttingDown = False
@@ -167,31 +174,31 @@ Public Sub SendAllSaves()
     End If
 End Sub
 
-Private Sub LoadAccount_SendAuthServer(ByVal filename As String)
+Private Sub LoadAccount_SendAuthServer(ByVal FileName As String)
     Dim F As Long
     Dim Jogador As PlayerRec
-    Dim Buffer As clsBuffer, DataSize As Long, TempData() As Byte
+    Dim Buffer As clsBuffer, DataSize As Long, tempData() As Byte
 
-    If Trim$(filename) = vbNullString Then Exit Sub
+    If Trim$(FileName) = vbNullString Then Exit Sub
     F = FreeFile
-    Open filename For Binary As #F
+    Open FileName For Binary As #F
     Get #F, , Jogador
     Close #F
     DataSize = LenB(Jogador)
-    ReDim TempData(DataSize - 1)
-    CopyMemory TempData(0), ByVal VarPtr(Jogador), DataSize
+    ReDim tempData(DataSize - 1)
+    CopyMemory tempData(0), ByVal VarPtr(Jogador), DataSize
     Set Buffer = New clsBuffer
     
     Buffer.WriteLong GSavePlayer
     Buffer.WriteString Trim$(Jogador.Login)
-    Buffer.WriteBytes TempData
+    Buffer.WriteBytes tempData
 
     Auth_SendDataTo Buffer.ToArray
     Buffer.Flush: Set Buffer = Nothing
 End Sub
 
 Public Sub DestroyServer()
-    Dim i As Long
+    Dim I As Long
     ServerOnline = False
     Call SetStatus("Destroying System Tray...")
     Call DestroySystemTray
@@ -200,8 +207,8 @@ Public Sub DestroyServer()
     Call ClearGameData
     Call SetStatus("Unloading sockets...")
 
-    For i = 1 To MAX_PLAYERS
-        Unload frmServer.Socket(i)
+    For I = 1 To MAX_PLAYERS
+        Unload frmServer.Socket(I)
     Next
     End
 End Sub
@@ -279,18 +286,18 @@ Private Sub LoadGameData()
 End Sub
 
 Sub SetHighIndex()
-    Dim i As Integer
-    Dim X As Integer
+    Dim I As Integer
+    Dim x As Integer
 
-    For i = 0 To MAX_PLAYERS
-        X = MAX_PLAYERS - i
+    For I = 0 To MAX_PLAYERS
+        x = MAX_PLAYERS - I
 
-        If IsConnected(X) = True Then
-            Player_HighIndex = X
+        If IsConnected(x) = True Then
+            Player_HighIndex = x
             Exit Sub
         End If
 
-    Next i
+    Next I
 
     Player_HighIndex = 0
 
