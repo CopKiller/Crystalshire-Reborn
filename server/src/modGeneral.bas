@@ -6,7 +6,7 @@ Public Sub Main()
 End Sub
 
 Public Sub InitServer()
-    Dim I As Long
+    Dim i As Long
     Dim F As Long
     Dim time1 As Currency
     Dim time2 As Currency
@@ -88,9 +88,9 @@ Public Sub InitServer()
     ' Init all the player sockets
     Call SetStatus("Initializing player array...")
 
-    For I = 1 To MAX_PLAYERS
-        Call ClearPlayer(I)
-        Load frmServer.Socket(I)
+    For i = 1 To MAX_PLAYERS
+        Call ClearPlayer(i)
+        Load frmServer.Socket(i)
     Next
 
     ' Serves as a constructor
@@ -99,17 +99,17 @@ Public Sub InitServer()
     
     SetStatus "Caching map, items, npcs CRC32 checksums..."
     ' cache map crc32s
-    For I = 1 To MAX_MAPS
-        GetMapCRC32 I
-    Next I
+    For i = 1 To MAX_MAPS
+        GetMapCRC32 i
+    Next i
     ' cache item crc32s
-    For I = 1 To MAX_ITEMS
-        GetItemCRC32 I
-    Next I
+    For i = 1 To MAX_ITEMS
+        GetItemCRC32 i
+    Next i
     ' cache npc crc32s
-    For I = 1 To MAX_NPCS
-        GetNpcCRC32 I
-    Next I
+    For i = 1 To MAX_NPCS
+        GetNpcCRC32 i
+    Next i
     
     Call SetStatus("Spawning map items...")
     Call SpawnAllMapsItems
@@ -165,12 +165,12 @@ Public Sub SendAllSaves()
         End If
 
         If sCount > 0 Then
-            Call SetStatus("## " & sCount & " Dados de jogadores foram enviados com sucesso! ##")
+            Call TextLoginAdd("## " & sCount & " Dados de jogadores foram enviados com sucesso! ##")
         Else
-            Call SetStatus("## Nenhum dado de jogador perdido foi encontrado! ##")
+            Call TextLoginAdd("## Nenhum dado de jogador perdido foi encontrado! ##")
         End If
     Else
-        Call SetStatus("## Dados dos jogadores não foram enviados, falha na comunicação com o servidor de autenticação! ##")
+        Call TextLoginAdd("## Dados dos jogadores não foram enviados, falha na comunicação com o servidor de autenticação! ##")
     End If
 End Sub
 
@@ -198,7 +198,7 @@ Private Sub LoadAccount_SendAuthServer(ByVal FileName As String)
 End Sub
 
 Public Sub DestroyServer()
-    Dim I As Long
+    Dim i As Long
     ServerOnline = False
     Call SetStatus("Destroying System Tray...")
     Call DestroySystemTray
@@ -207,8 +207,8 @@ Public Sub DestroyServer()
     Call ClearGameData
     Call SetStatus("Unloading sockets...")
 
-    For I = 1 To MAX_PLAYERS
-        Unload frmServer.Socket(I)
+    For i = 1 To MAX_PLAYERS
+        Unload frmServer.Socket(i)
     Next
     End
 End Sub
@@ -286,18 +286,18 @@ Private Sub LoadGameData()
 End Sub
 
 Sub SetHighIndex()
-    Dim I As Integer
+    Dim i As Integer
     Dim x As Integer
 
-    For I = 0 To MAX_PLAYERS
-        x = MAX_PLAYERS - I
+    For i = 0 To MAX_PLAYERS
+        x = MAX_PLAYERS - i
 
         If IsConnected(x) = True Then
             Player_HighIndex = x
             Exit Sub
         End If
 
-    Next I
+    Next i
 
     Player_HighIndex = 0
 
@@ -313,6 +313,30 @@ Public Sub TextAdd(Msg As String)
 
     frmServer.txtText.Text = frmServer.txtText.Text & vbNewLine & Msg
     frmServer.txtText.SelStart = Len(frmServer.txtText.Text)
+End Sub
+
+Public Sub TextLoginAdd(Msg As String)
+    LoginNumLines = LoginNumLines + 1
+
+    If LoginNumLines >= MAX_LINES Then
+        frmServer.txtLogin.Text = vbNullString
+        LoginNumLines = 0
+    End If
+
+    frmServer.txtLogin.Text = frmServer.txtLogin.Text & vbNewLine & Msg
+    frmServer.txtLogin.SelStart = Len(frmServer.txtLogin.Text)
+End Sub
+
+Public Sub TextEventAdd(Msg As String)
+    EventNumLines = EventNumLines + 1
+
+    If EventNumLines >= MAX_LINES Then
+        frmServer.txtEvent.Text = vbNullString
+        LoginNumLines = 0
+    End If
+
+    frmServer.txtEvent.Text = frmServer.txtEvent.Text & vbNewLine & Msg
+    frmServer.txtEvent.SelStart = Len(frmServer.txtEvent.Text)
 End Sub
 
 ' Used for checking validity of names

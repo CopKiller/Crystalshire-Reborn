@@ -10,8 +10,10 @@ namespace Event_Server.Network {
 
         public static void InitOpCode() {
             RecvPacket.Add((int)Packet.LotteryData, typeof(CpRequestLotteryData));
+            RecvPacket.Add((int)Packet.LotteryInfo, typeof(CpRequestLotteryInfo));
 
-            SendPacket.Add(typeof(SpAccountData), (int)Packet.LotteryData);
+            SendPacket.Add(typeof(SpLotteryData), (int)Packet.LotteryData);
+            SendPacket.Add(typeof(SpLotteryInfo), (int)Packet.LotteryInfo);
         }
     }
 }

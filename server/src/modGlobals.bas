@@ -21,6 +21,8 @@ Public ServerOnline As Boolean
 
 ' Used for outputting text
 Public NumLines As Long
+Public LoginNumLines As Long
+Public EventNumLines As Long
 
 ' Used to handle shutting down server with countdown.
 Public isShuttingDown As Boolean

@@ -34,7 +34,6 @@ namespace Event_Server.Network {
                         var uniqueKey = new KeyGenerator().GetUniqueKey();
 
                         new Connection(client, ipAddress, uniqueKey);
-                        Global.WriteLog(LogType.System, $"{ipAddress} Key {uniqueKey} is connected", LogColor.Coral);
                     }
                     else {
                         client.Close();
@@ -46,7 +45,7 @@ namespace Event_Server.Network {
 
         public void Stop() {
             accept = false;
-            server.Stop();   
+            server.Stop();
         }
 
         private bool IsValidIpAddress(string ipAddress) {

@@ -5,10 +5,10 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmServer 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Loading..."
-   ClientHeight    =   3600
+   ClientHeight    =   3990
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   6720
+   ClientWidth     =   6900
    BeginProperty Font 
       Name            =   "Verdana"
       Size            =   8.25
@@ -21,26 +21,101 @@ Begin VB.Form frmServer
    Icon            =   "frmServer.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   3600
-   ScaleWidth      =   6720
+   ScaleHeight     =   3990
+   ScaleWidth      =   6900
    StartUpPosition =   2  'CenterScreen
-   Begin MSWinsockLib.Winsock EventSocket 
-      Left            =   960
+   Begin VB.Frame Frame1 
+      Caption         =   "CPS"
+      Height          =   615
+      Left            =   4080
+      TabIndex        =   41
       Top             =   0
+      Width           =   2775
+      Begin VB.Label lblCPS 
+         AutoSize        =   -1  'True
+         Caption         =   "CPS: 0"
+         Height          =   195
+         Left            =   960
+         TabIndex        =   43
+         Top             =   240
+         Width           =   600
+      End
+      Begin VB.Label lblCpsLock 
+         Alignment       =   2  'Center
+         AutoSize        =   -1  'True
+         Caption         =   "[Unlock]"
+         ForeColor       =   &H00FF0000&
+         Height          =   195
+         Left            =   120
+         TabIndex        =   42
+         Top             =   240
+         Width           =   720
+      End
+   End
+   Begin VB.Frame Frame5 
+      Caption         =   "Game Time"
+      Height          =   615
+      Left            =   0
+      TabIndex        =   39
+      Top             =   0
+      Width           =   1815
+      Begin VB.Label lblGameTime 
+         Alignment       =   1  'Right Justify
+         BackStyle       =   0  'Transparent
+         Caption         =   "xx:xx"
+         ForeColor       =   &H8000000D&
+         Height          =   255
+         Left            =   0
+         TabIndex        =   40
+         Top             =   240
+         Width           =   1695
+      End
+   End
+   Begin VB.Frame frmServers 
+      Caption         =   "Servidores"
+      Height          =   615
+      Left            =   1920
+      TabIndex        =   36
+      Top             =   0
+      Width           =   2175
+      Begin VB.Label lblSvEvent 
+         AutoSize        =   -1  'True
+         Caption         =   "Event: Off"
+         ForeColor       =   &H000000FF&
+         Height          =   195
+         Left            =   1080
+         TabIndex        =   38
+         Top             =   240
+         Width           =   870
+      End
+      Begin VB.Label lblSvLogin 
+         AutoSize        =   -1  'True
+         Caption         =   "Login: Off"
+         ForeColor       =   &H000000FF&
+         Height          =   195
+         Left            =   120
+         TabIndex        =   37
+         Top             =   240
+         Width           =   840
+      End
+   End
+   Begin MSWinsockLib.Winsock EventSocket 
+      Left            =   6960
+      Top             =   960
       _ExtentX        =   741
       _ExtentY        =   741
       _Version        =   393216
    End
    Begin MSWinsockLib.Winsock AuthSocket 
-      Left            =   480
-      Top             =   0
+      Left            =   6960
+      Top             =   480
       _ExtentX        =   741
       _ExtentY        =   741
       _Version        =   393216
    End
    Begin MSWinsockLib.Winsock Socket 
       Index           =   0
-      Left            =   0
+      Left            =   6960
       Top             =   0
       _ExtentX        =   741
       _ExtentY        =   741
@@ -48,14 +123,17 @@ Begin VB.Form frmServer
    End
    Begin TabDlg.SSTab SSTab1 
       Height          =   3375
-      Left            =   120
+      Left            =   0
       TabIndex        =   0
-      Top             =   120
-      Width           =   6495
-      _ExtentX        =   11456
+      Top             =   600
+      Width           =   6855
+      _ExtentX        =   12091
       _ExtentY        =   5953
       _Version        =   393216
       Style           =   1
+      Tabs            =   5
+      Tab             =   3
+      TabsPerRow      =   5
       TabHeight       =   503
       Enabled         =   0   'False
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
@@ -69,22 +147,14 @@ Begin VB.Form frmServer
       EndProperty
       TabCaption(0)   =   "Console"
       TabPicture(0)   =   "frmServer.frx":1708A
-      Tab(0).ControlEnabled=   -1  'True
-      Tab(0).Control(0)=   "lblCPS"
+      Tab(0).ControlEnabled=   0   'False
+      Tab(0).Control(0)=   "chkMsgWindow"
       Tab(0).Control(0).Enabled=   0   'False
-      Tab(0).Control(1)=   "lblCpsLock"
+      Tab(0).Control(1)=   "txtChat"
       Tab(0).Control(1).Enabled=   0   'False
       Tab(0).Control(2)=   "txtText"
       Tab(0).Control(2).Enabled=   0   'False
-      Tab(0).Control(3)=   "txtChat"
-      Tab(0).Control(3).Enabled=   0   'False
-      Tab(0).Control(4)=   "Frame5"
-      Tab(0).Control(4).Enabled=   0   'False
-      Tab(0).Control(5)=   "chkMsgWindow"
-      Tab(0).Control(5).Enabled=   0   'False
-      Tab(0).Control(6)=   "Command1"
-      Tab(0).Control(6).Enabled=   0   'False
-      Tab(0).ControlCount=   7
+      Tab(0).ControlCount=   3
       TabCaption(1)   =   "Players"
       TabPicture(1)   =   "frmServer.frx":170A6
       Tab(1).ControlEnabled=   0   'False
@@ -98,54 +168,57 @@ Begin VB.Form frmServer
       Tab(2).Control(2)=   "chkServerLog"
       Tab(2).Control(3)=   "cmdShutDown"
       Tab(2).ControlCount=   4
-      Begin VB.CommandButton Command1 
-         Caption         =   "Send Packet"
-         Height          =   375
-         Left            =   3000
-         TabIndex        =   41
-         Top             =   240
-         Width           =   975
+      TabCaption(3)   =   "Login"
+      TabPicture(3)   =   "frmServer.frx":170DE
+      Tab(3).ControlEnabled=   -1  'True
+      Tab(3).Control(0)=   "txtLogin"
+      Tab(3).Control(0).Enabled=   0   'False
+      Tab(3).ControlCount=   1
+      TabCaption(4)   =   "Event"
+      TabPicture(4)   =   "frmServer.frx":170FA
+      Tab(4).ControlEnabled=   0   'False
+      Tab(4).Control(0)=   "txtEvent"
+      Tab(4).Control(0).Enabled=   0   'False
+      Tab(4).ControlCount=   1
+      Begin VB.TextBox txtEvent 
+         Height          =   2655
+         Left            =   -74880
+         MultiLine       =   -1  'True
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   45
+         Top             =   480
+         Width           =   6495
+      End
+      Begin VB.TextBox txtLogin 
+         Height          =   2655
+         Left            =   120
+         MultiLine       =   -1  'True
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   44
+         Top             =   480
+         Width           =   6495
       End
       Begin VB.CheckBox chkMsgWindow 
          Caption         =   "Msg Window"
          Height          =   375
-         Left            =   5400
-         TabIndex        =   34
-         Top             =   2880
+         Left            =   -69360
+         TabIndex        =   30
+         Top             =   2640
          Width           =   975
       End
-      Begin VB.Frame Frame5 
-         Caption         =   "Game Time"
-         Height          =   615
-         Left            =   4560
-         TabIndex        =   32
-         Top             =   0
-         Width           =   1815
-         Begin VB.Label lblGameTime 
-            Alignment       =   1  'Right Justify
-            BackStyle       =   0  'Transparent
-            Caption         =   "xx:xx"
-            ForeColor       =   &H8000000D&
-            Height          =   255
-            Left            =   0
-            TabIndex        =   33
-            Top             =   185
-            Width           =   1695
-         End
-      End
       Begin VB.CommandButton cmdShutDown 
-         Caption         =   "Desligar 30 Segs"
+         Caption         =   "ShutD. 30 Seg"
          Height          =   255
-         Left            =   -71040
-         TabIndex        =   17
+         Left            =   -70920
+         TabIndex        =   15
          Top             =   0
-         Width           =   1575
+         Width           =   1455
       End
       Begin VB.CheckBox chkServerLog 
          Caption         =   "Logs"
          Height          =   255
-         Left            =   -69240
-         TabIndex        =   16
+         Left            =   -69360
+         TabIndex        =   14
          Top             =   0
          Value           =   1  'Checked
          Width           =   855
@@ -161,7 +234,7 @@ Begin VB.Form frmServer
             Caption         =   "Open Lottery"
             Height          =   255
             Left            =   360
-            TabIndex        =   38
+            TabIndex        =   34
             Top             =   2160
             Width           =   2415
          End
@@ -169,21 +242,21 @@ Begin VB.Form frmServer
             Caption         =   "Mais Configurações"
             Height          =   255
             Left            =   360
-            TabIndex        =   36
+            TabIndex        =   32
             Top             =   2520
             Width           =   2415
          End
          Begin VB.TextBox txtGameSite 
             Height          =   285
             Left            =   1320
-            TabIndex        =   30
+            TabIndex        =   28
             Top             =   1800
             Width           =   1455
          End
          Begin VB.TextBox txtGameName 
             Height          =   285
             Left            =   1320
-            TabIndex        =   28
+            TabIndex        =   26
             Top             =   1440
             Width           =   1455
          End
@@ -191,7 +264,7 @@ Begin VB.Form frmServer
             Alignment       =   2  'Center
             Height          =   285
             Left            =   2280
-            TabIndex        =   23
+            TabIndex        =   21
             Text            =   "0"
             Top             =   1080
             Width           =   495
@@ -200,7 +273,7 @@ Begin VB.Form frmServer
             Alignment       =   2  'Center
             Height          =   285
             Left            =   1440
-            TabIndex        =   22
+            TabIndex        =   20
             Text            =   "0"
             Top             =   1080
             Width           =   495
@@ -209,7 +282,7 @@ Begin VB.Form frmServer
             Alignment       =   2  'Center
             Height          =   285
             Left            =   600
-            TabIndex        =   21
+            TabIndex        =   19
             Text            =   "0"
             Top             =   1080
             Width           =   495
@@ -217,7 +290,7 @@ Begin VB.Form frmServer
          Begin VB.TextBox txtMOTD 
             Height          =   285
             Left            =   120
-            TabIndex        =   18
+            TabIndex        =   16
             Top             =   480
             Width           =   2415
          End
@@ -226,7 +299,7 @@ Begin VB.Form frmServer
             Caption         =   "Game Site:"
             Height          =   195
             Left            =   120
-            TabIndex        =   29
+            TabIndex        =   27
             Top             =   1800
             Width           =   975
          End
@@ -235,7 +308,7 @@ Begin VB.Form frmServer
             Caption         =   "Game Name:"
             Height          =   195
             Left            =   120
-            TabIndex        =   27
+            TabIndex        =   25
             Top             =   1440
             Width           =   1140
          End
@@ -243,7 +316,7 @@ Begin VB.Form frmServer
             Caption         =   "Y"
             Height          =   255
             Left            =   2040
-            TabIndex        =   26
+            TabIndex        =   24
             Top             =   1080
             Width           =   255
          End
@@ -251,7 +324,7 @@ Begin VB.Form frmServer
             Caption         =   "X"
             Height          =   255
             Left            =   1200
-            TabIndex        =   25
+            TabIndex        =   23
             Top             =   1080
             Width           =   255
          End
@@ -259,7 +332,7 @@ Begin VB.Form frmServer
             Caption         =   "Map"
             Height          =   255
             Left            =   120
-            TabIndex        =   24
+            TabIndex        =   22
             Top             =   1080
             Width           =   375
          End
@@ -267,7 +340,7 @@ Begin VB.Form frmServer
             Caption         =   "StartMap Location:"
             Height          =   255
             Left            =   120
-            TabIndex        =   20
+            TabIndex        =   18
             Top             =   840
             Width           =   1695
          End
@@ -275,7 +348,7 @@ Begin VB.Form frmServer
             Caption         =   "Boas Vindas:"
             Height          =   255
             Left            =   120
-            TabIndex        =   19
+            TabIndex        =   17
             Top             =   240
             Width           =   1215
          End
@@ -287,19 +360,11 @@ Begin VB.Form frmServer
          TabIndex        =   5
          Top             =   360
          Width           =   2895
-         Begin VB.CommandButton Command4 
-            Caption         =   "Command4"
-            Height          =   255
-            Left            =   1080
-            TabIndex        =   40
-            Top             =   2520
-            Width           =   615
-         End
          Begin VB.CommandButton cmdConjuntos 
             Caption         =   "Conjuntos"
             Height          =   255
             Left            =   1440
-            TabIndex        =   39
+            TabIndex        =   35
             Top             =   2040
             Width           =   1215
          End
@@ -307,7 +372,7 @@ Begin VB.Form frmServer
             Caption         =   "CheckIn"
             Height          =   255
             Left            =   120
-            TabIndex        =   37
+            TabIndex        =   33
             Top             =   2040
             Width           =   1215
          End
@@ -315,7 +380,7 @@ Begin VB.Form frmServer
             Caption         =   "Quests"
             Height          =   255
             Left            =   1440
-            TabIndex        =   35
+            TabIndex        =   31
             Top             =   1680
             Width           =   1215
          End
@@ -323,7 +388,7 @@ Begin VB.Form frmServer
             Caption         =   "Seriais"
             Height          =   255
             Left            =   1440
-            TabIndex        =   31
+            TabIndex        =   29
             Top             =   1320
             Width           =   1215
          End
@@ -394,27 +459,27 @@ Begin VB.Form frmServer
       End
       Begin VB.TextBox txtChat 
          Height          =   375
-         Left            =   120
+         Left            =   -74880
          TabIndex        =   3
-         Top             =   2880
-         Width           =   5175
+         Top             =   2730
+         Width           =   5415
       End
       Begin VB.TextBox txtText 
          Height          =   2175
-         Left            =   120
+         Left            =   -74880
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   2
-         Top             =   600
-         Width           =   6255
+         Top             =   450
+         Width           =   6495
       End
       Begin MSComctlLib.ListView lvwInfo 
          Height          =   2775
          Left            =   -74880
          TabIndex        =   4
          Top             =   480
-         Width           =   6255
-         _ExtentX        =   11033
+         Width           =   6495
+         _ExtentX        =   11456
          _ExtentY        =   4895
          View            =   3
          Arrange         =   1
@@ -458,25 +523,6 @@ Begin VB.Form frmServer
             Object.Width           =   2999
          EndProperty
       End
-      Begin VB.Label lblCpsLock 
-         Alignment       =   2  'Center
-         AutoSize        =   -1  'True
-         Caption         =   "[Unlock]"
-         ForeColor       =   &H00FF0000&
-         Height          =   195
-         Left            =   120
-         TabIndex        =   15
-         Top             =   360
-         Width           =   720
-      End
-      Begin VB.Label lblCPS 
-         Caption         =   "CPS: 0"
-         Height          =   255
-         Left            =   960
-         TabIndex        =   14
-         Top             =   360
-         Width           =   1815
-      End
    End
    Begin VB.Menu mnuKick 
       Caption         =   "&Kick"
@@ -513,23 +559,23 @@ Private Sub cmdCheckIn_Click()
 End Sub
 
 Private Sub cmdReloadQuests_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadQuests
     Call TextAdd("All Quests reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendQuests I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendQuests i
         End If
     Next
 End Sub
 
 Private Sub cmdReloadSeriais_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadSerials
     Call TextAdd("All Serials reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            Call SendSerial(I)
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            Call SendSerial(i)
         End If
     Next
 End Sub
@@ -539,12 +585,12 @@ Private Sub cmdConfigs_Click()
 End Sub
 
 Private Sub cmdConjuntos_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadConjuntos
     Call TextAdd("All Conjuntos reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendConjuntos I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendConjuntos i
         End If
     Next
 End Sub
@@ -553,26 +599,20 @@ Private Sub cmdOpenLottery_Click()
     Call StartLottery
 End Sub
 
-Private Sub Command1_Click()
-    RequestLotteryData
-End Sub
-
-Private Sub Command4_Click()
-    SendLotteryInfosAll
-    'ClearLottery
-End Sub
-
 Private Sub EventSocket_Close()
     EventSocket.Close
     EventSocket.Listen
     
-    Call TextAdd("Event Server Disconnected")
+    lblSvEvent = "Event: Off"
+    lblSvEvent.ForeColor = &HFF&
     
     If EventSocket.State <> sckConnected Then ConnectToEventServer
 End Sub
 
 Private Sub EventSocket_Connect()
-    Call TextAdd("Event Server Connected...")
+
+    lblSvEvent = "Event: On"
+    lblSvEvent.ForeColor = &HC000&
 End Sub
 
 Private Sub EventSocket_ConnectionRequest(ByVal requestID As Long)
@@ -587,7 +627,9 @@ Private Sub EventSocket_Error(ByVal Number As Integer, Description As String, By
     EventSocket.Close
     EventSocket.Listen
     
-    'Call TextAdd("Event Server Disconnected")
+    lblSvEvent = "Event: Off"
+    lblSvEvent.ForeColor = &HFF&
+    
     If EventSocket.State <> sckConnected Then ConnectToEventServer
 End Sub
 
@@ -630,12 +672,13 @@ Private Sub Auth_AcceptConnection(ByVal SocketId As Long)
     frmServer.AuthSocket.Close
     frmServer.AuthSocket.Accept SocketId
 
-    Call TextAdd("Servidor de autenticação conectado...")
+    lblSvLogin = "Login: On"
+    lblSvLogin.ForeColor = &HC000&
     
     ' Enviar dados de jogadores que foram salvos quando o autenticador estava desligado!
-    Call SetStatus("## Verificando Dados dos jogadores pra enviar ao servidor de autenticação! ##")
+    Call TextLoginAdd("## Verificando Dados dos jogadores pra enviar ao servidor de autenticação! ##")
     Call SendAllSaves
-    Call SetStatus("## Enviando dados de classes... ##")
+    Call TextLoginAdd("## Enviando dados de classes... ##")
     Call Auth_ClassesData
 End Sub
 
@@ -651,7 +694,8 @@ Private Sub AuthSocket_Error(ByVal Number As Integer, Description As String, ByV
     frmServer.AuthSocket.Close
     frmServer.AuthSocket.Listen
     
-    Call TextAdd("Authentication Server Disconnected")
+    lblSvLogin = "Login: Off"
+    lblSvLogin.ForeColor = &HFF&
 End Sub
 
 Private Sub AuthSocket_DataArrival(ByVal bytesTotal As Long)
@@ -662,7 +706,8 @@ Private Sub AuthSocket_Close()
     frmServer.AuthSocket.Close
     frmServer.AuthSocket.Listen
     
-    Call TextAdd("Authentication Server Disconnected")
+    lblSvLogin = "Login: Off"
+    lblSvLogin.ForeColor = &HFF&
 End Sub
 
 ' ********************
@@ -676,90 +721,90 @@ Private Sub chkServerLog_Click()
 End Sub
 
 Private Sub cmdReloadClasses_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadClasses
     Call Auth_ClassesData
     Call TextAdd("All classes reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendClasses I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendClasses i
         End If
     Next
 End Sub
 
 Private Sub cmdReloadItems_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadItems
     Call TextAdd("All items reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendItems I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendItems i
         End If
     Next
 End Sub
 
 Private Sub cmdReloadMaps_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadMaps
     Call TextAdd("All maps reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            PlayerWarp I, GetPlayerMap(I), GetPlayerX(I), GetPlayerY(I)
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            PlayerWarp i, GetPlayerMap(i), GetPlayerX(i), GetPlayerY(i)
         End If
     Next
 End Sub
 
 Private Sub cmdReloadNPCs_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadNpcs
     Call TextAdd("All npcs reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendNpcs I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendNpcs i
         End If
     Next
 End Sub
 
 Private Sub cmdReloadShops_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadShops
     Call TextAdd("All shops reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendShops I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendShops i
         End If
     Next
 End Sub
 
 Private Sub cmdReloadSpells_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadSpells
     Call TextAdd("All spells reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendSpells I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendSpells i
         End If
     Next
 End Sub
 
 Private Sub cmdReloadResources_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadResources
     Call TextAdd("All Resources reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendResources I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendResources i
         End If
     Next
 End Sub
 
 Private Sub cmdReloadAnimations_Click()
-    Dim I As Long
+    Dim i As Long
     Call LoadAnimations
     Call TextAdd("All Animations reloaded.")
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) Then
-            SendAnimations I
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) Then
+            SendAnimations i
         End If
     Next
 End Sub
@@ -809,6 +854,10 @@ Private Sub lvwInfo_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
     lvwInfo.Sorted = True
 End Sub
 
+Private Sub txtLogin_GotFocus()
+    SSTab1.SetFocus
+End Sub
+
 Private Sub txtMap_Change()
 
 If Not IsNumeric(txtMap.Text) Then
@@ -853,22 +902,22 @@ Private Sub txtChat_KeyPress(KeyAscii As Integer)
 End Sub
 
 Sub UsersOnline_Start()
-    Dim I As Long
+    Dim i As Long
 
-    For I = 1 To MAX_PLAYERS
-        frmServer.lvwInfo.ListItems.Add (I)
+    For i = 1 To MAX_PLAYERS
+        frmServer.lvwInfo.ListItems.Add (i)
 
-        If I < 10 Then
-            frmServer.lvwInfo.ListItems(I).Text = "00" & I
-        ElseIf I < 100 Then
-            frmServer.lvwInfo.ListItems(I).Text = "0" & I
+        If i < 10 Then
+            frmServer.lvwInfo.ListItems(i).Text = "00" & i
+        ElseIf i < 100 Then
+            frmServer.lvwInfo.ListItems(i).Text = "0" & i
         Else
-            frmServer.lvwInfo.ListItems(I).Text = I
+            frmServer.lvwInfo.ListItems(i).Text = i
         End If
 
-        frmServer.lvwInfo.ListItems(I).SubItems(1) = vbNullString
-        frmServer.lvwInfo.ListItems(I).SubItems(2) = vbNullString
-        frmServer.lvwInfo.ListItems(I).SubItems(3) = vbNullString
+        frmServer.lvwInfo.ListItems(i).SubItems(1) = vbNullString
+        frmServer.lvwInfo.ListItems(i).SubItems(2) = vbNullString
+        frmServer.lvwInfo.ListItems(i).SubItems(3) = vbNullString
     Next
 
 End Sub

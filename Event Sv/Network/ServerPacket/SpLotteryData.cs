@@ -2,8 +2,8 @@
 using Event_Server.Data;
 
 namespace Event_Server.Network.ServerPacket {
-    public sealed class SpAccountData : SendPacket {
-        public SpAccountData() {
+    public sealed class SpLotteryData : SendPacket {
+        public SpLotteryData() {
 
             byte one = 25;
             int one1 = 99999999;

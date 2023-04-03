@@ -6,20 +6,35 @@ Private Event_DataTimer As Long
 Private Event_DataBytes As Long
 Private Event_DataPackets As Long
 
-Public Enum EventPackets
-    ELotteryData = 1
-
-    EMSG_COUNT
+' Handle
+Public Enum HEventPackets
+    HaLotteryData = 1
+    
+    HEMSG_COUNT
 End Enum
 
-Public Event_HandleDataSub(EMSG_COUNT) As Long
+' Send
+Public Enum SEventPackets
+    SeLotteryData = 1
+    SeLotteryInfo
+
+    SEMSG_COUNT
+End Enum
+
+' Utilidade
+Public Enum EventOptions
+    Save = 0
+    Clear
+End Enum
+
+Public Event_HandleDataSub(HEMSG_COUNT) As Long
 
 Private Function Event_GetAddress(FunAddr As Long) As Long
     Event_GetAddress = FunAddr
 End Function
 
 Public Sub Event_InitMessages()
-    Event_HandleDataSub(ELotteryData) = Event_GetAddress(AddressOf HandleLotteryData)
+    Event_HandleDataSub(HaLotteryData) = Event_GetAddress(AddressOf HandleLotteryData)
 End Sub
 
 Sub Event_HandleData(ByRef Data() As Byte)
@@ -35,7 +50,7 @@ Sub Event_HandleData(ByRef Data() As Byte)
         Exit Sub
     End If
 
-    If MsgType >= EMSG_COUNT Then
+    If MsgType >= HEMSG_COUNT Then
         Exit Sub
     End If
 
@@ -101,6 +116,49 @@ Function IsEventServerConnected() As Boolean
 
 End Function
 
+'Public Lottery As LotteryStruct
+
+'Private Type BetStruct
+'    Owner As String * ACCOUNT_LENGTH
+'    Value As Long
+'End Type
+
+'Private Type LotteryStruct
+'    Enabled As Boolean
+'    Started As Currency
+'    Aviso(1 To MAX_AVISOS) As Boolean
+'    Ended As Currency
+'    BetEnabled As Boolean ' Are bets open?
+'    BetTmr As Currency    ' Comparison time to send the notices
+'    Bet(1 To MAX_BETS) As BetStruct
+'    Acumulado As Long
+'    LastBetNum As Byte ' Last Bet number
+'    LastBetWinner As String * ACCOUNT_LENGTH ' Last Winner Name
+'End Type
+
+Public Sub SendLotterySaves(ByVal Save As EventOptions)
+    Dim Buffer As clsBuffer
+    Set Buffer = New clsBuffer
+
+    Buffer.WriteLong SeLotteryInfo
+    Buffer.WriteByte ConvertBooleanToByte(Lottery.Enabled)
+    Buffer.WriteByte ConvertBooleanToByte(Lottery.BetEnabled)
+    Buffer.WriteLong Lottery.Acumulado
+    Buffer.WriteByte Lottery.LastBetNum
+    Buffer.WriteString Lottery.LastBetWinner
+    
+    For i = 1 To MAX_BETS
+        If Trim$(Lottery.Bet(i).Owner) <> vbNullString Then
+            Buffer.WriteByte i
+            Buffer.WriteLong Lottery.Bet(i).Value
+            Buffer.WriteString Trim$(Lottery.Bet(i).Owner)
+        End If
+    Next i
+
+    SendToEventServer Buffer.ToArray
+    Set Buffer = Nothing
+End Sub
+
 Sub SendToEventServer(ByRef Data() As Byte)
     Dim Buffer As clsBuffer
     Dim tempData() As Byte
@@ -122,7 +180,7 @@ Public Sub RequestLotteryData()
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
 
-    Buffer.WriteLong ELotteryData
+    Buffer.WriteLong SeLotteryData
     Buffer.WriteString "Packet Recebida nessa porra Status do Socket de onde eu recebi: " & frmServer.EventSocket.State
 
     SendToEventServer Buffer.ToArray

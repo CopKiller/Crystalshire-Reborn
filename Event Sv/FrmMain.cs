@@ -218,7 +218,7 @@ namespace Event_Server
             return closeSteps;
         }
 
-        private void button1_Click(object sender, EventArgs e, SpAccountData packet)
+        private void button1_Click(object sender, EventArgs e, SpLotteryData packet)
         {
             //var Conexao = new Connection();
             //var SPacket = new SpAccountData();

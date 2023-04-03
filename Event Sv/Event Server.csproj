@@ -49,19 +49,22 @@
     <Compile Include="Communication\Constants.cs" />
     <Compile Include="Communication\Global.cs" />
     <Compile Include="Communication\KeyGenerator.cs" />
+    <Compile Include="Network\ClientPacket\CpRequestLotteryInfo.cs" />
+    <Compile Include="Network\Conversoes.cs" />
+    <Compile Include="Network\ServerPacket\SpLotteryInfo.cs" />
     <Compile Include="Util\LogType.cs" />
     <Compile Include="Server\Expired.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Server\DataServer.cs" />
     <Compile Include="Network\ByteBuffer.cs" />
-    <Compile Include="Network\ClientPacket\CpRequestAccountData.cs" />
+    <Compile Include="Network\ClientPacket\CpRequestLotteryData.cs" />
     <Compile Include="Network\Connection.cs" />
     <Compile Include="Network\Interface\IConnection.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\SendPacket.cs" />
     <Compile Include="Network\Interface\IRecvPacket.cs" />
     <Compile Include="Network\OpCode.cs" />
-    <Compile Include="Network\ServerPacket\SpAccountData.cs" />
+    <Compile Include="Network\ServerPacket\SpLotteryData.cs" />
     <Compile Include="Network\TcpServer.cs" />
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "mswinsck.ocx"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "Mswinsck.ocx"
 Begin VB.Form frmMain 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Authentication Server"
@@ -113,9 +113,9 @@ Private Sub ServerSocket_DataArrival(ByVal bytesTotal As Long)
     GS_IncomingData bytesTotal
 End Sub
 
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     Dim lmsg As Long
-    lmsg = x / Screen.TwipsPerPixelX
+    lmsg = X / Screen.TwipsPerPixelX
 
     Select Case lmsg
         Case WM_LBUTTONDBLCLK

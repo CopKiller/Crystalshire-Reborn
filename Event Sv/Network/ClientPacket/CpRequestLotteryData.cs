@@ -11,7 +11,7 @@ namespace Event_Server.Network.ClientPacket {
 
             Global.WriteLog(LogType.Player, mensagem, LogColor.Green);
 
-            new SpAccountData().Send(connection);
+            new SpLotteryData().Send(connection);
             //SendPacket.Add(typeof(SpAccountData), (int)Packet.AccountData);
         }
     }

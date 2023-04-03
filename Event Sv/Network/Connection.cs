@@ -21,6 +21,15 @@ namespace Event_Server.Network {
         private int pingTick;
 
         public Connection(TcpClient tcpClient, string ipAddress, string uniqueKey) {
+
+            // Verifica se tem algum client conectado, caso esteja sai do método,
+            // limita apenas 1 conexão no eventserver, caso queira alterar pra receber
+            // mais de uma conexão comente a condição abaixo!!!
+            if (Connections.Count > 0)
+            {
+                return;
+            }
+
             msg = new ByteBuffer();
 
             IpAddress = ipAddress;
@@ -30,6 +39,8 @@ namespace Event_Server.Network {
 
             Connected = true;
             Add(this);
+
+            Global.WriteLog(LogType.System, $"{ipAddress} Key {uniqueKey} is connected", LogColor.Coral);
         }
 
         public Connection()
