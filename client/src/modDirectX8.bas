@@ -106,6 +106,11 @@ Attribute isFullscreen.VB_VarUserMemId = 1073741880
 Public Const DegreeToRadian As Single = 0.0174532919296
 Public Const RadianToDegree As Single = 57.2958300962816
 
+' Grafic Extensions
+Public Const DEC_EXT As String = ".png"
+Public Const ENC_EXT As String = ".dat"
+
+
 Public Sub InitDX8(ByVal hWnd As Long)
     Dim DispMode As D3DDISPLAYMODE, Width As Long, Height As Long
 
@@ -262,22 +267,26 @@ Public Function LoadTextureFiles(ByRef Counter As Long, ByVal path As String) As
 
     Counter = 1
 
-    Do While dir$(path & Counter + 1 & ".png") <> vbNullString
+    Do While dir$(path & Counter + 1 & DEC_EXT) <> vbNullString Or dir$(path & Counter + 1 & ENC_EXT) <> vbNullString
         Counter = Counter + 1
     Loop
 
     ReDim Texture(0 To Counter)
 
     For i = 1 To Counter
-        Texture(i) = LoadTextureFile(path & i & ".png")
+        If dir$(path & i & DEC_EXT) <> vbNullString Then
+            Texture(i) = LoadTextureFile(path & i & DEC_EXT)
+        ElseIf dir$(path & i & ENC_EXT) <> vbNullString Then
+            Texture(i) = LoadTextureFile(path & i & ENC_EXT)
+        End If
         If PeekMessage(M, 0, 0, 0, PM_NOREMOVE) Then DoEvents
-    Next
+    Next i
 
     LoadTextureFiles = Texture
 End Function
 
 Public Function LoadTextureFile(ByVal path As String, Optional ByVal DontReuse As Boolean) As Long
-    Dim data() As Byte
+    Dim data() As Byte, decrypt() As Byte, length As Long
     Dim f As Long
 
     If dir$(path) = vbNullString Then
@@ -287,8 +296,17 @@ Public Function LoadTextureFile(ByVal path As String, Optional ByVal DontReuse A
 
     f = FreeFile
     Open path For Binary As #f
-    ReDim data(0 To LOF(f) - 1)
-    Get #f, , data
+
+    If InStr(Len(path) - Len(ENC_EXT), path, ENC_EXT, vbTextCompare) > 0 Then
+        Get #f, , length
+        ReDim data(length)
+        Get #f, , data
+        data = DecryptFile(data, length)
+    Else
+        ReDim data(0 To LOF(f) - 1)
+        Get #f, , data
+    End If
+
     Close #f
 
     LoadTextureFile = LoadTexture(data, DontReuse)
@@ -2024,7 +2042,7 @@ Public Sub DrawResource(ByVal Resource_num As Long)
     Dim rec As RECT
     Dim X As Long, Y As Long
     Dim Width As Long, Height As Long, i As Long, Alpha As Byte
-    Dim SString As String
+    Dim sString As String
     
     X = MapResource(Resource_num).X
     Y = MapResource(Resource_num).Y
@@ -2095,9 +2113,9 @@ Public Sub DrawResource(ByVal Resource_num As Long)
                     
                     If GlobalX >= X And GlobalX <= X + 13 Then
                         If GlobalY >= Y And GlobalY <= Y + 13 Then
-                            SString = "Objetivo de Missao!"
-                            Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
-                            Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, Yellow)
+                            sString = "Objetivo de Missao!"
+                            Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
+                            Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, Yellow)
                         End If
                     End If
                 End If
@@ -2126,7 +2144,7 @@ End Sub
 
 Public Sub DrawItem(ByVal itemNum As Long)
     Dim PicNum As Integer, dontRender As Boolean, i As Long, tmpIndex As Long, Colour As Byte, textX As Long, textY As Long
-    Dim SString As String, ItemSizeMouse As Long, rec As RECT
+    Dim sString As String, ItemSizeMouse As Long, rec As RECT
     PicNum = Item(MapItem(itemNum).num).Pic
     
     ' Default item size
@@ -2222,9 +2240,9 @@ Public Sub DrawItem(ByVal itemNum As Long)
 
                     If GlobalX >= textX And GlobalX <= textX + 13 Then
                         If GlobalY >= textY And GlobalY <= textY + 13 Then
-                            SString = "Objetivo de Missao!"
-                            Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
-                            Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, Yellow)
+                            sString = "Objetivo de Missao!"
+                            Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
+                            Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, Yellow)
                         End If
                     End If
 
@@ -2838,7 +2856,7 @@ Public Sub DrawBlood(ByVal Index As Long)
 End Sub
 
 Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
-    Dim X As Long, Y As Long, XX As Long, YY As Long, rec As RECT, SString As String
+    Dim X As Long, Y As Long, XX As Long, YY As Long, rec As RECT, sString As String
 
     With MapNpc(MapNpcNum)
         X = (.X * PIC_X) + .xOffset
@@ -2852,11 +2870,11 @@ Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
             rec.Left = .StatusFrame * PIC_X
             RenderTexture Tex_Status(Status.Confused), X, Y, rec.Left, rec.top, 25, 25, 32, 32
 
-            SString = "Npc está confuso!"
+            sString = "Npc está confuso!"
             If GlobalX >= X And GlobalX <= X + PIC_X Then
                 If GlobalY >= Y And GlobalY <= Y + PIC_Y Then
-                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
-                    Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, Red)
+                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
+                    Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, Red)
                 End If
             End If
 
@@ -2868,12 +2886,12 @@ Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
             rec.Left = .StatusFrame * PIC_X
             RenderTexture Tex_Status(Status.Question), X, Y, rec.Left, rec.top, 25, 25, 32, 32
 
-            SString = "Missao Disponivel!"
+            sString = "Missao Disponivel!"
             If GlobalX >= X And GlobalX <= X + PIC_X Then
                 If GlobalY >= Y And GlobalY <= Y + PIC_Y Then
 
                     ' calc position
-                    XX = GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5
+                    XX = GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5
                     YY = GlobalY - 35
                     ' offscreen?
                     If XX < 0 Then
@@ -2885,8 +2903,8 @@ Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
                         ' switch to right
                         YY = GlobalY
                     End If
-                    Call RenderEntity_Square(Tex_Design(6), XX, YY, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
-                    Call RenderText(font(Fonts.georgiaBold_16), SString, XX + 5, YY + 3, Green)
+                    Call RenderEntity_Square(Tex_Design(6), XX, YY, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
+                    Call RenderText(font(Fonts.georgiaBold_16), sString, XX + 5, YY + 3, Green)
                 End If
             End If
 
@@ -2898,11 +2916,11 @@ Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
             rec.Left = .StatusFrame * PIC_X
             RenderTexture Tex_Status(Status.Important), X, Y, rec.Left, rec.top, 25, 25, 32, 32
 
-            SString = "Missao em Progresso!"
+            sString = "Missao em Progresso!"
             If GlobalX >= X And GlobalX <= X + PIC_X Then
                 If GlobalY >= Y And GlobalY <= Y + PIC_Y Then
-                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
-                    Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, Yellow)
+                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
+                    Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, Yellow)
                 End If
             End If
 
@@ -2916,19 +2934,19 @@ Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
 
             Select Case NPC(.num).Balao
             Case Status.typing
-                SString = "Npc Conversa..."
+                sString = "Npc Conversa..."
             Case Status.Afk
-                SString = "Npc Dormindo..."
+                sString = "Npc Dormindo..."
             Case Status.Confused
-                SString = "Npc Confuso..."
+                sString = "Npc Confuso..."
             Case Else
-                SString = "Status de Npc..."
+                sString = "Status de Npc..."
             End Select
 
             If GlobalX >= X And GlobalX <= X + PIC_X Then
                 If GlobalY >= Y And GlobalY <= Y + PIC_Y Then
-                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
-                    Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, White)
+                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
+                    Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, White)
                 End If
             End If
         End If

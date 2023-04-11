@@ -1,11 +1,11 @@
-Attribute VB_Name = "modCryptography"
+Attribute VB_Name = "mCryptography"
 Option Explicit
 
 Public Const CRYPTO_KEY_LENGTH As Long = 16
 
 Private Const PADDING As Long = 64
 
-Public Declare Function Encrypt Lib "Encryptor.dll" (ByVal SourceLngPtr As Long, ByVal SourceLength As Long, ByRef DestLngPtr As Long, ByRef DestLengthLngPtr As Long, ByVal KeyRef As Long, ByVal IvRef As Long) As Long
+Public Declare Function encrypt Lib "Encryptor.dll" Alias "Encrypt" (ByVal SourceLngPtr As Long, ByVal SourceLength As Long, ByRef DestLngPtr As Long, ByRef DestLengthLngPtr As Long, ByVal KeyRef As Long, ByVal IvRef As Long) As Long
 Public Declare Function decrypt Lib "Encryptor.dll" Alias "Decrypt" (ByVal SourceLngPtr As Long, ByVal SourceLength As Long, ByRef DestLngPtr As Long, ByVal KeyRef As Long, ByVal IvRef As Long) As Long
 
 Public Key(0 To CRYPTO_KEY_LENGTH - 1) As Byte
@@ -27,7 +27,7 @@ Public Function EncryptPacket(ByRef data() As Byte, ByVal dataLength As Long) As
 
     ReDim Encrypted(0 To dataLength + PADDING)
 
-    EncryptedLength = Encrypt(ByVal VarPtr(data(0)), dataLength, ByVal VarPtr(Encrypted(0)), ByVal VarPtr(EncryptedLength), ByVal VarPtr(Key(0)), ByVal VarPtr(IV(0)))
+    EncryptedLength = encrypt(ByVal VarPtr(data(0)), dataLength, ByVal VarPtr(Encrypted(0)), ByVal VarPtr(EncryptedLength), ByVal VarPtr(Key(0)), ByVal VarPtr(IV(0)))
 
     ReDim Preserve Encrypted(0 To EncryptedLength - 1)
 
@@ -52,7 +52,7 @@ Public Function EncryptFile(ByRef data() As Byte, ByVal dataLength As Long) As B
 
     ReDim Encrypted(0 To dataLength + PADDING)
 
-    EncryptedLength = Encrypt(ByVal VarPtr(data(0)), dataLength, ByVal VarPtr(Encrypted(0)), ByVal VarPtr(EncryptedLength), ByVal VarPtr(Key(0)), ByVal VarPtr(IV(0)))
+    EncryptedLength = encrypt(ByVal VarPtr(data(0)), dataLength, ByVal VarPtr(Encrypted(0)), ByVal VarPtr(EncryptedLength), ByVal VarPtr(Key(0)), ByVal VarPtr(IV(0)))
 
     ReDim Preserve Encrypted(0 To EncryptedLength - 1)
 
@@ -70,3 +70,4 @@ Public Function DecryptFile(ByRef data() As Byte, ByVal DataLengh As Long) As By
 
     DecryptFile = Decrypted
 End Function
+

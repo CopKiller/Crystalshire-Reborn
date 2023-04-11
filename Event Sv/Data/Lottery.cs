@@ -1,5 +1,5 @@
 ﻿namespace Event_Server.Data {
-    public sealed class Account {
+    public sealed class Lottery {
         public string AccountName { get; set; }
         public string Password { get; set; }
         public int AccountId { get; set; }

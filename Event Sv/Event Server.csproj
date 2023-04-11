@@ -54,7 +54,7 @@
     <Compile Include="Network\ServerPacket\SpLotteryInfo.cs" />
     <Compile Include="Util\LogType.cs" />
     <Compile Include="Server\Expired.cs" />
-    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\Lottery.cs" />
     <Compile Include="Server\DataServer.cs" />
     <Compile Include="Network\ByteBuffer.cs" />
     <Compile Include="Network\ClientPacket\CpRequestLotteryData.cs" />
