@@ -2,14 +2,14 @@ VERSION 5.00
 Begin VB.Form frmEnc 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Encryptador"
-   ClientHeight    =   4140
+   ClientHeight    =   4545
    ClientLeft      =   8700
    ClientTop       =   5505
    ClientWidth     =   3645
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   4140
+   ScaleHeight     =   4545
    ScaleWidth      =   3645
    StartUpPosition =   2  'CenterScreen
    Begin VB.ComboBox cmbExtension 
@@ -30,7 +30,7 @@ Begin VB.Form frmEnc
       Width           =   3375
    End
    Begin VB.FileListBox flbAppPath 
-      Height          =   1065
+      Height          =   1260
       Left            =   120
       TabIndex        =   3
       Top             =   2280
@@ -51,6 +51,26 @@ Begin VB.Form frmEnc
       TabIndex        =   0
       Top             =   3600
       Width           =   1575
+   End
+   Begin VB.Label lblStatus 
+      Alignment       =   2  'Center
+      BackColor       =   &H80000005&
+      Caption         =   "Aguardando Ação"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   17.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   -1  'True
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H0000C0C0&
+      Height          =   495
+      Left            =   0
+      TabIndex        =   7
+      Top             =   4080
+      Width           =   3615
    End
    Begin VB.Label Label2 
       Caption         =   "O que Contém:"
@@ -91,12 +111,14 @@ Private Sub Command1_Click()
     'MsgBox dirAppPath.Path & "\"
     Dim i As Long, data() As Byte
     
+    Call SetStatus("Cryptografando...", Yellow)
     ConvertPNGToBinary GlobalDir, i, data
 End Sub
 
 Private Sub Command2_Click()
     Dim i As Long, data() As Byte
-
+    
+    Call SetStatus("Descryptografando...", Yellow)
     ConvertBinaryToPNG GlobalDir, i, data
 
 End Sub

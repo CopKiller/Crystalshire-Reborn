@@ -13,6 +13,10 @@ Public IV(0 To CRYPTO_KEY_LENGTH - 1) As Byte
 
 Public Sub InitCryptographyKey()
     Dim i As Long
+    
+    
+    
+    'Randomize
 
     For i = 0 To CRYPTO_KEY_LENGTH - 1
         Key(i) = i * 5

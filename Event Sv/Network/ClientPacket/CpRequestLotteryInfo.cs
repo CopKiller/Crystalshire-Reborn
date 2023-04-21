@@ -14,8 +14,8 @@ namespace Event_Server.Network.ClientPacket
         {
             var msg = new ByteBuffer(buffer);
 
-            bool LotteryStatus = new Conversoes().ByteToBoolean(msg.ReadByte());
-            bool BetStatus = new Conversoes().ByteToBoolean(msg.ReadByte());
+            bool LotteryStatus = Conversoes.ByteToBoolean(msg.ReadByte());
+            bool BetStatus = Conversoes.ByteToBoolean(msg.ReadByte());
             int Acumulado = msg.ReadInt32();
             byte LastBetNum = msg.ReadByte();
             string LastBetWinner = msg.ReadString();
@@ -33,9 +33,6 @@ namespace Event_Server.Network.ClientPacket
                     nomeValor.Add((nome, valor));
                 }
             }
-
-
-            //using System.IO;
 
             // Abre ou cria um arquivo de texto chamado "arquivo.txt" na pasta atual
             using (StreamWriter writer = new StreamWriter("arquivo.txt"))

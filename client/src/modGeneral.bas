@@ -20,6 +20,8 @@ Public Sub Main()
 
     InitCryptographyKey
     
+    'GenerateKeyAndIV
+    
     ' This must be called before any Tick calls because it states what the values of Tick will be
     InitTime
 

@@ -45,6 +45,8 @@ Public Sub ConvertBinaryToPNG(sPath As String, ByRef i As Long, ByRef data() As 
 
             Erase data
         End If
+        
+        DoEvents
     Next sFile
 
     For Each sFolder In fso.GetFolder(sPath).SubFolders
@@ -53,6 +55,8 @@ Public Sub ConvertBinaryToPNG(sPath As String, ByRef i As Long, ByRef data() As 
     
     ' Atualiza o diretório
     RefreshDir
+    
+    Call SetStatus("OK!!!", Green)
 
     Set fso = Nothing
 End Sub
@@ -85,6 +89,8 @@ Public Sub ConvertPNGToBinary(sPath As String, ByRef i As Long, ByRef data() As 
             Kill sFile.Path
             Erase data
         End If
+        
+        DoEvents
     Next sFile
 
     For Each sFolder In fso.GetFolder(sPath).SubFolders
@@ -93,6 +99,8 @@ Public Sub ConvertPNGToBinary(sPath As String, ByRef i As Long, ByRef data() As 
     
     ' Atualiza o diretório
     RefreshDir
+    
+    Call SetStatus("OK!!!", Green)
     
     Set fso = Nothing
 End Sub

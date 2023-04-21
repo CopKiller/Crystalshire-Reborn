@@ -2,10 +2,10 @@
 
 namespace Data_Server.Network
 {
-    internal class Conversoes
+    public static class Conversoes
     {
-        public Conversoes() { }
-        public bool ByteToBoolean(byte value)
+        //public static Conversoes() { }
+        public static bool ByteToBoolean(byte value)
         {
             if (value == 0)
             {
