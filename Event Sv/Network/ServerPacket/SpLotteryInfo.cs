@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Event_Server.Data;
-
+﻿
 namespace Event_Server.Network.ServerPacket {
     public sealed class SpLotteryInfo : SendPacket {
         public SpLotteryInfo() {

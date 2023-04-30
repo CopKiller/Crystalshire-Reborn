@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "Mswinsck.ocx"
 Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmServer 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Loading..."
@@ -132,7 +132,7 @@ Begin VB.Form frmServer
       _Version        =   393216
       Style           =   1
       Tabs            =   5
-      Tab             =   3
+      Tab             =   2
       TabsPerRow      =   5
       TabHeight       =   503
       Enabled         =   0   'False
@@ -148,12 +148,9 @@ Begin VB.Form frmServer
       TabCaption(0)   =   "Console"
       TabPicture(0)   =   "frmServer.frx":1708A
       Tab(0).ControlEnabled=   0   'False
-      Tab(0).Control(0)=   "chkMsgWindow"
-      Tab(0).Control(0).Enabled=   0   'False
+      Tab(0).Control(0)=   "txtText"
       Tab(0).Control(1)=   "txtChat"
-      Tab(0).Control(1).Enabled=   0   'False
-      Tab(0).Control(2)=   "txtText"
-      Tab(0).Control(2).Enabled=   0   'False
+      Tab(0).Control(2)=   "chkMsgWindow"
       Tab(0).ControlCount=   3
       TabCaption(1)   =   "Players"
       TabPicture(1)   =   "frmServer.frx":170A6
@@ -162,26 +159,37 @@ Begin VB.Form frmServer
       Tab(1).ControlCount=   1
       TabCaption(2)   =   "Control "
       TabPicture(2)   =   "frmServer.frx":170C2
-      Tab(2).ControlEnabled=   0   'False
+      Tab(2).ControlEnabled=   -1  'True
       Tab(2).Control(0)=   "fraDatabase"
+      Tab(2).Control(0).Enabled=   0   'False
       Tab(2).Control(1)=   "fraServer"
+      Tab(2).Control(1).Enabled=   0   'False
       Tab(2).Control(2)=   "chkServerLog"
+      Tab(2).Control(2).Enabled=   0   'False
       Tab(2).Control(3)=   "cmdShutDown"
+      Tab(2).Control(3).Enabled=   0   'False
       Tab(2).ControlCount=   4
       TabCaption(3)   =   "Login"
       TabPicture(3)   =   "frmServer.frx":170DE
-      Tab(3).ControlEnabled=   -1  'True
+      Tab(3).ControlEnabled=   0   'False
       Tab(3).Control(0)=   "txtLogin"
-      Tab(3).Control(0).Enabled=   0   'False
       Tab(3).ControlCount=   1
       TabCaption(4)   =   "Event"
       TabPicture(4)   =   "frmServer.frx":170FA
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "txtEvent"
-      Tab(4).Control(0).Enabled=   0   'False
-      Tab(4).ControlCount=   1
+      Tab(4).Control(0)=   "chkEventSv"
+      Tab(4).Control(1)=   "txtEvent"
+      Tab(4).ControlCount=   2
+      Begin VB.CheckBox chkEventSv 
+         Caption         =   "Event Server Enabled?"
+         Height          =   255
+         Left            =   -74880
+         TabIndex        =   47
+         Top             =   3000
+         Width           =   2295
+      End
       Begin VB.TextBox txtEvent 
-         Height          =   2655
+         Height          =   2535
          Left            =   -74880
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
@@ -191,7 +199,7 @@ Begin VB.Form frmServer
       End
       Begin VB.TextBox txtLogin 
          Height          =   2655
-         Left            =   120
+         Left            =   -74880
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   44
@@ -209,7 +217,7 @@ Begin VB.Form frmServer
       Begin VB.CommandButton cmdShutDown 
          Caption         =   "ShutD. 30 Seg"
          Height          =   255
-         Left            =   -70920
+         Left            =   4080
          TabIndex        =   15
          Top             =   0
          Width           =   1455
@@ -217,7 +225,7 @@ Begin VB.Form frmServer
       Begin VB.CheckBox chkServerLog 
          Caption         =   "Logs"
          Height          =   255
-         Left            =   -69360
+         Left            =   5640
          TabIndex        =   14
          Top             =   0
          Value           =   1  'Checked
@@ -226,7 +234,7 @@ Begin VB.Form frmServer
       Begin VB.Frame fraServer 
          Caption         =   "Server"
          Height          =   2895
-         Left            =   -71880
+         Left            =   3120
          TabIndex        =   1
          Top             =   360
          Width           =   3135
@@ -356,10 +364,18 @@ Begin VB.Form frmServer
       Begin VB.Frame fraDatabase 
          Caption         =   "Reload"
          Height          =   2895
-         Left            =   -74880
+         Left            =   120
          TabIndex        =   5
          Top             =   360
          Width           =   2895
+         Begin VB.CommandButton Command1 
+            Caption         =   "Lottery"
+            Height          =   255
+            Left            =   120
+            TabIndex        =   46
+            Top             =   2400
+            Width           =   1215
+         End
          Begin VB.CommandButton cmdConjuntos 
             Caption         =   "Conjuntos"
             Height          =   255
@@ -554,6 +570,17 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Private Sub chkEventSv_Click()
+    Options.EVENTSV = chkEventSv.Value
+    SaveOptions
+
+    If Options.EVENTSV = NO Then
+        EventSocket_Close
+    Else
+        ConnectToEventServer
+    End If
+End Sub
+
 Private Sub cmdCheckIn_Click()
     Call DayRewardInit
 End Sub
@@ -599,6 +626,10 @@ Private Sub cmdOpenLottery_Click()
     Call StartLottery
 End Sub
 
+Private Sub Command1_Click()
+    SendLotterySaves Save
+End Sub
+
 Private Sub EventSocket_Close()
     EventSocket.Close
     EventSocket.Listen
@@ -610,9 +641,17 @@ Private Sub EventSocket_Close()
 End Sub
 
 Private Sub EventSocket_Connect()
-
+    Dim Diretorio As String
+    
     lblSvEvent = "Event: On"
     lblSvEvent.ForeColor = &HC000&
+    
+    ' Enviar os dados perdidos.
+    Diretorio = App.Path & "/data/EventsData.ini"
+    If FileExist(Diretorio, True) Then
+        Call SendLotterySaves(Save)
+        Call Kill(Diretorio)
+    End If
 End Sub
 
 Private Sub EventSocket_ConnectionRequest(ByVal requestID As Long)
@@ -624,6 +663,8 @@ Private Sub EventSocket_DataArrival(ByVal bytesTotal As Long)
 End Sub
 
 Private Sub EventSocket_Error(ByVal Number As Integer, Description As String, ByVal Scode As Long, ByVal Source As String, ByVal HelpFile As String, ByVal HelpContext As Long, CancelDisplay As Boolean)
+    If Options.EVENTSV = NO Then Exit Sub
+    
     EventSocket.Close
     EventSocket.Listen
     

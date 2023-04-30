@@ -1,6 +1,7 @@
 ﻿namespace Event_Server.Util {
     public enum LogType {
         System,
-        Player
+        Player,
+        Debug
     }
 }

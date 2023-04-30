@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Sockets;
 using Event_Server.Util;
 using Event_Server.Communication;
+using System.Runtime.Remoting.Lifetime;
 
 namespace Event_Server.Network {
     public sealed class TcpServer {
@@ -18,6 +19,7 @@ namespace Event_Server.Network {
         }
 
         public void InitServer() {
+            Global.WriteLog(LogType.System, $"Initializing TCP Protocol...", LogColor.Coral);
             server = new TcpListener(IPAddress.Any, Port);
             server.Start();
 
@@ -47,6 +49,36 @@ namespace Event_Server.Network {
             accept = false;
             server.Stop();
         }
+
+        /// Envia um ping para determinar o estado da conexão.
+        public void SendPing()
+        {
+            if (Connection.HighIndex > 0)
+            {
+                if (Connection.Connections != null && Connection.Connections.Count > 0)
+                {
+                    Connection.Connections[Connection.HighIndex].SendPing();
+                }
+                //ChangeState();
+            }
+        }
+        /// Exibe a alteração no log quando o estado de conexão é alterado.
+        //private void ChangeState()
+        //{
+        //    if (Connection.Connections[Connection.HighIndex].Connected != lastState)
+        //    {
+        //        if (Connection.Connections[Connection.HighIndex].Connected)
+        //        {
+        //            Global.WriteLog(LogType.System, "Main Server is connected", LogColor.Green);
+        //        }
+        //        else
+        //        {
+        //            Global.WriteLog(LogType.System, "Main Server is disconnected", LogColor.Red);
+        //        }
+
+        //        lastState = Connection.Connections[Connection.HighIndex].Connected;
+        //    }
+        //}
 
         private bool IsValidIpAddress(string ipAddress) {
             const int IpAddressArraySplit = 4;

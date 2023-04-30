@@ -12,13 +12,20 @@ Public Key(0 To CRYPTO_KEY_LENGTH - 1) As Byte
 Public IV(0 To CRYPTO_KEY_LENGTH - 1) As Byte
 
 Public Sub InitCryptographyKey()
-    Dim i As Long
+    Dim I As Long, SString As String, Num As Byte
+    
+    Num = 48
+    
+    SString = SString & Chr(7 + Num) & Chr(5 + Num) & Chr(4 + Num) & Chr(6 + Num) & Chr(0 + Num) & Chr(0 + Num) & Chr(1 + Num) & Chr(3 + Num)
+    
+    Debug.Print SString
 
-    For i = 0 To CRYPTO_KEY_LENGTH - 1
-        Key(i) = i * 5
-        IV(i) = i * 3
+    Randomize CLng(SString)
+    
+    For I = 0 To CRYPTO_KEY_LENGTH - 1
+        Key(I) = Int(Rnd * 256)
+        IV(I) = Int(Rnd * 256)
     Next
-
 End Sub
 
 Public Function EncryptPacket(ByRef data() As Byte, ByVal dataLength As Long) As Byte()

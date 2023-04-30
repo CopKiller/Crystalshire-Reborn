@@ -9,6 +9,7 @@ Private Event_DataPackets As Long
 ' Handle
 Public Enum HEventPackets
     HaLotteryData = 1
+    HaPing
     
     HEMSG_COUNT
 End Enum
@@ -16,8 +17,8 @@ End Enum
 ' Send
 Public Enum SEventPackets
     SeLotteryData = 1
-    SeLotteryInfo
-
+    SeReqLotteryInfo
+    
     SEMSG_COUNT
 End Enum
 
@@ -116,47 +117,63 @@ Function IsEventServerConnected() As Boolean
 
 End Function
 
-'Public Lottery As LotteryStruct
-
-'Private Type BetStruct
-'    Owner As String * ACCOUNT_LENGTH
-'    Value As Long
-'End Type
-
-'Private Type LotteryStruct
-'    Enabled As Boolean
-'    Started As Currency
-'    Aviso(1 To MAX_AVISOS) As Boolean
-'    Ended As Currency
-'    BetEnabled As Boolean ' Are bets open?
-'    BetTmr As Currency    ' Comparison time to send the notices
-'    Bet(1 To MAX_BETS) As BetStruct
-'    Acumulado As Long
-'    LastBetNum As Byte ' Last Bet number
-'    LastBetWinner As String * ACCOUNT_LENGTH ' Last Winner Name
-'End Type
-
 Public Sub SendLotterySaves(ByVal Save As EventOptions)
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
+    Dim i As Byte
+    Dim CountStr As String, Filter() As String
 
-    Buffer.WriteLong SeLotteryInfo
-    Buffer.WriteByte ConvertBooleanToByte(Lottery.Enabled)
-    Buffer.WriteByte ConvertBooleanToByte(Lottery.BetEnabled)
-    Buffer.WriteLong Lottery.Acumulado
-    Buffer.WriteByte Lottery.LastBetNum
-    Buffer.WriteString Lottery.LastBetWinner
+    If Save = Save Then
+    If Options.EVENTSV = YES And IsEventServerConnected Then
+        Buffer.WriteLong SeLotteryData
+        Buffer.WriteByte ConvertBooleanToByte(lottery.Enabled)
+        Buffer.WriteByte ConvertBooleanToByte(lottery.BetEnabled)
+        Buffer.WriteLong lottery.Acumulado
+        Buffer.WriteByte lottery.LastBetNum
+        Buffer.WriteString lottery.LastBetWinner
+
+        For i = 1 To MAX_BETS
+            If LenB(Trim$(lottery.Bet(i).Owner)) > 0 Then
+                Buffer.WriteByte i
+                Buffer.WriteLong lottery.Bet(i).Value
+                Buffer.WriteString Trim$(lottery.Bet(i).Owner)
+            End If
+        Next i
+
+        SendToEventServer Buffer.ToArray
+
+    ElseIf Options.EVENTSV = NO Or Not IsEventServerConnected Then
+        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "Status", ConvertBooleanToByte(lottery.Enabled))
+        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetStatus", ConvertBooleanToByte(lottery.BetEnabled))
+        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "Accumulated", CStr(lottery.Acumulado))
+        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "LastBetNum", CStr(lottery.LastBetNum))
+        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "LastBetWinner", CStr(lottery.LastBetWinner))
+
+        For i = 1 To MAX_BETS
+            If Trim$(lottery.Bet(i).Owner) <> vbNullString Then
+                If CountStr <> vbNullString Then CountStr = CountStr & "," & i
+                If CountStr = vbNullString Then CountStr = i
+            End If
+        Next i
+
+        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "CountStr", CountStr)
+
+        Filter = Split(CountStr, ",")
+
+        For i = 0 To UBound(Filter)
+            If LenB(Trim$(Filter(i))) > 0 Then
+                Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetOwner" & Trim$(Filter(i)), Trim$(lottery.Bet(Filter(i)).Owner))
+                Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetValue" & Trim$(Filter(i)), Trim$(lottery.Bet(Filter(i)).Value))
+            End If
+        Next i
+    End If
     
-    For i = 1 To MAX_BETS
-        If Trim$(Lottery.Bet(i).Owner) <> vbNullString Then
-            Buffer.WriteByte i
-            Buffer.WriteLong Lottery.Bet(i).Value
-            Buffer.WriteString Trim$(Lottery.Bet(i).Owner)
-        End If
-    Next i
+    Else
+        Buffer.WriteLong SeLotteryData
+        SendToEventServer Buffer.ToArray
+    End If
 
-    SendToEventServer Buffer.ToArray
-    Set Buffer = Nothing
+Set Buffer = Nothing
 End Sub
 
 Sub SendToEventServer(ByRef Data() As Byte)
@@ -172,6 +189,8 @@ Sub SendToEventServer(ByRef Data() As Byte)
 
     If IsEventServerConnected Then
         frmServer.EventSocket.SendData Buffer.ToArray()
+    Else
+        Call TextEventAdd("Erro ao enviar dados dos eventos, Event Server Offline!")
     End If
 
 End Sub
@@ -180,8 +199,7 @@ Public Sub RequestLotteryData()
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
 
-    Buffer.WriteLong SeLotteryData
-    Buffer.WriteString "Packet Recebida nessa porra Status do Socket de onde eu recebi: " & frmServer.EventSocket.State
+    Buffer.WriteLong SeReqLotteryInfo
 
     SendToEventServer Buffer.ToArray
     Set Buffer = Nothing
@@ -190,29 +208,63 @@ End Sub
 Private Sub HandleLotteryData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Name As String
     Dim Buffer As clsBuffer
-    Dim num1 As Byte
-    Dim num2 As Integer
-    Dim num3 As Long
-    
+    Dim i As Byte, MAX_INDICE As Byte, Indice As Byte, lot As LotteryStruct
+
     Set Buffer = New clsBuffer
 
     Buffer.WriteBytes Data
-    
-    Name = Buffer.ReadString
-    num1 = Buffer.ReadByte
-    num3 = Buffer.ReadLong
-    
 
-    Call TextAdd(Name)
-    Call TextAdd(CStr(num1))
-    Call TextAdd(CStr(num3))
-    'Call TextAdd(num3)
 
+    lot.Enabled = ConvertByteToBool(Buffer.ReadByte)
+    lot.BetEnabled = ConvertByteToBool(Buffer.ReadByte)
+    lot.Acumulado = Buffer.ReadLong
+    lot.LastBetNum = Buffer.ReadByte
+    lot.LastBetWinner = Buffer.ReadString
+    
+    lottery.Acumulado = lot.Acumulado
+    lottery.LastBetNum = lot.LastBetNum
+    lottery.LastBetWinner = lot.LastBetWinner
+
+    MAX_INDICE = Buffer.ReadLong
+
+    If MAX_INDICE > 0 Then
+        For i = 1 To MAX_INDICE
+            Indice = Buffer.ReadByte
+            If Indice > 0 Then
+                lot.Bet(Indice).Owner = Buffer.ReadString
+                lot.Bet(Indice).Value = Buffer.ReadLong
+                
+                lottery.Bet(Indice).Owner = lot.Bet(Indice).Owner
+                lottery.Bet(Indice).Value = lot.Bet(Indice).Value
+            End If
+        Next i
+    End If
     Set Buffer = Nothing
 
+    If lot.Enabled Then
+        If lot.BetEnabled Then
+            Call StartLottery
+        Else
+            lottery.Enabled = True
+            Call CloseBets
+            For i = 1 To 3
+                lottery.Aviso(i) = True
+            Next i
+        End If
+    End If
+
+    'lottery = lot
+
+    Call TextEventAdd("Lottery Data Received!")
 End Sub
 
 Function ConnectToEventServer() As Boolean
+
+    If Options.EVENTSV = NO Then
+        ConnectToEventServer = False
+        frmServer.EventSocket.Close
+        Exit Function
+    End If
 
 ' Check to see if we are already connected, if so just exit
     If IsEventServerConnected Then

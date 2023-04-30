@@ -3,7 +3,7 @@ Option Explicit
 
 Private Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 
-Private Const MAX_BETS As Byte = 100
+Public Const MAX_BETS As Byte = 100
 
 Private Const MIN_BETS_VALUE As Long = 20    ' min bet value
 Private Const MAX_BETS_VALUE As Long = 100000    ' max bet value
@@ -13,14 +13,14 @@ Public Const LOTTERY_TIME_BET As Long = 180    'starting time of bets / 3 mins
 
 Private Const MAX_AVISOS As Byte = 3
 
-Public Lottery As LotteryStruct
+Public lottery As LotteryStruct
 
 Private Type BetStruct
     Owner As String * ACCOUNT_LENGTH
     Value As Long
 End Type
 
-Private Type LotteryStruct
+Public Type LotteryStruct
     Enabled As Boolean
     Started As Currency
     Aviso(1 To MAX_AVISOS) As Boolean
@@ -77,8 +77,10 @@ Private Sub AddBetValue(ByVal Index As Long, ByVal BetID As Byte, ByVal BetValue
     Call AlertMsg(Index, DIALOGUE_LOTTERY_SUCCESS, , False)
     Call SendEventMsgAll("[Lottery]", GetPlayerName(Index) & " bet on the number " & BetID & " value " & BetValue, White)
 
-    Lottery.Bet(BetID).Owner = GetPlayerName(Index)
-    Lottery.Bet(BetID).Value = Lottery.Bet(BetID).Value + BetValue
+    lottery.Bet(BetID).Owner = GetPlayerName(Index)
+    lottery.Bet(BetID).Value = BetValue
+    
+    SendLotterySaves Save
 End Sub
 
 Public Sub SendLotteryInfosTo(ByVal Index As Long)
@@ -87,12 +89,12 @@ Public Sub SendLotteryInfosTo(ByVal Index As Long)
     Set Buffer = New clsBuffer
     Buffer.WriteLong SLotteryInfo
 
-    Buffer.WriteString Trim$(Lottery.LastBetWinner)
-    Buffer.WriteByte Lottery.LastBetNum
-    Buffer.WriteByte ConvertBooleanToByte(Lottery.Enabled)
-    Buffer.WriteByte ConvertBooleanToByte(Lottery.BetEnabled)
+    Buffer.WriteString Trim$(lottery.LastBetWinner)
+    Buffer.WriteByte lottery.LastBetNum
+    Buffer.WriteByte ConvertBooleanToByte(lottery.Enabled)
+    Buffer.WriteByte ConvertBooleanToByte(lottery.BetEnabled)
 
-    If Lottery.BetEnabled Or Lottery.Enabled Then
+    If lottery.BetEnabled Or lottery.Enabled Then
         Buffer.WriteLong 0
     Else
         Tmr = LOTTERY_START_HOURS    ' 3 hrs
@@ -100,13 +102,13 @@ Public Sub SendLotteryInfosTo(ByVal Index As Long)
         Tmr = (Tmr * 60)    ' 10.800 segs
         Tmr = (Tmr * 1000)    ' 10.800.000 Milisegundos
         Debug.Print getTime
-        Tmr = (Tmr + Lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
+        Tmr = (Tmr + lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
         Tmr = (Tmr - getTime)
         Tmr = (Tmr / 1000)
         Buffer.WriteLong CLng(Tmr)
     End If
     
-    Buffer.WriteLong Lottery.Acumulado
+    Buffer.WriteLong GetBetsAccumulated + lottery.Acumulado
 
     Buffer.WriteLong MIN_BETS_VALUE
     Buffer.WriteLong MAX_BETS_VALUE
@@ -122,24 +124,26 @@ Public Sub SendLotteryInfosAll()
     Set Buffer = New clsBuffer
     Buffer.WriteLong SLotteryInfo
     
-    Buffer.WriteString Trim$(Lottery.LastBetWinner)
-    Buffer.WriteByte Lottery.LastBetNum
+    Buffer.WriteString Trim$(lottery.LastBetWinner)
+    Buffer.WriteByte lottery.LastBetNum
     
-    Debug.Print ConvertBooleanToByte(Lottery.Enabled)
-    Buffer.WriteByte ConvertBooleanToByte(Lottery.Enabled)
-    Buffer.WriteByte ConvertBooleanToByte(Lottery.BetEnabled)
+    Debug.Print ConvertBooleanToByte(lottery.Enabled)
+    Buffer.WriteByte ConvertBooleanToByte(lottery.Enabled)
+    Buffer.WriteByte ConvertBooleanToByte(lottery.BetEnabled)
 
-    If Lottery.BetEnabled Or Lottery.Enabled Then
+    If lottery.BetEnabled Or lottery.Enabled Then
         Buffer.WriteLong 0
     Else
         Tmr = LOTTERY_START_HOURS    ' 3 hrs
         Tmr = (Tmr * 60)    ' 180 min
         Tmr = (Tmr * 60)    ' 10.800 segs
         Tmr = (Tmr * 1000)    ' 10.800.000 Milisegundos
-        Tmr = (Tmr + Lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
+        Tmr = (Tmr + lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
         Tmr = (Tmr - getTime)
         Buffer.WriteLong CLng(Tmr / 1000)
     End If
+    
+    Buffer.WriteLong GetBetsAccumulated + lottery.Acumulado
 
     Buffer.WriteLong MIN_BETS_VALUE
     Buffer.WriteLong MAX_BETS_VALUE
@@ -153,63 +157,72 @@ Public Sub CheckBetLoop()
     Dim Number As Byte
     Dim PlayerID As Integer
     Dim i As Byte
-    Dim Accumulated As Long, Tmr As Currency
+    Dim Accumulated As Long, Tmr As Currency, BackupLastWinner As String
 
-    If VerifyLotteryStatus Then    'On?
-        ' Avisos - 1 (last is diferent message!)
-        For i = 1 To MAX_AVISOS - 1
-            If Not Lottery.Aviso(i) Then
-                'Debug.Print "BetTmr " & Lottery.BetTmr + ((LOTTERY_TIME_BET / MAX_AVISOS) * 1000) & " <= " & getTime & " GetTime"
-                If Lottery.BetTmr + ((LOTTERY_TIME_BET / MAX_AVISOS) * 1000) <= getTime Then
-                    Lottery.Aviso(i) = True
-                    Lottery.BetTmr = getTime
-                    Call SendEventMsgAll("[Lottery]", "bets close in " & SecondsToHMS(LOTTERY_TIME_BET - ((getTime - Lottery.Started) / 1000)), Yellow)
+    If VerifyLotteryStatus Then    'Lottery On?
+
+        If VerifyBetStatus Then ' Bets On?
+            ' Avisos - 1 (last is diferent message!)
+            For i = 1 To MAX_AVISOS - 1
+                If Not lottery.Aviso(i) Then
+                    If lottery.BetTmr + ((LOTTERY_TIME_BET / MAX_AVISOS) * 1000) <= getTime Then
+                        lottery.Aviso(i) = True
+                        lottery.BetTmr = getTime
+                        Call SendEventMsgAll("[Lottery]", "bets close in " & SecondsToHMS(LOTTERY_TIME_BET - ((getTime - lottery.Started) / 1000)), Yellow)
+                    End If
                 End If
-            End If
-        Next i
+            Next i
 
-        ' Last Aviso
-        If Not Lottery.Aviso(MAX_AVISOS) Then
-            If Lottery.Started + (LOTTERY_TIME_BET * 1000) <= getTime Then
-                Call SendEventMsgAll("[Lottery]", " Bets closed, Good Luck!!!", Green)
-                Call CloseBets
-                Lottery.Aviso(MAX_AVISOS) = True
-                Call SendLotteryInfosAll
+            ' Last Aviso
+            If Not lottery.Aviso(MAX_AVISOS) Then
+                If lottery.Started + (LOTTERY_TIME_BET * 1000) <= getTime Then
+                    Call SendEventMsgAll("[Lottery]", " Bets closed, Good Luck!!!", Green)
+                    Call CloseBets
+                    lottery.Aviso(MAX_AVISOS) = True
+                    Call SendLotteryInfosAll
+
+                    SendLotterySaves Save
+                End If
             End If
         End If
 
-        If ((getTime - Lottery.Started) / 1000) > LOTTERY_SECS_DURATION Then    ' Time End?
+        If ((getTime - lottery.Started) / 1000) > LOTTERY_SECS_DURATION Then    ' Time End?
             Number = ChooseLoteryNumber
-            Accumulated = GetBetsAccumulated
+            Accumulated = GetBetsAccumulated + lottery.Acumulado
 
             Call SendEventMsgAll("[Lottery]", "Drawn Number is " & Number, Yellow)
 
-            If LenB(Trim$(Lottery.Bet(Number).Owner)) > 0 Then
-                PlayerID = FindPlayer(Trim$(Lottery.Bet(Number).Owner))
+            If LenB(Trim$(lottery.Bet(Number).Owner)) > 0 Then
+                PlayerID = FindPlayer(Trim$(lottery.Bet(Number).Owner))
                 If PlayerID > 0 Then
                     Call SetPlayerGold(PlayerID, Accumulated)
                     Call SendGoldUpdate(PlayerID)
-                    Call SendEventMsgAll("[Lottery]", "The winner is " & Trim$(Lottery.Bet(Number).Owner) & " Congratulations!!!", Green)
+                    Call SendEventMsgAll("[Lottery]", "The winner is " & Trim$(lottery.Bet(Number).Owner) & " Congratulations!!!", Green)
 
-                    Lottery.Acumulado = 0
-                    Call ClearBets    ' Remove all apostas e all owners
-                    Call ClearLottery
+                    lottery.Acumulado = 0
+                    BackupLastWinner = Trim$(lottery.Bet(Number).Owner)
                 Else
-                    Call SendEventMsgAll("[Lottery]", "Player " & Trim$(Lottery.Bet(Number).Owner) & " OFFLINE, jackpot in " & Accumulated, Green)
-                    Call ClearBets    ' Remove all apostas e all owners
-                    Call ClearLottery
+                    Call SendEventMsgAll("[Lottery]", "Player " & Trim$(lottery.Bet(Number).Owner) & " OFFLINE, jackpot in " & Accumulated, Green)
+                    lottery.Acumulado = Accumulated
                 End If
-                
-                Lottery.LastBetWinner = Trim$(Lottery.Bet(Number).Owner)
-                Lottery.LastBetNum = Number
+
+                Call ClearBets    ' Remove all apostas e all owners
+                Call ClearLottery
+
+                lottery.LastBetWinner = BackupLastWinner
             Else
-                Call SendEventMsgAll("[Lottery]", "There were no winners, jackpot in " & Accumulated, Green)
+                lottery.Acumulado = Accumulated
+                Call SendEventMsgAll("[Lottery]", "There were no winners, jackpot in " & lottery.Acumulado, Green)
                 Call ClearBets    ' Remove all apostas e all owners
                 Call ClearLottery
             End If
 
-            Call SendEventMsgAll("[Lottery]", "The lottery has ended, next lottery starts in " & LOTTERY_START_HOURS & " hours", BrightRed)
+            lottery.LastBetNum = Number
             
+            SendLotterySaves Save    ' Faz a limpeza no servidor de eventos
+
+            Call SendEventMsgAll("[Lottery]", "The lottery has ended, next lottery starts in " & LOTTERY_START_HOURS & " hours", BrightRed)
+
             Call SendLotteryInfosAll
         End If
     Else    ' Get Off?? take on
@@ -217,7 +230,7 @@ Public Sub CheckBetLoop()
         Tmr = (Tmr * 60)    ' 180 min
         Tmr = (Tmr * 60)    ' 10.800 segs
         Tmr = (Tmr * 1000)    ' 10.800.000 Milisegundos
-        Tmr = (Tmr + Lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
+        Tmr = (Tmr + lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
         'Debug.Print Tmr
         If Tmr <= getTime Then
             Call StartLottery
@@ -225,23 +238,23 @@ Public Sub CheckBetLoop()
     End If
 End Sub
 
-Private Sub CloseBets()
-    Lottery.BetEnabled = False
-    Lottery.BetTmr = 0
+Public Sub CloseBets()
+    lottery.BetEnabled = False
+    lottery.BetTmr = 0
 End Sub
 
 Public Sub StartLottery()
     Dim Accumulated As Long
     
-    Lottery.Enabled = True
-    Lottery.BetEnabled = True
+    lottery.Enabled = True
+    lottery.BetEnabled = True
     
-    Lottery.Started = getTime
-    Lottery.BetTmr = getTime
+    lottery.Started = getTime
+    lottery.BetTmr = getTime
 
     Call SendEventMsgAll("[Lottery]", "Betting is on, place your bets in (" & SecondsToHMS(LOTTERY_TIME_BET) & ")", BrightGreen)
     
-    Accumulated = Lottery.Acumulado
+    Accumulated = lottery.Acumulado
     If Accumulated > 0 Then
         Call SendEventMsgAll("[Lottery]", "The prize is accumulated in " & Accumulated, BrightGreen)
     End If
@@ -276,8 +289,8 @@ Public Function GetBetsAccumulated() As Long
     Dim i As Byte
 
     For i = 1 To MAX_BETS
-        If Lottery.Bet(i).Value > 0 Then
-            GetBetsAccumulated = GetBetsAccumulated + Lottery.Bet(i).Value
+        If lottery.Bet(i).Value > 0 Then
+            GetBetsAccumulated = GetBetsAccumulated + lottery.Bet(i).Value
         End If
     Next i
 End Function
@@ -288,7 +301,7 @@ Private Function CheckBetSlot(ByRef BetID As Byte) As Boolean
     
     CheckBetSlot = True
 
-    If LenB(Trim$(Lottery.Bet(BetID).Owner)) > 0 Then
+    If LenB(Trim$(lottery.Bet(BetID).Owner)) > 0 Then
         CheckBetSlot = False
     End If
 
@@ -299,11 +312,11 @@ Private Function ChooseLoteryNumber() As Byte
 End Function
 
 Public Function VerifyLotteryStatus() As Boolean
-    VerifyLotteryStatus = Lottery.Enabled
+    VerifyLotteryStatus = lottery.Enabled
 End Function
 
 Private Function VerifyBetStatus() As Boolean
-    VerifyBetStatus = Lottery.BetEnabled
+    VerifyBetStatus = lottery.BetEnabled
 End Function
 
 Public Sub ClearBets()
@@ -314,23 +327,48 @@ Public Sub ClearBets()
 End Sub
 
 Private Sub ClearBetSlot(ByRef BetID As Byte)
-    Call ZeroMemory(ByVal VarPtr(Lottery.Bet(BetID)), LenB(Lottery.Bet(BetID)))
-    Lottery.Bet(BetID).Owner = vbNullString
+    Call ZeroMemory(ByVal VarPtr(lottery.Bet(BetID)), LenB(lottery.Bet(BetID)))
+    lottery.Bet(BetID).Owner = vbNullString
+End Sub
+
+Public Sub LoadLottery()
+    Dim i As Byte, Diretorio As String, SString As String, Filter() As String
+    
+    Diretorio = App.Path & "/data/EventsData.ini"
+
+    If FileExist(Diretorio, True) Then
+        lottery.Enabled = ConvertByteToBool(CByte(GetVar(Diretorio, "LOTTERY", "Status")))
+        lottery.BetEnabled = ConvertByteToBool(CByte(GetVar(Diretorio, "LOTTERY", "BetStatus")))
+        lottery.Acumulado = CLng(GetVar(Diretorio, "LOTTERY", "Accumulated"))
+        lottery.LastBetNum = CByte(GetVar(Diretorio, "LOTTERY", "LastBetNum"))
+        lottery.LastBetWinner = CStr(Trim$(GetVar(Diretorio, "LOTTERY", "LastBetWinner")))
+        
+        SString = CStr(Trim$(GetVar(Diretorio, "LOTTERY", "CountStr")))
+        
+        Filter = Split(SString, ",")
+        
+        For i = LBound(Filter) To UBound(Filter)
+            lottery.Bet(CByte(Filter(i))).Owner = Trim$(CStr(Trim$(GetVar(Diretorio, "LOTTERY", "BetOwner" & CByte(Filter(i))))))
+            lottery.Bet(CByte(Filter(i))).Value = Trim$(CLng(Trim$(GetVar(Diretorio, "LOTTERY", "BetValue" & CByte(Filter(i))))))
+        Next i
+    Else
+        Call RequestLotteryData
+    End If
 End Sub
 
 Public Sub ClearLottery()
     Dim i As Byte
     
-    Lottery.Enabled = False
-    Lottery.BetEnabled = False
+    lottery.Enabled = False
+    lottery.BetEnabled = False
     
-    Lottery.Ended = getTime
-    Lottery.Started = 0
-    Lottery.BetTmr = 0
-    Lottery.LastBetWinner = vbNullString
-    Lottery.LastBetNum = 0
+    lottery.Ended = getTime
+    lottery.Started = 0
+    lottery.BetTmr = 0
+    lottery.LastBetWinner = "Ninguem"
+    lottery.LastBetNum = 0
     
     For i = 1 To MAX_AVISOS
-        Lottery.Aviso(i) = False
+        lottery.Aviso(i) = False
     Next i
 End Sub

@@ -40,7 +40,7 @@ Public Const TASK_DEFEAT_LENGTH As Byte = 100
 
 Public Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 Public Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
-Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Const CLIENT_MAJOR As Byte = 1
 Public Const CLIENT_MINOR As Byte = 8
@@ -50,10 +50,14 @@ Public Const MAX_BYTE As Byte = 255
 Public Const MAX_INTEGER As Integer = 32767
 Public Const MAX_LONG As Long = 2147483647
 
-Public Const GAME_SERVER_IP As String = "127.0.0.1" ' "46.23.70.66"
-Public Const GAME_SERVER_PORT As Long = 7001 ' the port used by the main game server
-Public Const AUTH_SERVER_PORT As Long = 7002 ' the port used for people to connect to auth server
-Public Const SERVER_AUTH_PORT As Long = 7003 ' the portal used for server to talk to auth server
+' Connection details
+Public Const GAME_SERVER_IP As String = "127.0.0.1"    ' "46.23.70.66"
+Public Const AUTH_SERVER_IP As String = "127.0.0.1"    ' "46.23.70.66"
+Public Const EVENT_SERVER_IP As String = "127.0.0.1"    ' "46.23.70.66"
+Public Const GAME_SERVER_PORT As Long = 7001    ' the port used by the main game server
+Public Const AUTH_SERVER_PORT As Long = 7002    ' the port used for people to connect to auth server
+Public Const SERVER_AUTH_PORT As Long = 7003    ' the portal used for server to talk to auth server
+Public Const EVENT_SERVER_PORT As Long = 7004    ' the portal used for server to talk to auth server
 
 ' Tempo limite da conexao no sistema.
 ' Se uma conexao em que o token do login nao for confirmado.

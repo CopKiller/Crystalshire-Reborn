@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using Event_Server.Util;
 using Event_Server.Communication;
+using Event_Server.Network.ServerPacket;
+using System.Reflection;
+//using Event_Server.Cryptography;
+using System.Security.Cryptography;
+using System.Net.NetworkInformation;
+using System.Net;
 
 namespace Event_Server.Network {
     public sealed class Connection : IConnection {
@@ -18,17 +24,15 @@ namespace Event_Server.Network {
 
         private TcpClient Client;
         private ByteBuffer msg;
-        private int pingTick;
+        private static int pingTick;
+
+        private SpPing sPing = new SpPing();
+
+        //private byte[] decryptedBytes;
+        //readonly ByteBuffer decrypted_msg;
+        //readonly AesCryptography aes;
 
         public Connection(TcpClient tcpClient, string ipAddress, string uniqueKey) {
-
-            // Verifica se tem algum client conectado, caso esteja sai do método,
-            // limita apenas 1 conexão no eventserver, caso queira alterar pra receber
-            // mais de uma conexão comente a condição abaixo!!!
-            if (Connections.Count > 0)
-            {
-                return;
-            }
 
             msg = new ByteBuffer();
 
@@ -38,17 +42,44 @@ namespace Event_Server.Network {
             Client = tcpClient;
 
             Connected = true;
+
+            // Verifica se tem algum client conectado, caso esteja sai do método,
+            // limita apenas 1 conexão no eventserver, caso queira alterar pra receber
+            // mais de uma conexão comente a condição abaixo!!!
+            if (Connections.Count > 0)
+            {
+                Disconnect(); // Adiciona o comando Close() na conexão rejeitada
+                Global.WriteLog(LogType.System, $"{IpAddress} {uniqueKey} Foi rejeitado pois já tem uma conexão ativa!", LogColor.Red);
+                return;
+            }
+
             Add(this);
 
-            Global.WriteLog(LogType.System, $"{ipAddress} Key {uniqueKey} is connected", LogColor.Coral);
+            //Global.WriteLog(LogType.System, $"{ipAddress} Key {uniqueKey} is connected", LogColor.Coral);
+            Global.WriteLog(LogType.System, $"{ipAddress} Key {uniqueKey} Main Server is connected", LogColor.Green);
         }
 
         public Connection()
         {
         }
 
+        public void SendPing()
+        {
+            if (Environment.TickCount >= Connection.pingTick)
+            {
+                if (Connection.HighIndex > 0)
+                {
+
+                    sPing.SendPacket();
+                }
+                Connection.pingTick = Environment.TickCount + Constants.PingTime;
+            }
+        }
+
         public void Disconnect() {
             Client.Close();
+            Connections.Remove(Connection.HighIndex);
+            Connection.HighIndex = 0;
             Connected = false;
         }
 
@@ -85,15 +116,19 @@ namespace Event_Server.Network {
                         Global.WriteLog(LogType.System, $"Receive Data Error: Class {GetType().Name}", LogColor.Red);
                         Global.WriteLog(LogType.System, $"Message: {ex.Message}", LogColor.Red);
                         Disconnect();
+                        Global.WriteLog(LogType.System, $"Main Server is desconnected", LogColor.Blue);
                         return;
                     }
                 }
                 else {
                     Disconnect();
+                    Global.WriteLog(LogType.System, $"Main Server is desconnected", LogColor.Blue);
                     return;
                 }
 
                 int pLength = 0;
+
+                Global.WriteLog(LogType.Debug, $"Receive -> {IpAddress} Buffer Size: {msg.Length()}", LogColor.Black);
 
                 if (msg.Length() >= 4) {
                     pLength = msg.ReadInt32(false);
@@ -103,10 +138,28 @@ namespace Event_Server.Network {
                     }
                 }
 
+                //int encrypted_length;
+                //byte key;
+                //int keyIndex;
+                //byte iv;
+                //int ivIndex;
+
                 while (pLength > 0 && pLength <= msg.Length() - 4) {
                     if (pLength <= msg.Length() - 4) {
                         // Remove the first packet (Size of Packet).
                         msg.ReadInt32();
+
+                        //  decrypt
+                        //encrypted_length = msg.ReadInt32();
+                        //key = msg.ReadByte();
+                        //keyIndex = msg.ReadByte();
+                        //iv = msg.ReadByte();
+                        //ivIndex = msg.ReadByte();
+                        //var _key = ConnectionPassword.CreateKey(CryptographyKeyType.Key, keyIndex, key);
+                        //var _iv = ConnectionPassword.CreateKey(CryptographyKeyType.Iv, ivIndex, iv);
+                        //decryptedBytes = aes.Decrypt(msg.ReadBytes(encrypted_length), _key, _iv);
+                        //.Write(decryptedBytes);
+
                         // Remove the header.
                         var header = msg.ReadInt32();
                         // Decrease 4 bytes of header.
@@ -160,31 +213,22 @@ namespace Event_Server.Network {
                 Disconnect();
             }
         }
-  
+
         public static void Remove(int index) {
+            var connection = Connections[index];
+
             if (Connections.ContainsKey(index)) {
                 Connections.Remove(index);
+                connection.Connected = false;
             }
         }
 
         private static void Add(Connection connection) {
-            var index = 0;
 
-            if (Connections.Count < HighIndex) {
-                // Procura por um slot que não está sendo usado.
-                for (var i = 1; i <= HighIndex; i++) {
-                    if (!Connections.ContainsKey(i)) {
-                        index = i;
-                        break;
-                    }
-                }
+            if (Connections.Count == 0) {
+                ++HighIndex;
+                Connections.Add(HighIndex, connection);
             }
-            // Caso contrário, adiciona um novo slot.
-            else {
-                index = ++HighIndex;
-            }
-
-            Connections.Add(index, connection);
         }     
     }
 } 

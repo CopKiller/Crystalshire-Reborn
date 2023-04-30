@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 using Event_Server.Util;
 using Event_Server.Server;
 using Event_Server.Communication;
-using Event_Server.Network;
 using Event_Server.Network.ServerPacket;
-using System.Net.Sockets;
+using Event_Server.Data;
+using System.Net;
 
 namespace Event_Server
 {
@@ -84,7 +84,6 @@ namespace Event_Server
         private void InitServer()
         {
             InitLogs();
-
             Server = new DataServer();
             Server.UpdateUps += UpdateUps;
             Server.InitServer();
@@ -92,6 +91,7 @@ namespace Event_Server
 
         private void InitLogs()
         {
+            //System
             Global.SystemLogs = new Log("System")
             {
                 Index = 0
@@ -110,6 +110,7 @@ namespace Event_Server
                 MessageBox.Show("An error ocurred when trying to open the file log.");
             }
 
+            //Player
             Global.PlayerLogs = new Log("Player")
             {
                 Index = 1
@@ -127,6 +128,27 @@ namespace Event_Server
             {
                 MessageBox.Show("An error ocurred when trying to open the file log.");
             }
+
+            //Debug
+            Global.DebugLogs = new Log("Debug")
+            {
+                Index = 2
+            };
+
+            Global.DebugLogs.LogEvent += WriteLog;
+
+            result = Global.DebugLogs.OpenFile();
+
+            if (result)
+            {
+                Global.DebugLogs.Enabled = true;
+            }
+            else
+            {
+                MessageBox.Show("An error ocurred when trying to open the file log.");
+            }
+
+            Global.WriteLog(LogType.System, $"Initializing Logs...", LogColor.Coral);
         }
         private void WriteLog(object sender, LogEventArgs e)
         {
@@ -230,6 +252,13 @@ namespace Event_Server
 
             //SPacket.Send(Conexao);
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var SPacket = new SpLotteryData();
+
+            SPacket.SendPacket();
         }
     }
 }

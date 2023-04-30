@@ -80,10 +80,6 @@ Public Sub InitServer()
     ' Get the authentication socket going
     frmServer.AuthSocket.RemoteHost = AUTH_SERVER_IP
     frmServer.AuthSocket.LocalPort = SERVER_AUTH_PORT
-    
-    ' Get the event socket going
-    frmServer.EventSocket.RemoteHost = EVENT_SERVER_IP
-    frmServer.EventSocket.RemotePort = EVENT_SERVER_PORT
 
     ' Init all the player sockets
     Call SetStatus("Initializing player array...")
@@ -283,6 +279,8 @@ Private Sub LoadGameData()
     Call LoadConjuntos
     Call SetStatus("Loading DayReward...")
     Call DayRewardInit
+    Call SetStatus("Loading Lottery...")
+    Call LoadLottery
 End Sub
 
 Sub SetHighIndex()

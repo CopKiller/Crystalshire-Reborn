@@ -17,7 +17,7 @@ Sub Main()
     frmEnc.Show
 End Sub
 
-Public Sub ConvertBinaryToPNG(sPath As String, ByRef i As Long, ByRef data() As Byte)
+Public Sub ConvertBinaryToPNG(sPath As String, ByRef I As Long, ByRef data() As Byte)
     Dim fso As Object
     Dim f As Long, l As Long, s As String, sFile As Object
     Dim sFolder As Object, decrypt() As Byte
@@ -26,7 +26,7 @@ Public Sub ConvertBinaryToPNG(sPath As String, ByRef i As Long, ByRef data() As 
     Set fso = CreateObject("Scripting.FileSystemObject")
     For Each sFile In fso.GetFolder(sPath).Files
         If UCase(Right(sFile.Name, 4)) = EncExtension Then
-            i = i + 1
+            I = I + 1
             f = FreeFile
             
             Open sFile.Path For Binary As #f
@@ -50,7 +50,7 @@ Public Sub ConvertBinaryToPNG(sPath As String, ByRef i As Long, ByRef data() As 
     Next sFile
 
     For Each sFolder In fso.GetFolder(sPath).SubFolders
-        ConvertBinaryToPNG sFolder.Path, i, data()
+        ConvertBinaryToPNG sFolder.Path, I, data()
     Next sFolder
     
     ' Atualiza o diretório
@@ -61,7 +61,7 @@ Public Sub ConvertBinaryToPNG(sPath As String, ByRef i As Long, ByRef data() As 
     Set fso = Nothing
 End Sub
 
-Public Sub ConvertPNGToBinary(sPath As String, ByRef i As Long, ByRef data() As Byte)
+Public Sub ConvertPNGToBinary(sPath As String, ByRef I As Long, ByRef data() As Byte)
     Dim fso As Object
     Dim f As Long, l As Long, s As String, sFile As Object, NewName As String
     Dim sFolder As Object, encrypt() As Byte, length As Long
@@ -71,7 +71,7 @@ Public Sub ConvertPNGToBinary(sPath As String, ByRef i As Long, ByRef data() As 
     Set fso = CreateObject("Scripting.FileSystemObject")
     For Each sFile In fso.GetFolder(sPath).Files
         If UCase(Right(sFile.Name, 4)) = DecExtension Then
-            i = i + 1
+            I = I + 1
             f = FreeFile
             Open sFile.Path For Binary As #f
             
@@ -94,7 +94,7 @@ Public Sub ConvertPNGToBinary(sPath As String, ByRef i As Long, ByRef data() As 
     Next sFile
 
     For Each sFolder In fso.GetFolder(sPath).SubFolders
-        ConvertPNGToBinary sFolder.Path, i, data()
+        ConvertPNGToBinary sFolder.Path, I, data()
     Next sFolder
     
     ' Atualiza o diretório

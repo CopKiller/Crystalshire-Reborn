@@ -38,6 +38,8 @@ Private Type OptionsRec
     PREMIUMEXP As Integer
     PREMIUMDROP As Byte
     LOTTERYBONUS As Integer
+    
+    EVENTSV As Byte
 End Type
 
 Public Type PartyRec
@@ -114,7 +116,7 @@ Public Type PlayerRec
 
     ' Position
     Map As Integer
-    X As Byte
+    x As Byte
     Y As Byte
     dir As Byte
 
@@ -232,7 +234,7 @@ Public Type TempPlayerRec
 End Type
 
 Private Type TempEventRec
-    X As Long
+    x As Long
     Y As Long
     SelfSwitch As Byte
 End Type
@@ -280,7 +282,7 @@ End Type
 
 Private Type EventRec
     Name As String
-    X As Long
+    x As Long
     Y As Long
     PageCount As Long
     EventPage() As EventPageRec
@@ -328,7 +330,7 @@ Private Type MapDataRec
 End Type
 
 Private Type TileDataRec
-    X As Long
+    x As Long
     Y As Long
     Tileset As Long
 End Type
@@ -434,7 +436,7 @@ End Type
 Private Type MapItemRec
     Num As Long
     Value As Long
-    X As Byte
+    x As Byte
     Y As Byte
     ' ownership + despawn
     PlayerName As String
@@ -481,7 +483,7 @@ Private Type MapNpcRec
     target As Long
     TargetType As Byte
     Vital(1 To Vitals.Vital_Count - 1) As Long
-    X As Byte
+    x As Byte
     Y As Byte
     dir As Byte
     ' For server use only
@@ -541,7 +543,7 @@ Type As Byte
     CDTime As Long
     Icon As Long
     Map As Long
-    X As Long
+    x As Long
     Y As Long
     dir As Byte
     Vital As Long

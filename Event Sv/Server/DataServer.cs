@@ -1,6 +1,9 @@
 ﻿using System;
 using Event_Server.Network;
 using Event_Server.Communication;
+using Event_Server.Util;
+//using Event_Server.Cryptography;
+
 
 namespace Event_Server.Server {
     public class DataServer {
@@ -12,8 +15,9 @@ namespace Event_Server.Server {
         private int ups;
 
         TcpServer Server;
-    
+
         public void InitServer() {
+            //ConnectionPassword.InitializePassword();
             Server = new TcpServer(Constants.PORT);
             Server.InitServer();
 
@@ -23,6 +27,7 @@ namespace Event_Server.Server {
         public void ServerLoop() {
             Server.AcceptClient();
 
+            Server.SendPing();
             ReceiveSocketData();
 
             CountUps();
@@ -47,13 +52,10 @@ namespace Event_Server.Server {
         }
 
         private void ReceiveSocketData() {
-            for (int n = 1; n <= Connection.HighIndex; n++) {
-                if (Connection.Connections.ContainsKey(n)) {
-                    Connection.Connections[n].ReceiveData();
+            if (Connection.HighIndex == 0) { return; }
+                Connection.Connections[Connection.HighIndex].ReceiveData();
 
-                    RemoveWhenNotConnected(n);
-                }
-            }
+                RemoveWhenNotConnected(Connection.HighIndex);
         }
 
         private void RemoveWhenNotConnected(int index) {
@@ -61,9 +63,10 @@ namespace Event_Server.Server {
                 string ipAddress = Connection.Connections[index].IpAddress;
                 string uniqueKey = Connection.Connections[index].UniqueKey;
 
+                //Connection.Connections[index].
                 Connection.Remove(index);
 
-                //WriteLog(LogType.System, $"{ipAddress} Key {uniqueKey} is disconnected", LogColor.Coral);
+                Global.WriteLog(LogType.System, $"{ipAddress} Key {uniqueKey} is disconnected", LogColor.Coral);
             }
         }
     }

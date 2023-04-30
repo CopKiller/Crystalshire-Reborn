@@ -88,6 +88,7 @@ Public Sub SaveOptions()
     PutVar App.Path & "\data\options.ini", "OPTIONS", "PREMIUMEXP", Str(Options.PREMIUMEXP)
     PutVar App.Path & "\data\options.ini", "OPTIONS", "PREMIUMDROP", Str(Options.PREMIUMDROP)
     PutVar App.Path & "\data\options.ini", "OPTIONS", "LOTTERYBONUS", Str(Options.LOTTERYBONUS)
+    PutVar App.Path & "\data\options.ini", "OPTIONS", "EVENTSV", Str(Options.EVENTSV)
 End Sub
 
 Public Sub LoadOptions()
@@ -104,6 +105,7 @@ Public Sub LoadOptions()
     Options.PREMIUMEXP = GetVar(App.Path & "\data\options.ini", "OPTIONS", "PREMIUMEXP")
     Options.PREMIUMDROP = GetVar(App.Path & "\data\options.ini", "OPTIONS", "PREMIUMDROP")
     Options.LOTTERYBONUS = GetVar(App.Path & "\data\options.ini", "OPTIONS", "LOTTERYBONUS")
+    Options.EVENTSV = GetVar(App.Path & "\data\options.ini", "OPTIONS", "EVENTSV")
 
     ' Change Options in Server Window
     With frmServer
@@ -113,6 +115,7 @@ Public Sub LoadOptions()
         .txtY.Text = Options.START_Y
         .txtGameName.Text = Options.GAME_NAME
         .txtGameSite.Text = Options.GAME_WEBSITE
+        .chkEventSv.Value = Options.EVENTSV
     End With
 
     ' Change Options in Configurations Window
@@ -281,7 +284,7 @@ Sub LoadClasses()
     Dim tmpSprite As String
     Dim tmpArray() As String
     Dim startItemCount As Long, startSpellCount As Long
-    Dim X As Long
+    Dim x As Long
 
     If CheckClasses Then
         ReDim Class(1 To Max_Classes)
@@ -342,9 +345,9 @@ Sub LoadClasses()
         ' loop for items & values
         Class(I).startItemCount = startItemCount
         If startItemCount >= 1 And startItemCount <= MAX_INV Then
-            For X = 1 To startItemCount
-                Class(I).StartItem(X) = Val(GetVar(FileName, "CLASS" & I, "StartItem" & X))
-                Class(I).StartValue(X) = Val(GetVar(FileName, "CLASS" & I, "StartValue" & X))
+            For x = 1 To startItemCount
+                Class(I).StartItem(x) = Val(GetVar(FileName, "CLASS" & I, "StartItem" & x))
+                Class(I).StartValue(x) = Val(GetVar(FileName, "CLASS" & I, "StartValue" & x))
             Next
         End If
 
@@ -355,8 +358,8 @@ Sub LoadClasses()
         ' loop for spells
         Class(I).startSpellCount = startSpellCount
         If startSpellCount >= 1 And startSpellCount <= MAX_INV Then
-            For X = 1 To startSpellCount
-                Class(I).StartSpell(X) = Val(GetVar(FileName, "CLASS" & I, "StartSpell" & X))
+            For x = 1 To startSpellCount
+                Class(I).StartSpell(x) = Val(GetVar(FileName, "CLASS" & I, "StartSpell" & x))
             Next
         End If
     Next
@@ -366,7 +369,7 @@ End Sub
 Sub SaveClasses()
     Dim FileName As String
     Dim I As Long
-    Dim X As Long
+    Dim x As Long
 
     FileName = App.Path & "\data\classes.ini"
 
@@ -383,13 +386,13 @@ Sub SaveClasses()
         Call PutVar(FileName, "CLASS" & I, "START_X", Str(Options.START_X))
         Call PutVar(FileName, "CLASS" & I, "START_Y", Str(Options.START_Y))
         ' loop for items & values
-        For X = 1 To UBound(Class(I).StartItem)
-            Call PutVar(FileName, "CLASS" & I, "StartItem" & X, Str(Class(I).StartItem(X)))
-            Call PutVar(FileName, "CLASS" & I, "StartValue" & X, Str(Class(I).StartValue(X)))
+        For x = 1 To UBound(Class(I).StartItem)
+            Call PutVar(FileName, "CLASS" & I, "StartItem" & x, Str(Class(I).StartItem(x)))
+            Call PutVar(FileName, "CLASS" & I, "StartValue" & x, Str(Class(I).StartValue(x)))
         Next
         ' loop for spells
-        For X = 1 To UBound(Class(I).StartSpell)
-            Call PutVar(FileName, "CLASS" & I, "StartSpell" & X, Str(Class(I).StartSpell(X)))
+        For x = 1 To UBound(Class(I).StartSpell)
+            Call PutVar(FileName, "CLASS" & I, "StartSpell" & x, Str(Class(I).StartSpell(x)))
         Next
     Next
 
@@ -828,7 +831,7 @@ End Sub
 ' **********
 
 Sub SaveMap(ByVal MapNum As Long)
-    Dim FileName As String, F As Long, X As Long, Y As Long, I As Long
+    Dim FileName As String, F As Long, x As Long, Y As Long, I As Long
 
     ' save map data
     FileName = App.Path & "\data\maps\map" & MapNum & ".ini"
@@ -876,44 +879,44 @@ Sub SaveMap(ByVal MapNum As Long)
         For I = 1 To Map(MapNum).TileData.EventCount
             With Map(MapNum).TileData.Events(I)
                 PutVar FileName, "Event" & I, "Name", .Name
-                PutVar FileName, "Event" & I, "x", Val(.X)
+                PutVar FileName, "Event" & I, "x", Val(.x)
                 PutVar FileName, "Event" & I, "y", Val(.Y)
                 PutVar FileName, "Event" & I, "PageCount", Val(.PageCount)
             End With
             If Map(MapNum).TileData.Events(I).PageCount > 0 Then
-                For X = 1 To Map(MapNum).TileData.Events(I).PageCount
-                    With Map(MapNum).TileData.Events(I).EventPage(X)
-                        PutVar FileName, "Event" & I & "Page" & X, "chkPlayerVar", Val(.chkPlayerVar)
-                        PutVar FileName, "Event" & I & "Page" & X, "chkSelfSwitch", Val(.chkSelfSwitch)
-                        PutVar FileName, "Event" & I & "Page" & X, "chkHasItem", Val(.chkHasItem)
-                        PutVar FileName, "Event" & I & "Page" & X, "PlayerVarNum", Val(.PlayerVarNum)
-                        PutVar FileName, "Event" & I & "Page" & X, "SelfSwitchNum", Val(.SelfSwitchNum)
-                        PutVar FileName, "Event" & I & "Page" & X, "HasItemNum", Val(.HasItemNum)
-                        PutVar FileName, "Event" & I & "Page" & X, "PlayerVariable", Val(.PlayerVariable)
-                        PutVar FileName, "Event" & I & "Page" & X, "GraphicType", Val(.GraphicType)
-                        PutVar FileName, "Event" & I & "Page" & X, "Graphic", Val(.Graphic)
-                        PutVar FileName, "Event" & I & "Page" & X, "GraphicX", Val(.GraphicX)
-                        PutVar FileName, "Event" & I & "Page" & X, "GraphicY", Val(.GraphicY)
-                        PutVar FileName, "Event" & I & "Page" & X, "MoveType", Val(.MoveType)
-                        PutVar FileName, "Event" & I & "Page" & X, "MoveSpeed", Val(.MoveSpeed)
-                        PutVar FileName, "Event" & I & "Page" & X, "MoveFreq", Val(.MoveFreq)
-                        PutVar FileName, "Event" & I & "Page" & X, "WalkAnim", Val(.WalkAnim)
-                        PutVar FileName, "Event" & I & "Page" & X, "StepAnim", Val(.StepAnim)
-                        PutVar FileName, "Event" & I & "Page" & X, "DirFix", Val(.DirFix)
-                        PutVar FileName, "Event" & I & "Page" & X, "WalkThrough", Val(.WalkThrough)
-                        PutVar FileName, "Event" & I & "Page" & X, "Priority", Val(.Priority)
-                        PutVar FileName, "Event" & I & "Page" & X, "Trigger", Val(.Trigger)
-                        PutVar FileName, "Event" & I & "Page" & X, "CommandCount", Val(.CommandCount)
+                For x = 1 To Map(MapNum).TileData.Events(I).PageCount
+                    With Map(MapNum).TileData.Events(I).EventPage(x)
+                        PutVar FileName, "Event" & I & "Page" & x, "chkPlayerVar", Val(.chkPlayerVar)
+                        PutVar FileName, "Event" & I & "Page" & x, "chkSelfSwitch", Val(.chkSelfSwitch)
+                        PutVar FileName, "Event" & I & "Page" & x, "chkHasItem", Val(.chkHasItem)
+                        PutVar FileName, "Event" & I & "Page" & x, "PlayerVarNum", Val(.PlayerVarNum)
+                        PutVar FileName, "Event" & I & "Page" & x, "SelfSwitchNum", Val(.SelfSwitchNum)
+                        PutVar FileName, "Event" & I & "Page" & x, "HasItemNum", Val(.HasItemNum)
+                        PutVar FileName, "Event" & I & "Page" & x, "PlayerVariable", Val(.PlayerVariable)
+                        PutVar FileName, "Event" & I & "Page" & x, "GraphicType", Val(.GraphicType)
+                        PutVar FileName, "Event" & I & "Page" & x, "Graphic", Val(.Graphic)
+                        PutVar FileName, "Event" & I & "Page" & x, "GraphicX", Val(.GraphicX)
+                        PutVar FileName, "Event" & I & "Page" & x, "GraphicY", Val(.GraphicY)
+                        PutVar FileName, "Event" & I & "Page" & x, "MoveType", Val(.MoveType)
+                        PutVar FileName, "Event" & I & "Page" & x, "MoveSpeed", Val(.MoveSpeed)
+                        PutVar FileName, "Event" & I & "Page" & x, "MoveFreq", Val(.MoveFreq)
+                        PutVar FileName, "Event" & I & "Page" & x, "WalkAnim", Val(.WalkAnim)
+                        PutVar FileName, "Event" & I & "Page" & x, "StepAnim", Val(.StepAnim)
+                        PutVar FileName, "Event" & I & "Page" & x, "DirFix", Val(.DirFix)
+                        PutVar FileName, "Event" & I & "Page" & x, "WalkThrough", Val(.WalkThrough)
+                        PutVar FileName, "Event" & I & "Page" & x, "Priority", Val(.Priority)
+                        PutVar FileName, "Event" & I & "Page" & x, "Trigger", Val(.Trigger)
+                        PutVar FileName, "Event" & I & "Page" & x, "CommandCount", Val(.CommandCount)
                     End With
-                    If Map(MapNum).TileData.Events(I).EventPage(X).CommandCount > 0 Then
-                        For Y = 1 To Map(MapNum).TileData.Events(I).EventPage(X).CommandCount
-                            With Map(MapNum).TileData.Events(I).EventPage(X).Commands(Y)
-                                PutVar FileName, "Event" & I & "Page" & X & "Command" & Y, "Type", Val(.Type)
-                                PutVar FileName, "Event" & I & "Page" & X & "Command" & Y, "Text", .Text
-                                PutVar FileName, "Event" & I & "Page" & X & "Command" & Y, "Colour", Val(.colour)
-                                PutVar FileName, "Event" & I & "Page" & X & "Command" & Y, "Channel", Val(.Channel)
-                                PutVar FileName, "Event" & I & "Page" & X & "Command" & Y, "TargetType", Val(.TargetType)
-                                PutVar FileName, "Event" & I & "Page" & X & "Command" & Y, "Target", Val(.target)
+                    If Map(MapNum).TileData.Events(I).EventPage(x).CommandCount > 0 Then
+                        For Y = 1 To Map(MapNum).TileData.Events(I).EventPage(x).CommandCount
+                            With Map(MapNum).TileData.Events(I).EventPage(x).Commands(Y)
+                                PutVar FileName, "Event" & I & "Page" & x & "Command" & Y, "Type", Val(.Type)
+                                PutVar FileName, "Event" & I & "Page" & x & "Command" & Y, "Text", .Text
+                                PutVar FileName, "Event" & I & "Page" & x & "Command" & Y, "Colour", Val(.colour)
+                                PutVar FileName, "Event" & I & "Page" & x & "Command" & Y, "Channel", Val(.Channel)
+                                PutVar FileName, "Event" & I & "Page" & x & "Command" & Y, "TargetType", Val(.TargetType)
+                                PutVar FileName, "Event" & I & "Page" & x & "Command" & Y, "Target", Val(.target)
                             End With
                         Next
                     End If
@@ -931,20 +934,20 @@ Sub SaveMap(ByVal MapNum As Long)
 
     With Map(MapNum)
         Open FileName For Binary As #F
-        For X = 0 To .MapData.MaxX
+        For x = 0 To .MapData.MaxX
             For Y = 0 To .MapData.MaxY
-                Put #F, , .TileData.Tile(X, Y).Type
-                Put #F, , .TileData.Tile(X, Y).Data1
-                Put #F, , .TileData.Tile(X, Y).Data2
-                Put #F, , .TileData.Tile(X, Y).Data3
-                Put #F, , .TileData.Tile(X, Y).Data4
-                Put #F, , .TileData.Tile(X, Y).Data5
-                Put #F, , .TileData.Tile(X, Y).Autotile
-                Put #F, , .TileData.Tile(X, Y).DirBlock
+                Put #F, , .TileData.Tile(x, Y).Type
+                Put #F, , .TileData.Tile(x, Y).Data1
+                Put #F, , .TileData.Tile(x, Y).Data2
+                Put #F, , .TileData.Tile(x, Y).Data3
+                Put #F, , .TileData.Tile(x, Y).Data4
+                Put #F, , .TileData.Tile(x, Y).Data5
+                Put #F, , .TileData.Tile(x, Y).Autotile
+                Put #F, , .TileData.Tile(x, Y).DirBlock
                 For I = 1 To MapLayer.Layer_Count - 1
-                    Put #F, , .TileData.Tile(X, Y).Layer(I).Tileset
-                    Put #F, , .TileData.Tile(X, Y).Layer(I).X
-                    Put #F, , .TileData.Tile(X, Y).Layer(I).Y
+                    Put #F, , .TileData.Tile(x, Y).Layer(I).Tileset
+                    Put #F, , .TileData.Tile(x, Y).Layer(I).x
+                    Put #F, , .TileData.Tile(x, Y).Layer(I).Y
                 Next
             Next
         Next
@@ -977,7 +980,7 @@ Sub LoadMaps()
 End Sub
 
 Sub LoadMap(MapNum As Long)
-    Dim FileName As String, I As Long, F As Long, X As Long, Y As Long
+    Dim FileName As String, I As Long, F As Long, x As Long, Y As Long
 
     ' load map data
     FileName = App.Path & "\data\maps\map" & MapNum & ".ini"
@@ -1023,46 +1026,46 @@ Sub LoadMap(MapNum As Long)
         For I = 1 To Map(MapNum).TileData.EventCount
             With Map(MapNum).TileData.Events(I)
                 .Name = GetVar(FileName, "Event" & I, "Name")
-                .X = Val(GetVar(FileName, "Event" & I, "x"))
+                .x = Val(GetVar(FileName, "Event" & I, "x"))
                 .Y = Val(GetVar(FileName, "Event" & I, "y"))
                 .PageCount = Val(GetVar(FileName, "Event" & I, "PageCount"))
             End With
             If Map(MapNum).TileData.Events(I).PageCount > 0 Then
                 ReDim Preserve Map(MapNum).TileData.Events(I).EventPage(1 To Map(MapNum).TileData.Events(I).PageCount)
-                For X = 1 To Map(MapNum).TileData.Events(I).PageCount
-                    With Map(MapNum).TileData.Events(I).EventPage(X)
-                        .chkPlayerVar = Val(GetVar(FileName, "Event" & I & "Page" & X, "chkPlayerVar"))
-                        .chkSelfSwitch = Val(GetVar(FileName, "Event" & I & "Page" & X, "chkSelfSwitch"))
-                        .chkHasItem = Val(GetVar(FileName, "Event" & I & "Page" & X, "chkHasItem"))
-                        .PlayerVarNum = Val(GetVar(FileName, "Event" & I & "Page" & X, "PlayerVarNum"))
-                        .SelfSwitchNum = Val(GetVar(FileName, "Event" & I & "Page" & X, "SelfSwitchNum"))
-                        .HasItemNum = Val(GetVar(FileName, "Event" & I & "Page" & X, "HasItemNum"))
-                        .PlayerVariable = Val(GetVar(FileName, "Event" & I & "Page" & X, "PlayerVariable"))
-                        .GraphicType = Val(GetVar(FileName, "Event" & I & "Page" & X, "GraphicType"))
-                        .Graphic = Val(GetVar(FileName, "Event" & I & "Page" & X, "Graphic"))
-                        .GraphicX = Val(GetVar(FileName, "Event" & I & "Page" & X, "GraphicX"))
-                        .GraphicY = Val(GetVar(FileName, "Event" & I & "Page" & X, "GraphicY"))
-                        .MoveType = Val(GetVar(FileName, "Event" & I & "Page" & X, "MoveType"))
-                        .MoveSpeed = Val(GetVar(FileName, "Event" & I & "Page" & X, "MoveSpeed"))
-                        .MoveFreq = Val(GetVar(FileName, "Event" & I & "Page" & X, "MoveFreq"))
-                        .WalkAnim = Val(GetVar(FileName, "Event" & I & "Page" & X, "WalkAnim"))
-                        .StepAnim = Val(GetVar(FileName, "Event" & I & "Page" & X, "StepAnim"))
-                        .DirFix = Val(GetVar(FileName, "Event" & I & "Page" & X, "DirFix"))
-                        .WalkThrough = Val(GetVar(FileName, "Event" & I & "Page" & X, "WalkThrough"))
-                        .Priority = Val(GetVar(FileName, "Event" & I & "Page" & X, "Priority"))
-                        .Trigger = Val(GetVar(FileName, "Event" & I & "Page" & X, "Trigger"))
-                        .CommandCount = Val(GetVar(FileName, "Event" & I & "Page" & X, "CommandCount"))
+                For x = 1 To Map(MapNum).TileData.Events(I).PageCount
+                    With Map(MapNum).TileData.Events(I).EventPage(x)
+                        .chkPlayerVar = Val(GetVar(FileName, "Event" & I & "Page" & x, "chkPlayerVar"))
+                        .chkSelfSwitch = Val(GetVar(FileName, "Event" & I & "Page" & x, "chkSelfSwitch"))
+                        .chkHasItem = Val(GetVar(FileName, "Event" & I & "Page" & x, "chkHasItem"))
+                        .PlayerVarNum = Val(GetVar(FileName, "Event" & I & "Page" & x, "PlayerVarNum"))
+                        .SelfSwitchNum = Val(GetVar(FileName, "Event" & I & "Page" & x, "SelfSwitchNum"))
+                        .HasItemNum = Val(GetVar(FileName, "Event" & I & "Page" & x, "HasItemNum"))
+                        .PlayerVariable = Val(GetVar(FileName, "Event" & I & "Page" & x, "PlayerVariable"))
+                        .GraphicType = Val(GetVar(FileName, "Event" & I & "Page" & x, "GraphicType"))
+                        .Graphic = Val(GetVar(FileName, "Event" & I & "Page" & x, "Graphic"))
+                        .GraphicX = Val(GetVar(FileName, "Event" & I & "Page" & x, "GraphicX"))
+                        .GraphicY = Val(GetVar(FileName, "Event" & I & "Page" & x, "GraphicY"))
+                        .MoveType = Val(GetVar(FileName, "Event" & I & "Page" & x, "MoveType"))
+                        .MoveSpeed = Val(GetVar(FileName, "Event" & I & "Page" & x, "MoveSpeed"))
+                        .MoveFreq = Val(GetVar(FileName, "Event" & I & "Page" & x, "MoveFreq"))
+                        .WalkAnim = Val(GetVar(FileName, "Event" & I & "Page" & x, "WalkAnim"))
+                        .StepAnim = Val(GetVar(FileName, "Event" & I & "Page" & x, "StepAnim"))
+                        .DirFix = Val(GetVar(FileName, "Event" & I & "Page" & x, "DirFix"))
+                        .WalkThrough = Val(GetVar(FileName, "Event" & I & "Page" & x, "WalkThrough"))
+                        .Priority = Val(GetVar(FileName, "Event" & I & "Page" & x, "Priority"))
+                        .Trigger = Val(GetVar(FileName, "Event" & I & "Page" & x, "Trigger"))
+                        .CommandCount = Val(GetVar(FileName, "Event" & I & "Page" & x, "CommandCount"))
                     End With
-                    If Map(MapNum).TileData.Events(I).EventPage(X).CommandCount > 0 Then
-                        ReDim Preserve Map(MapNum).TileData.Events(I).EventPage(X).Commands(1 To Map(MapNum).TileData.Events(I).EventPage(X).CommandCount)
-                        For Y = 1 To Map(MapNum).TileData.Events(I).EventPage(X).CommandCount
-                            With Map(MapNum).TileData.Events(I).EventPage(X).Commands(Y)
-                                .Type = Val(GetVar(FileName, "Event" & I & "Page" & X & "Command" & Y, "Type"))
-                                .Text = GetVar(FileName, "Event" & I & "Page" & X & "Command" & Y, "Text")
-                                .colour = Val(GetVar(FileName, "Event" & I & "Page" & X & "Command" & Y, "Colour"))
-                                .Channel = Val(GetVar(FileName, "Event" & I & "Page" & X & "Command" & Y, "Channel"))
-                                .TargetType = Val(GetVar(FileName, "Event" & I & "Page" & X & "Command" & Y, "TargetType"))
-                                .target = Val(GetVar(FileName, "Event" & I & "Page" & X & "Command" & Y, "Target"))
+                    If Map(MapNum).TileData.Events(I).EventPage(x).CommandCount > 0 Then
+                        ReDim Preserve Map(MapNum).TileData.Events(I).EventPage(x).Commands(1 To Map(MapNum).TileData.Events(I).EventPage(x).CommandCount)
+                        For Y = 1 To Map(MapNum).TileData.Events(I).EventPage(x).CommandCount
+                            With Map(MapNum).TileData.Events(I).EventPage(x).Commands(Y)
+                                .Type = Val(GetVar(FileName, "Event" & I & "Page" & x & "Command" & Y, "Type"))
+                                .Text = GetVar(FileName, "Event" & I & "Page" & x & "Command" & Y, "Text")
+                                .colour = Val(GetVar(FileName, "Event" & I & "Page" & x & "Command" & Y, "Colour"))
+                                .Channel = Val(GetVar(FileName, "Event" & I & "Page" & x & "Command" & Y, "Channel"))
+                                .TargetType = Val(GetVar(FileName, "Event" & I & "Page" & x & "Command" & Y, "TargetType"))
+                                .target = Val(GetVar(FileName, "Event" & I & "Page" & x & "Command" & Y, "Target"))
                             End With
                         Next
                     End If
@@ -1080,20 +1083,20 @@ Sub LoadMap(MapNum As Long)
 
     With Map(MapNum)
         Open FileName For Binary As #F
-        For X = 0 To .MapData.MaxX
+        For x = 0 To .MapData.MaxX
             For Y = 0 To .MapData.MaxY
-                Get #F, , .TileData.Tile(X, Y).Type
-                Get #F, , .TileData.Tile(X, Y).Data1
-                Get #F, , .TileData.Tile(X, Y).Data2
-                Get #F, , .TileData.Tile(X, Y).Data3
-                Get #F, , .TileData.Tile(X, Y).Data4
-                Get #F, , .TileData.Tile(X, Y).Data5
-                Get #F, , .TileData.Tile(X, Y).Autotile
-                Get #F, , .TileData.Tile(X, Y).DirBlock
+                Get #F, , .TileData.Tile(x, Y).Type
+                Get #F, , .TileData.Tile(x, Y).Data1
+                Get #F, , .TileData.Tile(x, Y).Data2
+                Get #F, , .TileData.Tile(x, Y).Data3
+                Get #F, , .TileData.Tile(x, Y).Data4
+                Get #F, , .TileData.Tile(x, Y).Data5
+                Get #F, , .TileData.Tile(x, Y).Autotile
+                Get #F, , .TileData.Tile(x, Y).DirBlock
                 For I = 1 To MapLayer.Layer_Count - 1
-                    Get #F, , .TileData.Tile(X, Y).Layer(I).Tileset
-                    Get #F, , .TileData.Tile(X, Y).Layer(I).X
-                    Get #F, , .TileData.Tile(X, Y).Layer(I).Y
+                    Get #F, , .TileData.Tile(x, Y).Layer(I).Tileset
+                    Get #F, , .TileData.Tile(x, Y).Layer(I).x
+                    Get #F, , .TileData.Tile(x, Y).Layer(I).Y
                 Next
             Next
         Next
@@ -1120,12 +1123,12 @@ Sub ClearMapItem(ByVal Index As Long, ByVal MapNum As Long)
 End Sub
 
 Sub ClearMapItems()
-    Dim X As Long
+    Dim x As Long
     Dim Y As Long
 
     For Y = 1 To MAX_MAPS
-        For X = 1 To MAX_MAP_ITEMS
-            Call ClearMapItem(X, Y)
+        For x = 1 To MAX_MAP_ITEMS
+            Call ClearMapItem(x, Y)
         Next
     Next
 
@@ -1136,12 +1139,12 @@ Sub ClearMapNpc(ByVal Index As Long, ByVal MapNum As Long)
 End Sub
 
 Sub ClearMapNpcs()
-    Dim X As Long
+    Dim x As Long
     Dim Y As Long
 
     For Y = 1 To MAX_MAPS
-        For X = 1 To MAX_MAP_NPCS
-            Call ClearMapNpc(X, Y)
+        For x = 1 To MAX_MAP_NPCS
+            Call ClearMapNpc(x, Y)
         Next
     Next
 

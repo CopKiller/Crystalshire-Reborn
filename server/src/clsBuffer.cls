@@ -155,7 +155,7 @@ Public Function ReadString(Optional MoveReadHead As Boolean = True) As String
         Exit Function
     End If
 
-    'If sLength > 255 Then Exit Function
+    If sLength > 255 Then Exit Function
     ReDim sBytes(sLength - 1)
 
     CopyMemory sBytes(0), Buffer(ReadHead + 4), sLength
