@@ -1,0 +1,39 @@
+{
+  "LotteryStatus": true,
+  "BetStatus": true,
+  "Acumulado": 23221,
+  "LastBetNum": 28,
+  "LastBetWinner": "Ninguem",
+  "Apostas": [
+    [
+      19,
+      "PeixoNalts",
+      1000
+    ],
+    [
+      29,
+      "PeixoNalts",
+      4477
+    ],
+    [
+      49,
+      "PeixoNalts",
+      4000
+    ],
+    [
+      72,
+      "PeixoNalts",
+      10000
+    ],
+    [
+      82,
+      "PeixoNalts",
+      200
+    ],
+    [
+      89,
+      "PeixoNalts",
+      3544
+    ]
+  ]
+}
