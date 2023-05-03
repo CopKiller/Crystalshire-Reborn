@@ -32,7 +32,7 @@ namespace Event_Server.Data
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
-                Converters = { new TupleConverter() }
+                Converters = { new TupleConverterBSI() }
             };
 
             string json = JsonSerializer.Serialize(lottery, options);
@@ -46,7 +46,7 @@ namespace Event_Server.Data
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
-                Converters = { new TupleConverter() }
+                Converters = { new TupleConverterBSI() }
             };
 
             string json = File.ReadAllText(filePath);

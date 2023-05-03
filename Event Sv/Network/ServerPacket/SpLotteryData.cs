@@ -9,9 +9,7 @@ namespace Event_Server.Network.ServerPacket
     {
         public SpLotteryData()
         {
-
             var LoadLottery = new Lottery().Load();
-
 
             msg = new ByteBuffer();
             msg.Write(OpCode.SendPacket[GetType()]);

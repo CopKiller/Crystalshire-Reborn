@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Event_Server.Network.ClientPacket
 {
-    public sealed class CpRequestLotteryData : IRecvPacket  {
+    public sealed class CpReceiveLotteryData : IRecvPacket  {
         public void Process(byte[] buffer, IConnection connection) {
             var msg = new ByteBuffer(buffer);
 

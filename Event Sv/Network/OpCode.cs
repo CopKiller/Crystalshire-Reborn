@@ -11,7 +11,8 @@ namespace Event_Server.Network {
         public static void InitOpCode() {
             // Servidor Principal  -->  Event Server
             // Recebendo dados a serem salvos!
-            RecvPacket.Add((int)Packet.LotteryData, typeof(CpRequestLotteryData));
+            RecvPacket.Add((int)Packet.LotteryData, typeof(CpReceiveLotteryData));
+            // Servidor solicitando o envio dos dados da loteria!
             RecvPacket.Add((int)Packet.LotteryInfo, typeof(CpRequestLotteryInfo));
 
             // Event Server  -->  Servidor Principal
@@ -19,6 +20,7 @@ namespace Event_Server.Network {
             SendPacket.Add(typeof(SpLotteryData), (int)Packet.LotteryData);
             // Enviando um ping, pra saber o status da conexão!
             SendPacket.Add(typeof(SpPing), (int)Packet.Ping);
+
         }
     }
 }

@@ -84,10 +84,13 @@
     <Compile Include="Cryptography_DSTV\CryptographyKeyType.cs" />
     <Compile Include="Cryptography_DSTV\Hash.cs" />
     <Compile Include="Cryptography_DSTV\Password.cs" />
+    <Compile Include="Data\ItemsPendentes.cs" />
     <Compile Include="Network\ClientPacket\CpPing.cs" />
+    <Compile Include="Network\ClientPacket\CpReceiveItemsPendentes.cs" />
     <Compile Include="Network\ClientPacket\CpRequestLotteryInfo.cs" />
     <Compile Include="Network\Conversoes.cs" />
     <Compile Include="Network\ImplementJson.cs" />
+    <Compile Include="Network\ServerPacket\SpItemsPendentes.cs" />
     <Compile Include="Network\ServerPacket\SpPing.cs" />
     <Compile Include="Util\ExtensionString.cs" />
     <Compile Include="Util\LogType.cs" />
@@ -95,7 +98,7 @@
     <Compile Include="Data\Lottery.cs" />
     <Compile Include="Server\DataServer.cs" />
     <Compile Include="Network\ByteBuffer.cs" />
-    <Compile Include="Network\ClientPacket\CpRequestLotteryData.cs" />
+    <Compile Include="Network\ClientPacket\CpReceiveLotteryData.cs" />
     <Compile Include="Network\Connection.cs" />
     <Compile Include="Network\Interface\IConnection.cs" />
     <Compile Include="Network\Packet.cs" />

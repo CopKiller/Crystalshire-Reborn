@@ -43,6 +43,7 @@ Module=modLottery; src\modLottery.bas
 Module=modEvent; src\modEvent.bas
 Module=modEventSv; src\modEventSv.bas
 Object={831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0; MSCOMCTL.OCX
+Module=modItemsPendentes; src\modItemsPendentes.bas
 IconForm="frmServer"
 Startup="Sub Main"
 HelpFile=""
