@@ -303,19 +303,19 @@ Option Explicit
 
 Private Sub chkBirthday_Click()
     If EditorIndex = 0 Then Exit Sub
-    
+
     Serial(EditorIndex).BirthDay = chkBirthday.Value
 End Sub
 
 Private Sub chkBlocked_Click()
     If EditorIndex = 0 Then Exit Sub
-    
+
     Serial(EditorIndex).Blocked = chkBlocked.Value
 End Sub
 
 Private Sub chkObtain_Click()
     If EditorIndex = 0 Then Exit Sub
-    
+
     Serial(EditorIndex).GiveOne = chkObtain.Value
 End Sub
 
@@ -332,7 +332,7 @@ Private Sub cmdAddItem_Click()
     ' make sure it's not a clear
     If Not cmbItems.list(cmbItems.ListIndex) = "No Items" Then
         Serial(EditorIndex).Item(lstItems.ListIndex + 1) = cmbItems.ListIndex
-        Serial(EditorIndex).ItemValue(lstItems.ListIndex + 1) = txtAmount.Text
+        Serial(EditorIndex).ItemValue(lstItems.ListIndex + 1) = txtAmount.text
     Else
         Serial(EditorIndex).Item(lstItems.ListIndex + 1) = 0
         Serial(EditorIndex).ItemValue(lstItems.ListIndex + 1) = 0
@@ -352,84 +352,84 @@ Private Sub cmdAddItem_Click()
 End Sub
 
 Private Sub cmdCancel_Click()
-    
+
     Call SerialEditorCancel
 
 End Sub
 
 Private Sub cmdDelete_Click()
-Dim tmpIndex As Long
-    
+    Dim tmpIndex As Long
+
     If EditorIndex = 0 Or EditorIndex > MAX_SERIAL_NUMBER Then Exit Sub
-    
+
     ClearSerial EditorIndex
-    
+
     tmpIndex = lstIndex.ListIndex
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Trim$(Serial(EditorIndex).Name), EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
-    
+
     SerialEditorInit
 End Sub
 
 Private Sub cmdSave_Click()
-    
+
     Call SerialEditorOk
 
 End Sub
 
 Private Sub lstIndex_Click()
-    
+
     SerialEditorInit
 
 End Sub
 
 Private Sub scrlGuildSlot_Change()
     If EditorIndex = 0 Then Exit Sub
-    
+
     Serial(EditorIndex).GiveGuildSlot = scrlGuildSlot.Value
 End Sub
 
 Private Sub scrlTechnique_Change()
     If EditorIndex = 0 Then Exit Sub
-    
+
     If scrlTechnique > 0 Then
         lblTecnica.caption = Trim$(Spell(scrlTechnique.Value).Name)
     Else
         lblTecnica.caption = "-Nome Tecnica-"
     End If
-    
+
     Serial(EditorIndex).GiveSpell = scrlTechnique.Value
 End Sub
 
 Private Sub txtDias_Change()
     If EditorIndex = 0 Then Exit Sub
-    
-    If Not IsNumeric(txtDias.Text) Then
-        txtDias.Text = vbNullString
+
+    If Not IsNumeric(txtDias.text) Then
+        txtDias.text = vbNullString
         Exit Sub
     End If
-    
-    If Val(txtDias.Text) > MAX_INTEGER Or Val(txtDias.Text) < 0 Then
-        txtDias.Text = vbNullString
+
+    If Val(txtDias.text) > MAX_INTEGER Or Val(txtDias.text) < 0 Then
+        txtDias.text = vbNullString
         Exit Sub
     End If
-    
-    Serial(EditorIndex).VipDays = txtDias.Text
+
+    Serial(EditorIndex).VipDays = txtDias.text
 End Sub
 
 Private Sub txtMsg_Change()
-If EditorIndex = 0 Then Exit Sub
+    If EditorIndex = 0 Then Exit Sub
 
-Serial(EditorIndex).Msg = Trim$(txtMsg.Text)
+    Serial(EditorIndex).Msg = Trim$(txtMsg.text)
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
-Dim tmpIndex As Long
-    
+    Dim tmpIndex As Long
+
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Serial(EditorIndex).Name = Trim$(txtName.Text)
+    Serial(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Serial(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
@@ -438,12 +438,12 @@ End Sub
 
 Private Sub txtPName_Change()
     If EditorIndex = 0 Then Exit Sub
-    
-    Serial(EditorIndex).NamePlayer = Trim$(txtPName.Text)
+
+    Serial(EditorIndex).NamePlayer = Trim$(txtPName.text)
 End Sub
 
 Private Sub txtSerial_Change()
     If EditorIndex = 0 Then Exit Sub
-    
-    Serial(EditorIndex).Serial = Trim$(txtSerial.Text)
+
+    Serial(EditorIndex).Serial = Trim$(txtSerial.text)
 End Sub

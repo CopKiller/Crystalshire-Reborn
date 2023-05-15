@@ -17,7 +17,7 @@ Public lottery As LotteryStruct
 
 Private Type BetStruct
     Owner As String * ACCOUNT_LENGTH
-    Value As Long
+    value As Long
 End Type
 
 Public Type LotteryStruct
@@ -78,7 +78,7 @@ Private Sub AddBetValue(ByVal Index As Long, ByVal BetID As Byte, ByVal BetValue
     Call SendEventMsgAll("[Lottery]", GetPlayerName(Index) & " bet on the number " & BetID & " value " & BetValue, White)
 
     lottery.Bet(BetID).Owner = GetPlayerName(Index)
-    lottery.Bet(BetID).Value = BetValue
+    lottery.Bet(BetID).value = BetValue
     
     SendLotterySaves Save
 End Sub
@@ -181,7 +181,7 @@ Public Sub CheckBetLoop()
                     lottery.Aviso(MAX_AVISOS) = True
                     Call SendLotteryInfosAll
 
-                    SendLotterySaves Save
+                    SendLotterySaves Saves
                 End If
             End If
         End If
@@ -219,7 +219,7 @@ Public Sub CheckBetLoop()
 
             lottery.LastBetNum = Number
             
-            SendLotterySaves Save    ' Faz a limpeza no servidor de eventos
+            SendLotterySaves Saves    ' Faz a limpeza no servidor de eventos
 
             Call SendEventMsgAll("[Lottery]", "The lottery has ended, next lottery starts in " & LOTTERY_START_HOURS & " hours", BrightRed)
 
@@ -289,8 +289,8 @@ Public Function GetBetsAccumulated() As Long
     Dim I As Byte
 
     For I = 1 To MAX_BETS
-        If lottery.Bet(I).Value > 0 Then
-            GetBetsAccumulated = GetBetsAccumulated + lottery.Bet(I).Value
+        If lottery.Bet(I).value > 0 Then
+            GetBetsAccumulated = GetBetsAccumulated + lottery.Bet(I).value
         End If
     Next I
 End Function
@@ -346,11 +346,12 @@ Public Sub LoadLottery()
         SString = CStr(Trim$(GetVar(Diretorio, "LOTTERY", "CountStr")))
         
         Filter = Split(SString, ",")
-        
-        For I = LBound(Filter) To UBound(Filter)
-            lottery.Bet(CByte(Filter(I))).Owner = Trim$(CStr(Trim$(GetVar(Diretorio, "LOTTERY", "BetOwner" & CByte(Filter(I))))))
-            lottery.Bet(CByte(Filter(I))).Value = Trim$(CLng(Trim$(GetVar(Diretorio, "LOTTERY", "BetValue" & CByte(Filter(I))))))
-        Next I
+        If UBound(Filter) >= 0 Then
+            For I = LBound(Filter) To UBound(Filter)
+                lottery.Bet(CByte(Filter(I))).Owner = Trim$(CStr(Trim$(GetVar(Diretorio, "LOTTERY", "BetOwner" & CByte(Filter(I))))))
+                lottery.Bet(CByte(Filter(I))).value = Trim$(CLng(Trim$(GetVar(Diretorio, "LOTTERY", "BetValue" & CByte(Filter(I))))))
+            Next I
+        End If
     Else
         Call RequestLotteryData
     End If
@@ -379,57 +380,59 @@ Public Sub SendLotterySaves(ByVal Save As EventOptions)
     Dim I As Byte
     Dim CountStr As String, Filter() As String
 
-    If Save = Save Then
-    If Options.EVENTSV = YES And IsEventServerConnected Then
-        Buffer.WriteLong SeLotteryData
-        Buffer.WriteByte ConvertBooleanToByte(lottery.Enabled)
-        Buffer.WriteByte ConvertBooleanToByte(lottery.BetEnabled)
-        Buffer.WriteLong lottery.Acumulado
-        Buffer.WriteByte lottery.LastBetNum
-        Buffer.WriteString lottery.LastBetWinner
+    If Save = Saves Then
+        If Options.EVENTSV = YES And IsEventServerConnected Then
+            Buffer.WriteLong SeLotteryData
+            Buffer.WriteByte ConvertBooleanToByte(lottery.Enabled)
+            Buffer.WriteByte ConvertBooleanToByte(lottery.BetEnabled)
+            Buffer.WriteLong lottery.Acumulado
+            Buffer.WriteByte lottery.LastBetNum
+            Buffer.WriteString lottery.LastBetWinner
 
-        For I = 1 To MAX_BETS
-            If LenB(Trim$(lottery.Bet(I).Owner)) > 0 Then
-                Buffer.WriteByte I
-                Buffer.WriteLong lottery.Bet(I).Value
-                Buffer.WriteString Trim$(lottery.Bet(I).Owner)
+            For I = 1 To MAX_BETS
+                If LenB(Trim$(lottery.Bet(I).Owner)) > 0 Then
+                    Buffer.WriteByte I
+                    Buffer.WriteLong lottery.Bet(I).value
+                    Buffer.WriteString Trim$(lottery.Bet(I).Owner)
+                End If
+            Next I
+
+            SendToEventServer Buffer.ToArray
+
+        ElseIf Options.EVENTSV = NO Or Not IsEventServerConnected Then
+            Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "Status", ConvertBooleanToByte(lottery.Enabled))
+            Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetStatus", ConvertBooleanToByte(lottery.BetEnabled))
+            Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "Accumulated", CStr(lottery.Acumulado))
+            Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "LastBetNum", CStr(lottery.LastBetNum))
+            Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "LastBetWinner", CStr(lottery.LastBetWinner))
+
+            For I = 1 To MAX_BETS
+                If Trim$(lottery.Bet(I).Owner) <> vbNullString Then
+                    If CountStr <> vbNullString Then CountStr = CountStr & "," & I
+                    If CountStr = vbNullString Then CountStr = I
+                End If
+            Next I
+
+            Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "CountStr", CountStr)
+
+            Filter = Split(CountStr, ",")
+
+            If UBound(Filter) > 0 Then
+                For I = 0 To UBound(Filter)
+                    If LenB(Trim$(Filter(I))) > 0 Then
+                        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetOwner" & Trim$(Filter(I)), Trim$(lottery.Bet(Filter(I)).Owner))
+                        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetValue" & Trim$(Filter(I)), Trim$(lottery.Bet(Filter(I)).value))
+                    End If
+                Next I
             End If
-        Next I
+        End If
 
-        SendToEventServer Buffer.ToArray
-
-    ElseIf Options.EVENTSV = NO Or Not IsEventServerConnected Then
-        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "Status", ConvertBooleanToByte(lottery.Enabled))
-        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetStatus", ConvertBooleanToByte(lottery.BetEnabled))
-        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "Accumulated", CStr(lottery.Acumulado))
-        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "LastBetNum", CStr(lottery.LastBetNum))
-        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "LastBetWinner", CStr(lottery.LastBetWinner))
-
-        For I = 1 To MAX_BETS
-            If Trim$(lottery.Bet(I).Owner) <> vbNullString Then
-                If CountStr <> vbNullString Then CountStr = CountStr & "," & I
-                If CountStr = vbNullString Then CountStr = I
-            End If
-        Next I
-
-        Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "CountStr", CountStr)
-
-        Filter = Split(CountStr, ",")
-
-        For I = 0 To UBound(Filter)
-            If LenB(Trim$(Filter(I))) > 0 Then
-                Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetOwner" & Trim$(Filter(I)), Trim$(lottery.Bet(Filter(I)).Owner))
-                Call PutVar(App.Path & "/data/EventsData.ini", "LOTTERY", "BetValue" & Trim$(Filter(I)), Trim$(lottery.Bet(Filter(I)).Value))
-            End If
-        Next I
-    End If
-    
     Else
         Buffer.WriteLong SeLotteryData
         SendToEventServer Buffer.ToArray
     End If
 
-Set Buffer = Nothing
+    Set Buffer = Nothing
 End Sub
 
 Public Sub RequestLotteryData()
@@ -469,10 +472,10 @@ Public Sub HandleLotteryData(ByVal Index As Long, ByRef Data() As Byte, ByVal St
             Indice = Buffer.ReadByte
             If Indice > 0 Then
                 lot.Bet(Indice).Owner = Buffer.ReadString
-                lot.Bet(Indice).Value = Buffer.ReadLong
+                lot.Bet(Indice).value = Buffer.ReadLong
                 
                 lottery.Bet(Indice).Owner = lot.Bet(Indice).Owner
-                lottery.Bet(Indice).Value = lot.Bet(Indice).Value
+                lottery.Bet(Indice).value = lot.Bet(Indice).value
             End If
         Next I
     End If

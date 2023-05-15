@@ -20,49 +20,52 @@ Public Sub HandleQuestEditor()
 
 End Sub
 
-Public Sub HandleUpdateQuest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub HandleUpdateQuest(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim QuestSize As Long
     Dim QuestData() As Byte
-    Dim DecompData()   As Byte
-    
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes Data()
-    DecompData = Buffer.UnCompressData
-    Set Buffer = Nothing
-    
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes DecompData
-    
-    n = Buffer.ReadLong
+    Dim DecompData() As Byte
+
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
+    DecompData = buffer.UnCompressData
+    Set buffer = Nothing
+
+    Set buffer = New clsBuffer
+    buffer.WriteBytes DecompData
+
+    n = buffer.ReadLong
     ' Update the Quest
     QuestSize = LenB(Quest(n))
     ReDim QuestData(QuestSize - 1)
-    QuestData = Buffer.ReadBytes(QuestSize)
+    QuestData = buffer.ReadBytes(QuestSize)
     CopyMemory ByVal VarPtr(Quest(n)), ByVal VarPtr(QuestData(0)), QuestSize
-    Set Buffer = Nothing
+    Set buffer = Nothing
 End Sub
 
-Public Sub HandlePlayerQuest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer
-    Dim i As Long, QuestNum As Long
+Public Sub HandlePlayerQuest(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+    Dim buffer As clsBuffer
+    Dim i As Long, QuestNum As Long, QSelected As Integer
 
-    Set Buffer = New clsBuffer
+    Set buffer = New clsBuffer
 
-    Buffer.WriteBytes Data()
+    buffer.WriteBytes data()
+    
+    ' Recebe se começou a quest e seleciona ela na lista
+    QSelected = buffer.ReadInteger
 
     For i = 1 To MAX_QUESTS
-        QuestNum = Buffer.ReadLong
+        QuestNum = buffer.ReadLong
 
         If QuestNum > 0 Then
-            Player(MyIndex).PlayerQuest(QuestNum).Status = Buffer.ReadLong
-            Player(MyIndex).PlayerQuest(QuestNum).ActualTask = Buffer.ReadLong
-            Player(MyIndex).PlayerQuest(QuestNum).CurrentCount = Buffer.ReadLong
-            
-            Player(MyIndex).PlayerQuest(QuestNum).TaskTimer.Active = Buffer.ReadByte
-            Player(MyIndex).PlayerQuest(QuestNum).TaskTimer.Timer = Buffer.ReadLong
-            
+            Player(MyIndex).PlayerQuest(QuestNum).Status = buffer.ReadLong
+            Player(MyIndex).PlayerQuest(QuestNum).ActualTask = buffer.ReadLong
+            Player(MyIndex).PlayerQuest(QuestNum).CurrentCount = buffer.ReadLong
+
+            Player(MyIndex).PlayerQuest(QuestNum).TaskTimer.Active = buffer.ReadByte
+            Player(MyIndex).PlayerQuest(QuestNum).TaskTimer.Timer = buffer.ReadLong
+
             QuestTimeToFinish = vbNullString
             QuestNameToFinish = vbNullString
             QuestSelect = QuestNum
@@ -70,50 +73,54 @@ Public Sub HandlePlayerQuest(ByVal Index As Long, ByRef Data() As Byte, ByVal St
     Next
 
     RefreshQuestWindow
+    
+    If QSelected > 0 Then
+        SelectLastQuest QSelected
+    End If
 
-    Buffer.Flush: Set Buffer = Nothing
+    buffer.Flush: Set buffer = Nothing
 End Sub
 
-Public Sub HandleQuestMessage(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer
+Public Sub HandleQuestMessage(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+    Dim buffer As clsBuffer
     Dim i As Long, QuestNum As Long, header As String, saycolour As Long
     Dim message As String
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes Data()
-    QuestNum = Buffer.ReadLong
-    message = Trim$(Buffer.ReadString)
-    saycolour = Buffer.ReadLong
-    header = Buffer.ReadString
-    
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
+    QuestNum = buffer.ReadLong
+    message = Trim$(buffer.ReadString)
+    saycolour = buffer.ReadLong
+    header = buffer.ReadString
+
     ' remove the colour char from the message
     message = Replace$(message, ColourChar, vbNullString)
-    
+
     AddText ColourChar & GetColStr(Gold) & header & Trim$(Quest(QuestNum).Name) & " : " & ColourChar & GetColStr(saycolour) & message, Grey, , ChatChannel.chQuest
 
-    Set Buffer = Nothing
+    Set buffer = Nothing
 End Sub
 
-Public Sub HandleQuestCancel(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer
+Public Sub HandleQuestCancel(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+    Dim buffer As clsBuffer
     Dim QuestNum As Long
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes Data()
-    
-    QuestNum = Buffer.ReadLong
-    Player(MyIndex).PlayerQuest(QuestNum).Status = Buffer.ReadLong
-    Player(MyIndex).PlayerQuest(QuestNum).ActualTask = Buffer.ReadLong
-    Player(MyIndex).PlayerQuest(QuestNum).CurrentCount = Buffer.ReadLong
-    
-    Player(MyIndex).PlayerQuest(QuestNum).TaskTimer.Active = Buffer.ReadByte
-    Player(MyIndex).PlayerQuest(QuestNum).TaskTimer.Timer = Buffer.ReadLong
-    
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
+
+    QuestNum = buffer.ReadLong
+    Player(MyIndex).PlayerQuest(QuestNum).Status = buffer.ReadLong
+    Player(MyIndex).PlayerQuest(QuestNum).ActualTask = buffer.ReadLong
+    Player(MyIndex).PlayerQuest(QuestNum).CurrentCount = buffer.ReadLong
+
+    Player(MyIndex).PlayerQuest(QuestNum).TaskTimer.Active = buffer.ReadByte
+    Player(MyIndex).PlayerQuest(QuestNum).TaskTimer.Timer = buffer.ReadLong
+
     QuestTimeToFinish = vbNullString
     QuestNameToFinish = vbNullString
 
     RefreshQuestWindow
-    
-    Set Buffer = Nothing
+
+    Set buffer = Nothing
 End Sub
 

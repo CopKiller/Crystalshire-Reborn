@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Net.NetworkInformation;
 using System.Net;
+using Event_Server.Server;
 
 namespace Event_Server.Network {
     public sealed class Connection : IConnection {
@@ -70,7 +71,7 @@ namespace Event_Server.Network {
                 if (Connection.HighIndex > 0)
                 {
 
-                    sPing.SendPacket();
+                    SpPing.SendPacket();
                 }
                 Connection.pingTick = Environment.TickCount + Constants.PingTime;
             }

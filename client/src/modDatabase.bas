@@ -133,7 +133,7 @@ Public Sub LoadOptions()
     End If
 
     Exit Sub
-    
+
 ErrorHandler:
     Options.Music = YES
     Options.sound = YES
@@ -154,7 +154,7 @@ ErrorHandler:
     Next
     ChangeControls_Restore
     SaveOptions
-    
+
     Exit Sub
 End Sub
 
@@ -183,7 +183,7 @@ Public Sub SaveMap(ByVal MapNum As Long)
         PutVar filename, "General", "MaxY", Val(.MaxY)
         PutVar filename, "General", "BossNpc", Val(.BossNpc)
         PutVar filename, "General", "Panorama", Val(.Panorama)
-        
+
         PutVar filename, "General", "Weather", Val(.Weather)
         PutVar filename, "General", "WeatherIntensity", Val(.WeatherIntensity)
         PutVar filename, "General", "Fog", Val(.Fog)
@@ -240,7 +240,7 @@ Public Sub SaveMap(ByVal MapNum As Long)
                         For Y = 1 To Map.TileData.Events(i).EventPage(X).CommandCount
                             With Map.TileData.Events(i).EventPage(X).Commands(Y)
                                 PutVar filename, "Event" & i & "Page" & X & "Command" & Y, "Type", Val(.Type)
-                                PutVar filename, "Event" & i & "Page" & X & "Command" & Y, "Text", .Text
+                                PutVar filename, "Event" & i & "Page" & X & "Command" & Y, "Text", .text
                                 PutVar filename, "Event" & i & "Page" & X & "Command" & Y, "Colour", Val(.Colour)
                                 PutVar filename, "Event" & i & "Page" & X & "Command" & Y, "Channel", Val(.channel)
                                 PutVar filename, "Event" & i & "Page" & X & "Command" & Y, "TargetType", Val(.TargetType)
@@ -309,7 +309,7 @@ Public Sub LoadMap(ByVal MapNum As Long)
         .MaxY = Val(GetVar(filename, "General", "MaxY"))
         .BossNpc = Val(GetVar(filename, "General", "BossNpc"))
         .Panorama = Val(GetVar(filename, "General", "Panorama"))
-        
+
         .Weather = Val(GetVar(filename, "General", "Weather"))
         .WeatherIntensity = Val(GetVar(filename, "General", "WeatherIntensity"))
         .Fog = Val(GetVar(filename, "General", "Fog"))
@@ -369,7 +369,7 @@ Public Sub LoadMap(ByVal MapNum As Long)
                         For Y = 1 To Map.TileData.Events(i).EventPage(X).CommandCount
                             With Map.TileData.Events(i).EventPage(X).Commands(Y)
                                 .Type = GetVar(filename, "Event" & i & "Page" & X & "Command" & Y, "Type")
-                                .Text = GetVar(filename, "Event" & i & "Page" & X & "Command" & Y, "Text")
+                                .text = GetVar(filename, "Event" & i & "Page" & X & "Command" & Y, "Text")
                                 .Colour = Val(GetVar(filename, "Event" & i & "Page" & X & "Command" & Y, "Colour"))
                                 .channel = Val(GetVar(filename, "Event" & i & "Page" & X & "Command" & Y, "Channel"))
                                 .TargetType = Val(GetVar(filename, "Event" & i & "Page" & X & "Command" & Y, "TargetType"))
@@ -425,7 +425,7 @@ Sub ClearItem(ByVal Index As Long)
     Item(Index).Name = vbNullString
     Item(Index).Desc = vbNullString
     Item(Index).sound = "None."
-    
+
     ' Clear CRC32
     Call ZeroMemory(ByVal VarPtr(ItemCRC32(Index)), LenB(ItemCRC32(Index)))
 End Sub
@@ -462,7 +462,7 @@ Sub ClearNPC(ByVal Index As Long)
     Call ZeroMemory(ByVal VarPtr(NPC(Index)), LenB(NPC(Index)))
     NPC(Index).Name = vbNullString
     NPC(Index).sound = "None."
-    
+
     ' Clear CRC32
     Call ZeroMemory(ByVal VarPtr(NpcCRC32(Index)), LenB(NpcCRC32(Index)))
 End Sub
@@ -672,7 +672,7 @@ End Function
 Sub SetPlayerMaxVital(ByVal Index As Long, ByVal Vital As Vitals, ByVal Value As Long)
 
     If Index > Player_HighIndex Then Exit Sub
-    
+
     Player(Index).MaxVital(Vital) = Value
 
 End Sub
@@ -755,13 +755,13 @@ Function GetPlayerInvItemNum(ByVal Index As Long, ByVal InvSlot As Long) As Long
 
     If Index > Player_HighIndex Then Exit Function
     If InvSlot = 0 Then Exit Function
-    GetPlayerInvItemNum = PlayerInv(InvSlot).num
+    GetPlayerInvItemNum = PlayerInv(InvSlot).Num
 End Function
 
 Sub SetPlayerInvItemNum(ByVal Index As Long, ByVal InvSlot As Long, ByVal itemNum As Long)
 
     If Index > Player_HighIndex Then Exit Sub
-    PlayerInv(InvSlot).num = itemNum
+    PlayerInv(InvSlot).Num = itemNum
 End Sub
 
 Function GetPlayerInvItemValue(ByVal Index As Long, ByVal InvSlot As Long) As Long
@@ -808,7 +808,7 @@ Public Function GetNpcMaxVitals(ByVal MapNpcNum As Byte, ByVal Vital As Vitals) 
 
     GetNpcMaxVitals = 0
 
-    NpcNum = MapNpc(MapNpcNum).num
+    NpcNum = MapNpc(MapNpcNum).Num
 
     If NpcNum <= 0 Then Exit Function
 

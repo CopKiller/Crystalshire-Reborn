@@ -50,7 +50,9 @@ Public Sub ConvertBinaryToPNG(sPath As String, ByRef I As Long, ByRef data() As 
     Next sFile
 
     For Each sFolder In fso.GetFolder(sPath).SubFolders
-        ConvertBinaryToPNG sFolder.Path, I, data()
+        If LCase(sFolder.Name) <> "fonts" Then
+            ConvertBinaryToPNG sFolder.Path, I, data()
+        End If
     Next sFolder
     
     ' Atualiza o diretório
@@ -66,20 +68,18 @@ Public Sub ConvertPNGToBinary(sPath As String, ByRef I As Long, ByRef data() As 
     Dim f As Long, l As Long, s As String, sFile As Object, NewName As String
     Dim sFolder As Object, encrypt() As Byte, length As Long
     
-    'Dim i As Long, data() As Byte
-
     Set fso = CreateObject("Scripting.FileSystemObject")
+    
     For Each sFile In fso.GetFolder(sPath).Files
         If UCase(Right(sFile.Name, 4)) = DecExtension Then
             I = I + 1
             f = FreeFile
             Open sFile.Path For Binary As #f
-            
-            
+        
             ReDim data(LOF(f) - 1)
             Get #f, , data ' Pega os bytes
             Close #f
-            
+        
             ' Inicia a encryptação AES 128bits
             encrypt = EncryptFile(data, (UBound(data) - LBound(data)) + 1)
             length = (UBound(encrypt) - LBound(encrypt)) + 1
@@ -89,19 +89,22 @@ Public Sub ConvertPNGToBinary(sPath As String, ByRef I As Long, ByRef data() As 
             Kill sFile.Path
             Erase data
         End If
-        
         DoEvents
     Next sFile
 
     For Each sFolder In fso.GetFolder(sPath).SubFolders
-        ConvertPNGToBinary sFolder.Path, I, data()
+        ' Ignora a pasta com o nome "fonts"
+        Debug.Print sFolder.Name
+        If LCase(sFolder.Name) <> "fonts" Then
+            ConvertPNGToBinary sFolder.Path, I, data()
+        End If
     Next sFolder
-    
+
     ' Atualiza o diretório
     RefreshDir
-    
+
     Call SetStatus("OK!!!", Green)
-    
+
     Set fso = Nothing
 End Sub
 

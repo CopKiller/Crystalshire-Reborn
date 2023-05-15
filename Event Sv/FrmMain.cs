@@ -10,6 +10,8 @@ using Event_Server.Communication;
 using Event_Server.Network.ServerPacket;
 using Event_Server.Data;
 using System.Net;
+using Event_Server.Network;
+using System.Threading.Tasks;
 
 namespace Event_Server
 {
@@ -84,9 +86,18 @@ namespace Event_Server
         private void InitServer()
         {
             InitLogs();
+            InitDiscordBotAsync();
             Server = new DataServer();
             Server.UpdateUps += UpdateUps;
             Server.InitServer();
+        }
+
+        private async Task InitDiscordBotAsync()
+        {
+            Global.DiscordBot = new DiscordBot();
+            await Global.DiscordBot.Start();
+
+            Global.SystemLogs.Write("DiscordBot Ready...", LogColor.Green);
         }
 
         private void InitLogs()
@@ -256,9 +267,10 @@ namespace Event_Server
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var SPacket = new SpLotteryData();
-
-            SPacket.SendPacket();
+            if (Connection.HighIndex > 0)
+            {
+                new SpLotteryData(new Lottery().Load()).Send(Connection.Connections[Connection.HighIndex]);
+            }
         }
     }
 }

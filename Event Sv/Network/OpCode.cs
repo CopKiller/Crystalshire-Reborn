@@ -14,6 +14,8 @@ namespace Event_Server.Network {
             RecvPacket.Add((int)Packet.LotteryData, typeof(CpReceiveLotteryData));
             // Servidor solicitando o envio dos dados da loteria!
             RecvPacket.Add((int)Packet.LotteryInfo, typeof(CpRequestLotteryInfo));
+            // Servidor enviando mensagem pra postar no discord!
+            RecvPacket.Add((int)Packet.DiscordMsg, typeof(CpReceiveDiscordMsg));
 
             // Event Server  -->  Servidor Principal
             // Enviando os dados salvo pro servidor principal

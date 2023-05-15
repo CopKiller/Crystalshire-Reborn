@@ -2,7 +2,7 @@ Attribute VB_Name = "modVideo"
 Option Explicit
 
 Public Declare Function LockWindowUpdate Lib "user32" (ByVal hwndLock As Long) As Long
-Public Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
+Public Declare Function GetClientRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
 
 Public BasicAudio As IBasicAudio
 Public BasicVideo As IBasicVideo
@@ -60,7 +60,7 @@ Public Sub PlayIntro()
 
     ' hack the window
     VideoWindow.WindowStyle = &H6000000
-    handle = frmMain.picIntro.hWnd
+    handle = frmMain.picIntro.hwnd
     VideoWindow.Owner = handle
 
     ' turn off music if need be
@@ -83,9 +83,9 @@ Public Sub PlayIntro()
     videoPlaying = True
     VideoLoop
 
-  '  Exit Sub
-'ErrorHandler:
- '   Exit Sub
+    '  Exit Sub
+    'ErrorHandler:
+    '   Exit Sub
 End Sub
 
 Public Sub StopIntro()

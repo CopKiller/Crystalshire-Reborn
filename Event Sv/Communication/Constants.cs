@@ -24,6 +24,10 @@
         public const int PORT = 7004;
 
         // Events
-        public const byte MAX_BETS = 100;
+        public const byte MaxBets = 100;
+
+        // Directories
+        public const string DirLottery = @"~\Lottery";
+        public const string DirItemsPendentes = @"~\ItemsPendentes";
     }
 }

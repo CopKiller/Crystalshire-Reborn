@@ -792,7 +792,7 @@ End Sub
 
 Private Sub scrlX_Change()
     lblX.caption = "X: " & scrlX.Value
-    Spell(EditorIndex).x = scrlX.Value
+    Spell(EditorIndex).X = scrlX.Value
 End Sub
 
 Private Sub scrlY_Change()
@@ -801,7 +801,7 @@ Private Sub scrlY_Change()
 End Sub
 
 Private Sub txtDesc_Change()
-    Spell(EditorIndex).Desc = txtDesc.Text
+    Spell(EditorIndex).Desc = txtDesc.text
 End Sub
 
 Public Sub txtName_Validate(Cancel As Boolean)
@@ -809,7 +809,7 @@ Public Sub txtName_Validate(Cancel As Boolean)
 
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Spell(EditorIndex).Name = Trim$(txtName.Text)
+    Spell(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Spell(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex

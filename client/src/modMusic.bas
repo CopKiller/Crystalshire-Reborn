@@ -154,7 +154,7 @@ ErrorHandler:
     Destroy_Music
 End Sub
 
-Public Sub Play_Sound(ByVal sound As String, Optional ByVal x As Long = -1, Optional ByVal y As Long = -1)
+Public Sub Play_Sound(ByVal sound As String, Optional ByVal X As Long = -1, Optional ByVal Y As Long = -1)
     Dim dX As Long, dY As Long, volume As Long, distance As Long
 
     On Error GoTo ErrorHandler
@@ -163,20 +163,20 @@ Public Sub Play_Sound(ByVal sound As String, Optional ByVal x As Long = -1, Opti
 
     ' exit out early if we have the system turned off
     If Options.sound = 0 Then Exit Sub
-    If x > -1 And y > -1 Then
+    If X > -1 And Y > -1 Then
 
         ' x
-        If x < GetPlayerX(MyIndex) Then
-            dX = GetPlayerX(MyIndex) - x
-        ElseIf x > GetPlayerX(MyIndex) Then
-            dX = x - GetPlayerX(MyIndex)
+        If X < GetPlayerX(MyIndex) Then
+            dX = GetPlayerX(MyIndex) - X
+        ElseIf X > GetPlayerX(MyIndex) Then
+            dX = X - GetPlayerX(MyIndex)
         End If
 
         ' y
-        If y < GetPlayerY(MyIndex) Then
-            dY = GetPlayerY(MyIndex) - y
-        ElseIf y > GetPlayerY(MyIndex) Then
-            dY = y - GetPlayerY(MyIndex)
+        If Y < GetPlayerY(MyIndex) Then
+            dY = GetPlayerY(MyIndex) - Y
+        ElseIf Y > GetPlayerY(MyIndex) Then
+            dY = Y - GetPlayerY(MyIndex)
         End If
 
         ' distance

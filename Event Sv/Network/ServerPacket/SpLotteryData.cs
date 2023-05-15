@@ -7,9 +7,8 @@ namespace Event_Server.Network.ServerPacket
 {
     public sealed class SpLotteryData : SendPacket
     {
-        public SpLotteryData()
+        public SpLotteryData(Lottery LoadLottery)
         {
-            var LoadLottery = new Lottery().Load();
 
             msg = new ByteBuffer();
             msg.Write(OpCode.SendPacket[GetType()]);
@@ -37,12 +36,12 @@ namespace Event_Server.Network.ServerPacket
         }
 
         // Exemplo de como enviar uma packet pro client sem precisar do servidor principal acioná-la!
-        public void SendPacket()
-        {
-            if (Connection.HighIndex > 0)
-            {
-                new SpLotteryData().Send(Connection.Connections[Connection.HighIndex]);
-            }
-        }
+        //public void SendPacket(Lottery LoadLottery)
+        //{
+        //    if (Connection.HighIndex > 0)
+        //    {
+        //        new SpLotteryData(LoadLottery).Send(Connection.Connections[Connection.HighIndex]);
+        //    }
+        //}
     }
 }

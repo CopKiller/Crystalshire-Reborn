@@ -138,7 +138,7 @@ Private Sub chkPlayer_Click()
         For i = 1 To MAX_GUILD_CAPACITY
 
             ' Verifica o controle que vai selecionar
-            If GlobalX >= .Window.left + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).left And GlobalX <= .Window.left + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).left + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Width Then
+            If GlobalX >= .Window.Left + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Left And GlobalX <= .Window.Left + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Left + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Width Then
                 If GlobalY >= .Window.top + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).top And GlobalY <= .Window.top + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).top + .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Height Then
                     Selected = i
                 End If
@@ -156,7 +156,7 @@ Private Sub BtnGuildKick()
     Dim Selected As Byte
 
     If Player(MyIndex).Guild_ID = 0 Then Exit Sub
-    
+
     If GuildMembers(Player(MyIndex).Guild_ID).Membro(Player(MyIndex).Guild_MembroID).Admin = False Then
         AddText "Apenas Líderes da guild podem fazer isso!", BrightRed
         Exit Sub
@@ -164,13 +164,13 @@ Private Sub BtnGuildKick()
 
     With Windows(GetWindowIndex("winGuildMenu"))
         For i = 1 To MAX_GUILD_CAPACITY
-           If i <= Guild(Player(MyIndex).Guild_ID).Capacidade Then
-            If GuildMembers(Player(MyIndex).Guild_ID).Membro(i).MembroID <> 0 Then
-                If .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Value Then
-                    Selected = i: Exit For
+            If i <= Guild(Player(MyIndex).Guild_ID).Capacidade Then
+                If GuildMembers(Player(MyIndex).Guild_ID).Membro(i).MembroID <> 0 Then
+                    If .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Value Then
+                        Selected = i: Exit For
+                    End If
                 End If
             End If
-           End If
         Next i
 
         If Selected > 0 Then
@@ -188,7 +188,7 @@ Private Sub BtnGuildRebaixar()
     Dim Selected As Byte
 
     If Player(MyIndex).Guild_ID = 0 Then Exit Sub
-    
+
     If GuildMembers(Player(MyIndex).Guild_ID).Membro(Player(MyIndex).Guild_MembroID).Admin = False Then
         AddText "Apenas donos da guild podem fazer isso!", BrightRed
         Exit Sub
@@ -243,9 +243,9 @@ Private Sub BtnGuildPromote()
 End Sub
 
 Private Sub BtnGuildInvite()
-    SendGuildInvite Windows(GetWindowIndex("winGuildMenu")).Controls(GetControlIndex("winGuildMenu", "txtInvite")).Text
+    SendGuildInvite Windows(GetWindowIndex("winGuildMenu")).Controls(GetControlIndex("winGuildMenu", "txtInvite")).text
 
-    Windows(GetWindowIndex("winGuildMenu")).Controls(GetControlIndex("winGuildMenu", "txtInvite")).Text = vbNullString
+    Windows(GetWindowIndex("winGuildMenu")).Controls(GetControlIndex("winGuildMenu", "txtInvite")).text = vbNullString
 End Sub
 
 Private Sub BtnGuildDestroy()
@@ -262,7 +262,7 @@ Private Sub DrawFlagBox()
     With Windows(GetWindowIndex("winGuildMenu"))
 
         'RenderEntity_Square Tex_Design(17), .Window.Left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).Left, .Window.top + .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).top, 17, 13, 1, 100
-        RenderDesign DesignTypes.desTileBox, .Window.left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).left, .Window.top + .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).top, 17, 13
+        RenderDesign DesignTypes.desTileBox, .Window.Left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).Left, .Window.top + .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).top, 17, 13
     End With
 End Sub
 
@@ -276,7 +276,7 @@ Private Sub SetPicSelect()
     With Windows(GetWindowIndex("winGuildMenu"))
         .Controls(GetControlIndex("winGuildMenu", "picSelect")).visible = True
         .Controls(GetControlIndex("winGuildMenu", "picSelect")).top = .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).top - 12
-        .Controls(GetControlIndex("winGuildMenu", "picSelect")).left = .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).left
+        .Controls(GetControlIndex("winGuildMenu", "picSelect")).Left = .Controls(GetControlIndex("winGuildMenu", "picFlags" & Player(MyIndex).Guild_Icon)).Left
     End With
 End Sub
 
@@ -285,7 +285,7 @@ Private Sub btnSelect_Flag()
     If Player(MyIndex).Guild_ID = 0 Then Exit Sub
     With Windows(GetWindowIndex("winGuildMenu"))
         For i = 1 To Count_Flags
-            If GlobalX >= .Window.left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).left And GlobalX <= .Window.left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).Width Then
+            If GlobalX >= .Window.Left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).Left And GlobalX <= .Window.Left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).Left + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).Width Then
                 If GlobalY >= .Window.top + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).top And GlobalY <= .Window.top + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).top + .Controls(GetControlIndex("winGuildMenu", "picFlags" & i)).Height Then
                     Player(MyIndex).Guild_Icon = i
                     SetPicSelect
@@ -365,7 +365,7 @@ End Sub
 
 Public Sub SendSaveGuild()
     Dim Anuncio As String, Color As Byte, IconChanged As Byte
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     If GuildMembers(Player(MyIndex).Guild_ID).Membro(Player(MyIndex).Guild_MembroID).Admin = False Then
         AddText "Apenas donos da guild podem fazer isso!", BrightRed
@@ -374,7 +374,7 @@ Public Sub SendSaveGuild()
         Exit Sub
     End If
 
-    Anuncio = Windows(GetWindowIndex("winGuildMenu")).Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).Text
+    Anuncio = Windows(GetWindowIndex("winGuildMenu")).Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).text
     Color = (Windows(GetWindowIndex("winGuildMenu")).Controls(GetControlIndex("winGuildMenu", "cmbColor")).Value - 1)
     IconChanged = Player(MyIndex).Guild_Icon
 
@@ -385,16 +385,16 @@ Public Sub SendSaveGuild()
 
     If IconChanged = 0 Then IconChanged = Guild(Player(MyIndex).Guild_ID).Icon
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CSaveGuild
+    Set buffer = New clsBuffer
+    buffer.WriteLong CSaveGuild
 
-    Buffer.WriteString Anuncio
-    Buffer.WriteByte Color
-    Buffer.WriteByte IconChanged
+    buffer.WriteString Anuncio
+    buffer.WriteByte Color
+    buffer.WriteByte IconChanged
 
-    SendData Buffer.ToArray()
+    SendData buffer.ToArray()
 
-    Buffer.Flush: Set Buffer = Nothing
+    buffer.Flush: Set buffer = Nothing
 End Sub
 
 Public Sub UpdateWindowGuild()
@@ -428,20 +428,20 @@ Public Sub UpdateWindowGuild()
         Next i
 
         'Painel Geral
-        .Controls(GetControlIndex("winGuild", "lblGuild")).Text = Guild(GuildID).Name
-        .Controls(GetControlIndex("winGuild", "lblRank")).Text = "Lider: " & GuildLeader
-        .Controls(GetControlIndex("winGuild", "lblKills")).Text = "Kills: " & Guild(GuildID).Kills
-        .Controls(GetControlIndex("winGuild", "lblVictory")).Text = "Vitorias: " & Guild(GuildID).Victory
-        .Controls(GetControlIndex("winGuild", "lblLose")).Text = "Derrotas: " & Guild(GuildID).Lose
-        .Controls(GetControlIndex("winGuild", "lblHonra")).Text = "Honra: " & Guild(GuildID).Honra
-        .Controls(GetControlIndex("winGuild", "lblMembers")).Text = "Membros: " & GuildMembros
-        .Controls(GetControlIndex("winGuild", "lblAnnouncement")).Text = Guild(GuildID).Motd
+        .Controls(GetControlIndex("winGuild", "lblGuild")).text = Guild(GuildID).Name
+        .Controls(GetControlIndex("winGuild", "lblRank")).text = "Lider: " & GuildLeader
+        .Controls(GetControlIndex("winGuild", "lblKills")).text = "Kills: " & Guild(GuildID).Kills
+        .Controls(GetControlIndex("winGuild", "lblVictory")).text = "Vitorias: " & Guild(GuildID).Victory
+        .Controls(GetControlIndex("winGuild", "lblLose")).text = "Derrotas: " & Guild(GuildID).Lose
+        .Controls(GetControlIndex("winGuild", "lblHonra")).text = "Honra: " & Guild(GuildID).Honra
+        .Controls(GetControlIndex("winGuild", "lblMembers")).text = "Membros: " & GuildMembros
+        .Controls(GetControlIndex("winGuild", "lblAnnouncement")).text = Guild(GuildID).Motd
     End With
 
     ' Painel Guild Menu
     With Windows(GetWindowIndex("winGuildMenu"))
         .Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).Height = (TextHeight(font(verdanaBold_12)) * 5)
-        .Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).Text = Guild(GuildID).Motd
+        .Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).text = Guild(GuildID).Motd
         AddComboColors
         ' Coloca o nome do jogador na lista de players da guild no guild menu
         For i = 1 To Guild(GuildID).Capacidade
@@ -449,22 +449,22 @@ Public Sub UpdateWindowGuild()
                 If GuildMembers(GuildID).Membro(i).Admin = True Then
                     If GuildMembers(GuildID).Membro(i).Dono = True Then
                         If GuildMembers(GuildID).Membro(i).Online = True Then
-                            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = GuildMembers(GuildID).Membro(i).Name & "[Leader] (On)"
+                            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = GuildMembers(GuildID).Membro(i).Name & "[Leader] (On)"
                         Else
-                            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = GuildMembers(GuildID).Membro(i).Name & "[Leader] (Off)"
+                            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = GuildMembers(GuildID).Membro(i).Name & "[Leader] (Off)"
                         End If
                     Else
                         If GuildMembers(GuildID).Membro(i).Online = True Then
-                            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = GuildMembers(GuildID).Membro(i).Name & "[Admin] (On)"
+                            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = GuildMembers(GuildID).Membro(i).Name & "[Admin] (On)"
                         Else
-                            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = GuildMembers(GuildID).Membro(i).Name & "[Admin] (Off)"
+                            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = GuildMembers(GuildID).Membro(i).Name & "[Admin] (Off)"
                         End If
                     End If
                 Else
                     If GuildMembers(GuildID).Membro(i).Online = True Then
-                        .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = GuildMembers(GuildID).Membro(i).Name & " (On)"
+                        .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = GuildMembers(GuildID).Membro(i).Name & " (On)"
                     Else
-                        .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = GuildMembers(GuildID).Membro(i).Name & " (Off)"
+                        .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = GuildMembers(GuildID).Membro(i).Name & " (Off)"
                     End If
                 End If
                 ' Enable Checkboxes
@@ -472,7 +472,7 @@ Public Sub UpdateWindowGuild()
             Else
                 ' Disable Checkboxes caso nao exista o jogador
                 .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).enabled = False
-                .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = "Vazio"
+                .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = "Vazio"
                 .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Value = 0
                 .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).textColour = White
             End If
@@ -481,7 +481,7 @@ Public Sub UpdateWindowGuild()
         ' Adiciona o nome ''Bloqueado'' em slots que a guild ainda não possui adquirido
         If Guild(GuildID).Capacidade < MAX_GUILD_CAPACITY Then
             For i = (Guild(GuildID).Capacidade + 1) To MAX_GUILD_CAPACITY
-                .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = "Locked (Unlock Donate)"
+                .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = "Locked (Unlock Donate)"
                 .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).textColour = BrightRed
                 .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).enabled = False
             Next i
@@ -495,25 +495,25 @@ Public Sub ClearWindowGuild()
 
     ' Painel da Guild
     With Windows(GetWindowIndex("winGuild"))
-        .Controls(GetControlIndex("winGuild", "lblGuild")).Text = "Nenhuma Guild"
-        .Controls(GetControlIndex("winGuild", "lblRank")).Text = "Lider: "
-        .Controls(GetControlIndex("winGuild", "lblKills")).Text = "Kills: "
-        .Controls(GetControlIndex("winGuild", "lblVictory")).Text = "Vitorias: "
-        .Controls(GetControlIndex("winGuild", "lblLose")).Text = "Derrotas: "
-        .Controls(GetControlIndex("winGuild", "lblHonra")).Text = "Honra: "
-        .Controls(GetControlIndex("winGuild", "lblMembers")).Text = "Membros: "
-        .Controls(GetControlIndex("winGuild", "lblAnnouncement")).Text = vbNullString
-        .Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).Text = vbNullString
+        .Controls(GetControlIndex("winGuild", "lblGuild")).text = "Nenhuma Guild"
+        .Controls(GetControlIndex("winGuild", "lblRank")).text = "Lider: "
+        .Controls(GetControlIndex("winGuild", "lblKills")).text = "Kills: "
+        .Controls(GetControlIndex("winGuild", "lblVictory")).text = "Vitorias: "
+        .Controls(GetControlIndex("winGuild", "lblLose")).text = "Derrotas: "
+        .Controls(GetControlIndex("winGuild", "lblHonra")).text = "Honra: "
+        .Controls(GetControlIndex("winGuild", "lblMembers")).text = "Membros: "
+        .Controls(GetControlIndex("winGuild", "lblAnnouncement")).text = vbNullString
+        .Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).text = vbNullString
     End With
 
     ' Painel Guild Menu
     With Windows(GetWindowIndex("winGuildMenu"))
         .Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).Height = (TextHeight(font(verdanaBold_12)) * 5)
-        .Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).Text = vbNullString
+        .Controls(GetControlIndex("winGuildMenu", "txtAnnouncement")).text = vbNullString
 
         ' Adiciona o nome ''Bloqueado'' em slots que a guild ainda não possui adquirido
         For i = 1 To MAX_GUILD_CAPACITY
-            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Text = "Vazio"
+            .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).text = "Vazio"
             .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).textColour = White
             .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).enabled = False
             .Controls(GetControlIndex("winGuildMenu", "chkPlayer" & i)).Value = 0
@@ -550,27 +550,27 @@ Public Sub btnCreateGuild()
         ' Window visible?
         If .Window.visible = False Then Exit Sub
         ' Have Guild Name?
-        If .Controls(GetControlIndex("winGuildMaker", "txtGuildName")).Text = vbNullString Then Exit Sub
+        If .Controls(GetControlIndex("winGuildMaker", "txtGuildName")).text = vbNullString Then Exit Sub
         ' Ok, Send It.
-        Call SendCriarGuild(.Controls(GetControlIndex("winGuildMaker", "txtGuildName")).Text)
+        Call SendCriarGuild(.Controls(GetControlIndex("winGuildMaker", "txtGuildName")).text)
         ' Hide the window.
         HideWindow GetWindowIndex("winGuildMaker")
     End With
 End Sub
 
 Public Sub btnCloseCreateGuild()
-    Windows(GetWindowIndex("winGuildMaker")).Controls(GetControlIndex("winGuildMaker", "txtGuildName")).Text = vbNullString
+    Windows(GetWindowIndex("winGuildMaker")).Controls(GetControlIndex("winGuildMaker", "txtGuildName")).text = vbNullString
     HideWindow GetWindowIndex("winGuildMaker")
 End Sub
 
 Public Sub DrawGuild(ByVal Index As Long)
-    Dim textX As Long, textY As Long, Text As String, textSize As Long, Colour As Long, Icon As Byte
+    Dim textX As Long, textY As Long, text As String, textSize As Long, Colour As Long, Icon As Byte
 
     If Player(Index).Guild_ID = 0 Then Exit Sub
 
     Icon = Guild(Player(Index).Guild_ID).Icon
-    Text = Trim$(Guild(Player(Index).Guild_ID).Name)
-    textSize = TextWidth(font(Fonts.rockwell_15), Text)
+    text = Trim$(Guild(Player(Index).Guild_ID).Name)
+    textSize = TextWidth(font(Fonts.rockwell_15), text)
     ' get the colour
     Colour = Guild(Player(Index).Guild_ID).Color
 
@@ -581,7 +581,7 @@ Public Sub DrawGuild(ByVal Index As Long)
         textY = GetPlayerY(Index) * PIC_Y + Player(Index).yOffset - (mTexture(Tex_Char(GetPlayerSprite(Index))).h / 4)
     End If
 
-    Call RenderText(font(Fonts.rockwell_15), Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
+    Call RenderText(font(Fonts.rockwell_15), text, ConvertMapX(textX), ConvertMapY(textY), Colour)
 
     If Icon > 0 Then
         textX = textX - 18

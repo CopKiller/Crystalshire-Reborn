@@ -64,7 +64,7 @@ Public Sub MapEditorProperties()
     ' finished populating
     With frmEditor_MapProperties
         .scrlBoss.max = MAX_MAP_NPCS
-        .txtName.Text = Trim$(Map.MapData.Name)
+        .txtName.text = Trim$(Map.MapData.Name)
 
         ' find the music we have set
         If .lstMusic.ListCount >= 0 Then
@@ -82,35 +82,35 @@ Public Sub MapEditorProperties()
         End If
 
         ' rest of it
-        .txtUp.Text = CStr(Map.MapData.Up)
-        .txtDown.Text = CStr(Map.MapData.Down)
-        .txtLeft.Text = CStr(Map.MapData.Left)
-        .txtRight.Text = CStr(Map.MapData.Right)
+        .txtUp.text = CStr(Map.MapData.Up)
+        .txtDown.text = CStr(Map.MapData.Down)
+        .txtLeft.text = CStr(Map.MapData.Left)
+        .txtRight.text = CStr(Map.MapData.Right)
         .cmbMoral.ListIndex = Map.MapData.Moral
-        .txtBootMap.Text = CStr(Map.MapData.BootMap)
-        .txtBootX.Text = CStr(Map.MapData.BootX)
-        .txtBootY.Text = CStr(Map.MapData.BootY)
+        .txtBootMap.text = CStr(Map.MapData.BootMap)
+        .txtBootX.text = CStr(Map.MapData.BootX)
+        .txtBootY.text = CStr(Map.MapData.BootY)
         .scrlBoss = Map.MapData.BossNpc
         .scrlPanorama = Map.MapData.Panorama
-        
+
         .CmbWeather.ListIndex = Map.MapData.Weather
         .scrlWeatherIntensity.Value = Map.MapData.WeatherIntensity
-        
+
         .ScrlFog.max = Count_Fog
         .ScrlFog.Value = Map.MapData.Fog
         .ScrlFogSpeed.Value = Map.MapData.FogSpeed
         .scrlFogOpacity.Value = Map.MapData.FogOpacity
-        
+
         .scrlR.Value = Map.MapData.Red
         .scrlG.Value = Map.MapData.Green
         .scrlB.Value = Map.MapData.Blue
         .scrlA.Value = Map.MapData.Alpha
-        
+
         .scrlSun.max = Count_Sun
         .scrlSun.Value = Map.MapData.Sun
-        
+
         .cmbDayNight.ListIndex = Map.MapData.DayNight
-        
+
         ' show the map npcs
         .lstNpcs.Clear
 
@@ -141,8 +141,8 @@ Public Sub MapEditorProperties()
         .cmbNpc.ListIndex = Map.MapData.NPC(NpcNum)
         ' show the current map
         .lblMap.caption = "Current map: " & GetPlayerMap(MyIndex)
-        .txtMaxX.Text = Map.MapData.MaxX
-        .txtMaxY.Text = Map.MapData.MaxY
+        .txtMaxX.text = Map.MapData.MaxX
+        .txtMaxY.text = Map.MapData.MaxY
     End With
 
 End Sub
@@ -375,7 +375,7 @@ Public Sub MapEditorMouseDown(ByVal Button As Integer, ByVal X As Long, ByVal Y 
                     .Data4 = 0
                     .Data5 = 0
                 End If
-                
+
                 ' Light
                 If frmEditor_Map.optLight.Value Then
                     .Type = TILE_TYPE_LIGHT
@@ -707,7 +707,7 @@ End Sub
 ' /////////////////
 Public Sub ItemEditorInit()
     Dim i As Long, SoundSet As Boolean, tmpNum As Long
-    
+
     On Error Resume Next
 
     If frmEditor_Item.visible = False Then Exit Sub
@@ -729,13 +729,13 @@ Public Sub ItemEditorInit()
 
     ' finished populating
     With Item(EditorIndex)
-        frmEditor_Item.txtName.Text = Trim$(.Name)
+        frmEditor_Item.txtName.text = Trim$(.Name)
 
         If .Pic > frmEditor_Item.scrlPic.max Then .Pic = 0
         frmEditor_Item.scrlPic.Value = .Pic
         frmEditor_Item.cmbType.ListIndex = .Type
         frmEditor_Item.scrlAnim.Value = .Animation
-        frmEditor_Item.txtDesc.Text = Trim$(.Desc)
+        frmEditor_Item.txtDesc.text = Trim$(.Desc)
         frmEditor_Item.chkStackable.Value = Item(EditorIndex).Stackable
         frmEditor_Item.scrlGiveSpell.Value = Item(EditorIndex).GiveSpellNum
         frmEditor_Item.chkDropDead.Value = Item(EditorIndex).DropDead
@@ -760,7 +760,7 @@ Public Sub ItemEditorInit()
         ' Type specific settings
         If (frmEditor_Item.cmbType.ListIndex >= ITEM_TYPE_WEAPON) And (frmEditor_Item.cmbType.ListIndex <= ITEM_TYPE_RINGRIGHT) Then
             frmEditor_Item.fraEquipment.visible = True
-            frmEditor_Item.txtDamage.Text = .Data2
+            frmEditor_Item.txtDamage.text = .Data2
             frmEditor_Item.chkPercentDamage.Value = .Data2_Percent
             frmEditor_Item.cmbTool.ListIndex = .Data3
 
@@ -769,9 +769,9 @@ Public Sub ItemEditorInit()
 
             ' loop for stats
             For i = 1 To Stats.Stat_Count - 1
-                frmEditor_Item.txtStatBonus(i).Text = .Add_Stat(i)
+                frmEditor_Item.txtStatBonus(i).text = .Add_Stat(i)
                 frmEditor_Item.chkPercentStats(i).Value = .Stat_Percent(i)
-                
+
                 'Base Atribute
                 frmEditor_Item.optBase(.AtributeBase).Value = True
             Next
@@ -827,7 +827,7 @@ Public Sub ItemEditorInit()
 
         ' loop for stats
         For i = 1 To Stats.Stat_Count - 1
-            frmEditor_Item.txtStatReq(i).Text = .Stat_Req(i)
+            frmEditor_Item.txtStatReq(i).text = .Stat_Req(i)
         Next
 
         ' Build cmbClassReq
@@ -840,7 +840,7 @@ Public Sub ItemEditorInit()
 
         frmEditor_Item.cmbClassReq.ListIndex = .ClassReq
         ' Info
-        frmEditor_Item.txtPrice.Text = .price
+        frmEditor_Item.txtPrice.text = .price
         frmEditor_Item.cmbBind.ListIndex = .BindType
         frmEditor_Item.scrlRarity.Value = .Rarity
         EditorIndex = frmEditor_Item.lstIndex.ListIndex + 1
@@ -913,7 +913,7 @@ Public Sub AnimationEditorInit()
 
     ' finished populating
     With Animation(EditorIndex)
-        frmEditor_Animation.txtName.Text = Trim$(.Name)
+        frmEditor_Animation.txtName.text = Trim$(.Name)
 
         ' find the sound we have set
         If frmEditor_Animation.cmbSound.ListCount >= 0 Then
@@ -1004,15 +1004,15 @@ Public Sub NpcEditorInit()
     ' finished populating
     With frmEditor_NPC
         .scrlSpell.max = MAX_NPC_SPELLS
-        .txtName.Text = Trim$(NPC(EditorIndex).Name)
-        .txtAttackSay.Text = Trim$(NPC(EditorIndex).AttackSay)
+        .txtName.text = Trim$(NPC(EditorIndex).Name)
+        .txtAttackSay.text = Trim$(NPC(EditorIndex).AttackSay)
 
         If NPC(EditorIndex).Sprite < 0 Or NPC(EditorIndex).Sprite > .scrlSprite.max Then NPC(EditorIndex).Sprite = 0
         .scrlSprite.Value = NPC(EditorIndex).Sprite
         .cmbBehaviour.ListIndex = NPC(EditorIndex).Behaviour
         .scrlRange.Value = NPC(EditorIndex).Range
-        .txtExp.Text = NPC(EditorIndex).EXP
-        .txtLevel.Text = NPC(EditorIndex).Level
+        .txtExp.text = NPC(EditorIndex).EXP
+        .txtLevel.text = NPC(EditorIndex).Level
         .scrlConv.Value = NPC(EditorIndex).Conv
         .scrlAnimation.Value = NPC(EditorIndex).Animation
         .chkShadow.Value = NPC(EditorIndex).Shadow
@@ -1020,15 +1020,15 @@ Public Sub NpcEditorInit()
 
         ' spawn variavel
         .chkRndSpawn.Value = NPC(EditorIndex).RndSpawn
-        .txtSpawnSecs.Text = CStr(NPC(EditorIndex).SpawnSecs)
-        .txtSpawnSecsMin.Text = CStr(NPC(EditorIndex).SpawnSecsMin)
+        .txtSpawnSecs.text = CStr(NPC(EditorIndex).SpawnSecs)
+        .txtSpawnSecsMin.text = CStr(NPC(EditorIndex).SpawnSecsMin)
 
         ' exp variavel
         .chkRndExp.Value = NPC(EditorIndex).RandExp
         .opPercent_5.Value = CBool(NPC(EditorIndex).Percent_5)
         .opPercent_10.Value = CBool(NPC(EditorIndex).Percent_10)
         .opPercent_20.Value = CBool(NPC(EditorIndex).Percent_20)
-        
+
         ' block chance
         .scrlBlockChance.Value = NPC(EditorIndex).BlockChance
 
@@ -1048,7 +1048,7 @@ Public Sub NpcEditorInit()
         End If
 
         For i = 1 To Stats.Stat_Count - 1
-            .txtStat(i).Text = NPC(EditorIndex).Stat(i)
+            .txtStat(i).text = NPC(EditorIndex).Stat(i)
         Next
 
         ' Drop Items
@@ -1131,7 +1131,7 @@ Public Sub ConvEditorInit()
         ' Não permitindo que o controle event seja alterado.
         .IsIniting = True
 
-        .txtName.Text = Trim$(Conv(EditorIndex).Name)
+        .txtName.text = Trim$(Conv(EditorIndex).Name)
 
         If Conv(EditorIndex).chatCount = 0 Then
             .curConv = 1
@@ -1159,7 +1159,7 @@ Public Sub ConvEditorInit()
             If Conv(EditorIndex).Conv(.scrlConv.Value).rTarget(i) > Conv(EditorIndex).chatCount Then
                 Conv(EditorIndex).Conv(.scrlConv.Value).rTarget(i) = 0
             End If
-            .txtReply(i).Text = Conv(EditorIndex).Conv(.scrlConv.Value).rText(i)
+            .txtReply(i).text = Conv(EditorIndex).Conv(.scrlConv.Value).rText(i)
             .cmbReply(i).ListIndex = Conv(EditorIndex).Conv(.scrlConv.Value).rTarget(i)
         Next
 
@@ -1235,9 +1235,9 @@ Public Sub ResourceEditorInit()
         .scrlExhaustedPic.max = Count_Resource
         .scrlNormalPic.max = Count_Resource
         .scrlAnimation.max = MAX_ANIMATIONS
-        .txtName.Text = Trim$(Resource(EditorIndex).Name)
-        .txtMessage.Text = Trim$(Resource(EditorIndex).SuccessMessage)
-        .txtMessage2.Text = Trim$(Resource(EditorIndex).EmptyMessage)
+        .txtName.text = Trim$(Resource(EditorIndex).Name)
+        .txtMessage.text = Trim$(Resource(EditorIndex).SuccessMessage)
+        .txtMessage2.text = Trim$(Resource(EditorIndex).EmptyMessage)
         .cmbType.ListIndex = Resource(EditorIndex).ResourceType
         .scrlNormalPic.Value = Resource(EditorIndex).ResourceImage
         .scrlExhaustedPic.Value = Resource(EditorIndex).ExhaustedImage
@@ -1304,7 +1304,7 @@ Public Sub ShopEditorInit()
 
     If frmEditor_Shop.visible = False Then Exit Sub
     EditorIndex = frmEditor_Shop.lstIndex.ListIndex + 1
-    frmEditor_Shop.txtName.Text = Trim$(Shop(EditorIndex).Name)
+    frmEditor_Shop.txtName.text = Trim$(Shop(EditorIndex).Name)
 
     If Shop(EditorIndex).BuyRate > 0 Then
         frmEditor_Shop.scrlBuy.Value = Shop(EditorIndex).BuyRate
@@ -1434,8 +1434,8 @@ Public Sub SpellEditorInit()
 
         .cmbClass.ListIndex = 0
         ' set values
-        .txtName.Text = Trim$(Spell(EditorIndex).Name)
-        .txtDesc.Text = Trim$(Spell(EditorIndex).Desc)
+        .txtName.text = Trim$(Spell(EditorIndex).Name)
+        .txtDesc.text = Trim$(Spell(EditorIndex).Desc)
         .cmbType.ListIndex = Spell(EditorIndex).Type
         .scrlMP.Value = Spell(EditorIndex).MPCost
         .scrlLevel.Value = Spell(EditorIndex).LevelReq
@@ -1458,7 +1458,7 @@ Public Sub SpellEditorInit()
         Else
             .chkAOE.Value = 0
         End If
-        
+
         .chkCanRun.Value = Spell(EditorIndex).CanRun
 
         .scrlAOE.Value = Spell(EditorIndex).AoE

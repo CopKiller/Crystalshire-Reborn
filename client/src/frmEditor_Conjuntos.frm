@@ -443,19 +443,19 @@ Option Explicit
 
 Private Sub chkPercentDamage_Click()
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
+
     Conjunto(EditorIndex).Bonus.DanoPercent = chkPercentDamage.Value
 End Sub
 
 Private Sub chkPercentDefense_Click()
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
+
     Conjunto(EditorIndex).Bonus.DefesaPercent = chkPercentDefense.Value
 End Sub
 
 Private Sub chkPercentStats_Click(Index As Integer)
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
+
     Conjunto(EditorIndex).Bonus.Add_Stat_Percent(Index) = CByte(chkPercentStats(Index).Value)
 End Sub
 
@@ -524,66 +524,66 @@ End Sub
 
 Private Sub scrlAnim_Change()
     If scrlAnim = 0 Or scrlAnim > MAX_ANIMATIONS Then Exit Sub
-    
+
     If Trim$(Animation(scrlAnim.Value).Name) <> vbNullString Then
         lblAnim.caption = "Anim: " & Trim$(Animation(scrlAnim.Value).Name)
     End If
-    
+
     Conjunto(EditorIndex).Actions.Animation = scrlAnim.Value
 End Sub
 
 Private Sub txtDamage_Change()
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
-    If Not IsNumeric(txtDamage.Text) Then
-        txtDamage.Text = 0
+
+    If Not IsNumeric(txtDamage.text) Then
+        txtDamage.text = 0
     End If
-    
-    Conjunto(EditorIndex).Bonus.Dano = CLng(txtDamage.Text)
+
+    Conjunto(EditorIndex).Bonus.Dano = CLng(txtDamage.text)
 End Sub
 
 Private Sub txtDefense_Change()
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
-    If Not IsNumeric(txtDefense.Text) Then
-        txtDefense.Text = 0
+
+    If Not IsNumeric(txtDefense.text) Then
+        txtDefense.text = 0
     End If
-    
-    Conjunto(EditorIndex).Bonus.Defesa = CLng(txtDefense.Text)
+
+    Conjunto(EditorIndex).Bonus.Defesa = CLng(txtDefense.text)
 End Sub
 
 Private Sub txtDrop_Change()
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
+
     If Not IsNumeric(txtDrop) Then
         txtDrop = 0
     End If
-    
+
     If txtDrop > 100 Then
         txtDrop = 100
     End If
-    
+
     If txtDrop < 0 Then
         txtDrop = 0
     End If
-    
+
     Conjunto(EditorIndex).Bonus.Drop = CByte(txtDrop)
 End Sub
 
 Private Sub txtEXP_Change()
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
-    If Not IsNumeric(txtExp.Text) Then
-        txtExp.Text = 0
+
+    If Not IsNumeric(txtExp.text) Then
+        txtExp.text = 0
     End If
-    
-    Conjunto(EditorIndex).Bonus.EXP = CLng(txtExp.Text)
+
+    Conjunto(EditorIndex).Bonus.EXP = CLng(txtExp.text)
 End Sub
 
 Private Sub txtMsg_Change()
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
-    Conjunto(EditorIndex).Actions.Msg = Trim$(txtMsg.Text)
+
+    Conjunto(EditorIndex).Actions.Msg = Trim$(txtMsg.text)
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
@@ -591,7 +591,7 @@ Private Sub txtName_Validate(Cancel As Boolean)
 
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Conjunto(EditorIndex).Name = Trim$(txtName.Text)
+    Conjunto(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Conjunto(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
@@ -599,10 +599,10 @@ End Sub
 
 Private Sub txtStatBonus_Change(Index As Integer)
     If EditorIndex = 0 Or EditorIndex > MAX_CONJUNTOS Then Exit Sub
-    
-    If Not IsNumeric(txtStatBonus(Index).Text) Then
-        txtStatBonus(Index).Text = 0
+
+    If Not IsNumeric(txtStatBonus(Index).text) Then
+        txtStatBonus(Index).text = 0
     End If
-    
-    Conjunto(EditorIndex).Bonus.Add_Stat(Index) = CLng(txtStatBonus(Index).Text)
+
+    Conjunto(EditorIndex).Bonus.Add_Stat(Index) = CLng(txtStatBonus(Index).text)
 End Sub

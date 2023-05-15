@@ -125,7 +125,7 @@ Private Declare Function CloseHandle Lib "kernel32" (ByVal hObject As Long) As L
 
 Private Declare Function GetDesktopWindow Lib "user32.dll" () As Long
 
-Private Declare Function IsWindowUnicode Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function IsWindowUnicode Lib "user32.dll" (ByVal hwnd As Long) As Long
 
 Private Declare Function CreateStreamOnHGlobal _
                           Lib "ole32" (ByVal hGlobal As Long, _
@@ -270,7 +270,7 @@ Private Declare Function GdipBitmapSetPixel _
 
 Private Declare Function GdipCreateBitmapFromHBITMAP _
                           Lib "GdiPlus.dll" (ByVal hbm As Long, _
-                                             ByVal hpal As Long, _
+                                             ByVal hPal As Long, _
                                              ByRef pbitmap As Long) As Long
 
 Private Declare Function GdipCreateBitmapFromGraphics _
@@ -306,10 +306,10 @@ Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
 
 Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
 
-Private Declare Function GetDC Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function GetDC Lib "user32.dll" (ByVal hwnd As Long) As Long
 
 Private Declare Function ReleaseDC _
-                          Lib "user32.dll" (ByVal hWnd As Long, _
+                          Lib "user32.dll" (ByVal hwnd As Long, _
                                             ByVal hDC As Long) As Long
 
 Private Declare Function GetDIBits _
@@ -328,6 +328,8 @@ Private Declare Function CreateDIBSection _
                                            ByRef lplpVoid As Long, _
                                            ByVal handle As Long, _
                                            ByVal dW As Long) As Long
+
+Private Declare Function CreateCompatibleBitmap Lib "gdi32" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
 
 Private Type BITMAPINFOHEADER   ' structure used within icon image data
 
@@ -1120,13 +1122,13 @@ Public Function LoadPicture_FromNothing(Width As Long, _
 ExitRoutine:
 End Function
 
-Public Function LoadPicture_stdPicture(Picture As StdPicture, _
+Public Function LoadPicture_stdPicture(picture As StdPicture, _
                                        TokenClass As cGDIpToken, _
                                        Optional ClearAttributes As Boolean = True) As Boolean
 
     If TokenClass Is Nothing Then Exit Function
     If TokenClass.Token = 0& Then Exit Function
-    If Picture Is Nothing Then Exit Function
+    If picture Is Nothing Then Exit Function
 
     Dim lClearFlag As pvCleanUpEnum
 
@@ -1139,21 +1141,21 @@ Public Function LoadPicture_stdPicture(Picture As StdPicture, _
 
     If ClearAttributes Then lClearFlag = cuDestroyAll Else lClearFlag = cuDestroyAll Xor cuResetAttrs
 
-    Select Case Picture.Type
+    Select Case picture.Type
 
     Case vbPicTypeBitmap    ' pass off to another function. VB bitmaps are DIBs
-        LoadPicture_stdPicture = LoadPicture_DIBhandle(Picture.handle, TokenClass, ClearAttributes)
+        LoadPicture_stdPicture = LoadPicture_DIBhandle(picture.handle, TokenClass, ClearAttributes)
 
     Case vbPicTypeEMetafile, vbPicTypeMetafile
 
-        If pvMetaFileTo32bpp(Picture, 0&, lClearFlag) = True Then    ' convert metafile to bitmap
-            If Picture.Type = vbPicTypeEMetafile Then m_ImageType = imageEMF Else m_ImageType = imageWMF
+        If pvMetaFileTo32bpp(picture, 0&, lClearFlag) = True Then    ' convert metafile to bitmap
+            If picture.Type = vbPicTypeEMetafile Then m_ImageType = imageEMF Else m_ImageType = imageWMF
             LoadPicture_stdPicture = True
         End If
 
     Case vbPicTypeIcon
         Set oldSource = m_Source(0)     ' back up current image type
-        Set m_Source(0) = Picture
+        Set m_Source(0) = picture
         oldType = m_ImageType
         m_ImageType = imageIcon
 
@@ -1588,7 +1590,7 @@ Public Function SaveAsOriginalFormat(outArray() As Byte) As Boolean
 '   the converted internal bitmap, those chunks will no longer be there, but the returned
 '   bytes will be a PNG format.
 
-    Dim IIStream As IUnknown, IPIC As IPicture
+    Dim IIStream As IUnknown, IPic As IPicture
 
     Dim lSize As Long, bFalse As Boolean
 
@@ -1610,12 +1612,12 @@ Public Function SaveAsOriginalFormat(outArray() As Byte) As Boolean
     Else
 
         If TypeOf m_Source(0) Is StdPicture Then
-            Set IPIC = m_Source(0)
+            Set IPic = m_Source(0)
             Set IIStream = pvStreamFromArray(0&, 0&)
 
-            If (IPIC Is Nothing Or IIStream Is Nothing) Then Exit Function
+            If (IPic Is Nothing Or IIStream Is Nothing) Then Exit Function
             ' have VB's stdPicture save to our stream
-            IPIC.SaveAsFile ByVal ObjPtr(IIStream), bFalse, lSize
+            IPic.SaveAsFile ByVal ObjPtr(IIStream), bFalse, lSize
 
             If lSize = 0& Then Exit Function
         Else
@@ -2408,7 +2410,7 @@ End Function
 ' Routine is a helper function for the SavePicture routine
 Private Function pvGetEncoderClsID(strMimeType As String, ClassID() As Long) As Long
 
-    Dim num As Long
+    Dim Num As Long
 
     Dim SizeA As Long
 
@@ -2418,27 +2420,27 @@ Private Function pvGetEncoderClsID(strMimeType As String, ClassID() As Long) As 
 
     Dim ICI() As ImageCodecInfo
 
-    Dim Buffer() As Byte, sMime As String
+    Dim buffer() As Byte, sMime As String
 
     '-- Get the encoder array size
-    Call GdipGetImageEncodersSize(num, SizeA)
+    Call GdipGetImageEncodersSize(Num, SizeA)
 
     If (SizeA = 0&) Then Exit Function    ' Failed!
 
     '-- Allocate room for the arrays dynamically
-    ReDim ICI(1 To num) As ImageCodecInfo
-    ReDim Buffer(1 To SizeA) As Byte
+    ReDim ICI(1 To Num) As ImageCodecInfo
+    ReDim buffer(1 To SizeA) As Byte
 
     '-- Get the array and string data
-    Call GdipGetImageEncoders(num, SizeA, Buffer(1))
+    Call GdipGetImageEncoders(Num, SizeA, buffer(1))
     '-- Copy the class headers
-    Call CopyMemory(ICI(1), Buffer(1), (Len(ICI(1)) * num))
+    Call CopyMemory(ICI(1), buffer(1), (Len(ICI(1)) * Num))
 
     SizeA = Len(strMimeType)
     sMime = String$(SizeA, vbNullChar)
 
     '-- Loop through all the codecs
-    For LIdx = num To 1& Step -1&
+    For LIdx = Num To 1& Step -1&
 
         '-- Must convert the pointer into a usable string
         With ICI(LIdx)
@@ -2542,20 +2544,20 @@ Private Function pvIconTo32bpp(Index As Long, resetFlags As pvCleanUpEnum) As Bo
 
     Dim srcPtr As Long, dstPtr As Long, palIndex As Long, lColor As Long, bFalse As Boolean
 
-    Dim BHI As BITMAPINFO, IIStream As IUnknown, IIBackup As IUnknown, IPIC As IPicture
+    Dim BHI As BITMAPINFO, IIStream As IUnknown, IIBackup As IUnknown, IPic As IPicture
 
     ' Test for PNG encoded icon. Offset=location in icon source where icon starts
     If TypeOf m_Source(0) Is StdPicture Then
         Set IIStream = pvStreamFromArray(0&, 0&)
 
         If Not IIStream Is Nothing Then
-            Set IPIC = m_Source(0)
-            IPIC.SaveAsFile ByVal ObjPtr(IIStream), bFalse, X    ' have VB's stdPicture save icon to stream for us
+            Set IPic = m_Source(0)
+            IPic.SaveAsFile ByVal ObjPtr(IIStream), bFalse, X    ' have VB's stdPicture save icon to stream for us
 
             If X = 0& Then Exit Function    ' failed
             If pvStreamToArray(ObjPtr(IIStream), bBits()) = False Then Exit Function
             Set IIStream = Nothing
-            Set IPIC = Nothing
+            Set IPic = Nothing
         End If
 
     Else
@@ -2821,7 +2823,7 @@ Private Function pvMetaFileTo32bpp(metaSource As IUnknown, _
 
     Dim bFalse As Boolean, lSize As Long, dibPtr As Long
 
-    Dim IIStream As IUnknown, IPIC As IPicture, Bounds As RECTF
+    Dim IIStream As IUnknown, IPic As IPicture, Bounds As RECTF
 
     Dim BHI As BITMAPINFO, cRenderer As cGDIpRenderer
 
@@ -2834,13 +2836,13 @@ Private Function pvMetaFileTo32bpp(metaSource As IUnknown, _
     Const PICTURE_TRANSPARENT = &H2
 
     If TypeOf metaSource Is StdPicture Then        ' called from LoadPicture_stdPicture
-        Set IPIC = metaSource
-        Set IIStream = IPIC                                         ' new source if load is successful
+        Set IPic = metaSource
+        Set IIStream = IPic                                         ' new source if load is successful
 
-        If (IPIC.Attributes And PICTURE_TRANSPARENT) Then lColorType = PixelFormat32bppARGB Else lColorType = PixelFormat24bppRGB
-        hImage = IPIC.handle                                        ' make non-zero
-        cx = IPIC.Width * 1440& / 2540& / Screen.TwipsPerPixelX     ' get size in pixels
-        cy = IPIC.Height * 1440& / 2540& / Screen.TwipsPerPixelY
+        If (IPic.Attributes And PICTURE_TRANSPARENT) Then lColorType = PixelFormat32bppARGB Else lColorType = PixelFormat24bppRGB
+        hImage = IPic.handle                                        ' make non-zero
+        cx = IPic.Width * 1440& / 2540& / Screen.TwipsPerPixelX     ' get size in pixels
+        cy = IPic.Height * 1440& / 2540& / Screen.TwipsPerPixelY
     Else                                        ' called from LoadPicture_Stream
         Call GdipGetImageHorizontalResolution(theImage, xyRatio)     ' calc size
 
@@ -2890,7 +2892,7 @@ Private Function pvMetaFileTo32bpp(metaSource As IUnknown, _
             If BHI.bmiHeader.biBitCount = 32 Then FillMemory ByVal dibPtr, BHI.bmiHeader.biSizeImage, 255
             hObj = SelectObject(tDC, hDib)
 
-            If IPIC Is Nothing Then                             ' rendering from stream object not stdPicture object
+            If IPic Is Nothing Then                             ' rendering from stream object not stdPicture object
                 Set cRenderer = New cGDIpRenderer
                 cRenderer.AttachTokenClass m_Token
                 hGraphics = cRenderer.CreateHGraphicsFromHDC(tDC)
@@ -2904,7 +2906,7 @@ Private Function pvMetaFileTo32bpp(metaSource As IUnknown, _
 
                 Set cRenderer = Nothing
             Else                                                ' rendering from stdPicture object
-                IPIC.Render tDC + 0&, 0&, 0&, cx + 0&, cy + 0&, 0&, IPIC.Height, IPIC.Width, -IPIC.Height, ByVal 0&
+                IPic.Render tDC + 0&, 0&, 0&, cx + 0&, cy + 0&, 0&, IPic.Height, IPic.Width, -IPic.Height, ByVal 0&
             End If
 
             SelectObject tDC, hObj
@@ -2914,7 +2916,7 @@ Private Function pvMetaFileTo32bpp(metaSource As IUnknown, _
                 DeleteObject hDib
             Else
 
-                If IPIC Is Nothing Then GdipDisposeImage theImage    ' destroy passed theImage
+                If IPic Is Nothing Then GdipDisposeImage theImage    ' destroy passed theImage
                 hImage = 0&
 
                 If BHI.bmiHeader.biBitCount = 24 Then           ' create new bitmap from DIB; no alpha checks necessary. Done.

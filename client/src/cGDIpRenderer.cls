@@ -42,7 +42,7 @@ Private Declare Function GdipCreateFromHDC _
                                          hGraphics As Long) As Long
 
 Private Declare Function GdipCreateFromHWND _
-                          Lib "gdiplus" (ByVal hWnd As Long, _
+                          Lib "gdiplus" (ByVal hwnd As Long, _
                                          hGraphics As Long) As Long
 
 Private Declare Function GdipDeleteGraphics _
@@ -275,10 +275,10 @@ Public Function CreateHGraphicsFromHDC(ByVal hDC As Long) As Long
 
 End Function
 
-Public Function CreateHGraphicsFromHWND(ByVal hWnd As Long) As Long
+Public Function CreateHGraphicsFromHWND(ByVal hwnd As Long) As Long
 
-    If Not (hWnd = 0& Or (m_Token Is Nothing)) Then
-        If m_Token.Token Then Call GdipCreateFromHWND(hWnd, CreateHGraphicsFromHWND)
+    If Not (hwnd = 0& Or (m_Token Is Nothing)) Then
+        If m_Token.Token Then Call GdipCreateFromHWND(hwnd, CreateHGraphicsFromHWND)
     End If
 
 End Function

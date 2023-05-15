@@ -353,7 +353,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub chkShadow_Click()
-Resource(EditorIndex).Shadow = chkShadow.Value
+    Resource(EditorIndex).Shadow = chkShadow.Value
 End Sub
 
 Private Sub cmbType_Click()
@@ -387,10 +387,10 @@ Private Sub lstIndex_Click()
 End Sub
 
 Private Sub scrlAnimation_Change()
-    Dim sString As String
+    Dim SString As String
 
-    If scrlAnimation.Value = 0 Then sString = "None" Else sString = Trim$(Animation(scrlAnimation.Value).Name)
-    lblAnim.caption = "Animation: " & sString
+    If scrlAnimation.Value = 0 Then SString = "None" Else SString = Trim$(Animation(scrlAnimation.Value).Name)
+    lblAnim.caption = "Animation: " & SString
     Resource(EditorIndex).Animation = scrlAnimation.Value
 End Sub
 
@@ -448,11 +448,11 @@ Private Sub scrlTool_Change()
 End Sub
 
 Private Sub txtMessage_Change()
-    Resource(EditorIndex).SuccessMessage = Trim$(txtMessage.Text)
+    Resource(EditorIndex).SuccessMessage = Trim$(txtMessage.text)
 End Sub
 
 Private Sub txtMessage2_Change()
-    Resource(EditorIndex).EmptyMessage = Trim$(txtMessage2.Text)
+    Resource(EditorIndex).EmptyMessage = Trim$(txtMessage2.text)
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
@@ -460,7 +460,7 @@ Private Sub txtName_Validate(Cancel As Boolean)
 
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Resource(EditorIndex).Name = Trim$(txtName.Text)
+    Resource(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Resource(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex

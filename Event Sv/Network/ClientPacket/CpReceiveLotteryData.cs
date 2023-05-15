@@ -21,7 +21,7 @@ namespace Event_Server.Network.ClientPacket
 
             // Cria uma lista com as apostas.
             var apostas = new List<(byte, string, int)>();
-            for (int i = 1; i <= Constants.MAX_BETS; i++)
+            for (int i = 1; i <= Constants.MaxBets; i++)
             {
                 byte j = msg.ReadByte();
                 if (j > 0)

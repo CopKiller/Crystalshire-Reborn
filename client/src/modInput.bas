@@ -21,6 +21,13 @@ Public Sub CheckKeys()
     If GetAsyncKeyState(VK_DOWN) >= 0 Then SetaDown = False
     If GetAsyncKeyState(VK_LEFT) >= 0 Then SetaLeft = False
     If GetAsyncKeyState(VK_RIGHT) >= 0 Then SetaRight = False
+    If GetAsyncKeyState(VK_RIGHT) >= 0 Then SetaRight = False
+
+    If GetAsyncKeyState(VK_LBUTTON) >= 0 Then IsLeftMouseButtonDown = False
+
+    'If GetAsyncKeyState(VK_CONTROL) >= 0 And GetAsyncKeyState(VK_V) >= 0 Then
+    '    Ctrl_V = False
+    'End If
 End Sub
 
 Public Sub CheckInputKeys()
@@ -62,103 +69,103 @@ Public Sub CheckInputKeys()
         TargetDown = False
     End If
 
-        If GetKeyState(Options.PegarItem) < 0 Then
-            CheckMapGetItem
-        End If
+    If GetKeyState(Options.PegarItem) < 0 Then
+        CheckMapGetItem
+    End If
+    ' move up
+    If GetKeyState(Options.Up) < 0 Then
+        upDown = True
+        downDown = False
+        leftDown = False
+        rightDown = False
+        Exit Sub
+    Else
+        upDown = False
+    End If
+    'Move Right
+    If GetKeyState(Options.Right) < 0 Then
+        upDown = False
+        downDown = False
+        leftDown = False
+        rightDown = True
+        Exit Sub
+    Else
+        rightDown = False
+    End If
+    'Move down
+    If GetKeyState(Options.Down) < 0 Then
+        upDown = False
+        downDown = True
+        leftDown = False
+        rightDown = False
+        Exit Sub
+    Else
+        downDown = False
+    End If
+    'Move left
+    If GetKeyState(Options.Left) < 0 Then
+        upDown = False
+        downDown = False
+        leftDown = True
+        rightDown = False
+        Exit Sub
+    Else
+        leftDown = False
+    End If
+
+    If Options.UsarSetas > 0 Then
         ' move up
-        If GetKeyState(Options.Up) < 0 Then
-            upDown = True
-            downDown = False
-            leftDown = False
-            rightDown = False
+        If GetKeyState(VK_UP) < 0 Then
+            SetaUp = True
+            SetaDown = False
+            SetaLeft = False
+            SetaRight = False
             Exit Sub
         Else
-            upDown = False
+            SetaUp = False
         End If
         'Move Right
-        If GetKeyState(Options.Right) < 0 Then
-            upDown = False
-            downDown = False
-            leftDown = False
-            rightDown = True
+        If GetKeyState(VK_RIGHT) < 0 Then
+            SetaUp = False
+            SetaDown = False
+            SetaLeft = False
+            SetaRight = True
             Exit Sub
         Else
-            rightDown = False
+            SetaRight = False
         End If
         'Move down
-        If GetKeyState(Options.Down) < 0 Then
-            upDown = False
-            downDown = True
-            leftDown = False
-            rightDown = False
+        If GetKeyState(VK_DOWN) < 0 Then
+            SetaUp = False
+            SetaDown = True
+            SetaLeft = False
+            SetaRight = False
             Exit Sub
         Else
-            downDown = False
+            SetaDown = False
         End If
         'Move left
-        If GetKeyState(Options.Left) < 0 Then
-            upDown = False
-            downDown = False
-            leftDown = True
-            rightDown = False
+        If GetKeyState(VK_LEFT) < 0 Then
+            SetaUp = False
+            SetaDown = False
+            SetaLeft = True
+            SetaRight = False
             Exit Sub
         Else
             leftDown = False
         End If
-
-        If Options.UsarSetas > 0 Then
-            ' move up
-            If GetKeyState(VK_UP) < 0 Then
-                SetaUp = True
-                SetaDown = False
-                SetaLeft = False
-                SetaRight = False
-                Exit Sub
-            Else
-                SetaUp = False
-            End If
-            'Move Right
-            If GetKeyState(VK_RIGHT) < 0 Then
-                SetaUp = False
-                SetaDown = False
-                SetaLeft = False
-                SetaRight = True
-                Exit Sub
-            Else
-                SetaRight = False
-            End If
-            'Move down
-            If GetKeyState(VK_DOWN) < 0 Then
-                SetaUp = False
-                SetaDown = True
-                SetaLeft = False
-                SetaRight = False
-                Exit Sub
-            Else
-                SetaDown = False
-            End If
-            'Move left
-            If GetKeyState(VK_LEFT) < 0 Then
-                SetaUp = False
-                SetaDown = False
-                SetaLeft = True
-                SetaRight = False
-                Exit Sub
-            Else
-                leftDown = False
-            End If
-        End If
+    End If
 
 End Sub
 
 Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
-    Dim chatText As String, Name As String, i As Long, n As Long, Command() As String, Buffer As clsBuffer, tmpNum As Long
+    Dim chatText As String, Name As String, i As Long, n As Long, Command() As String, buffer As clsBuffer, tmpNum As Long, tmpText As String
 
     ' Exit if
     If Windows(GetWindowIndex("winChangeControls")).Window.visible Then Exit Sub
 
     If InGame Then
-        chatText = Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text
+        chatText = Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text
     End If
 
     If KeyAscii = vbKeyEscape Then Exit Sub
@@ -174,8 +181,8 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
                     ' Handle input
                     Select Case KeyAscii
                     Case vbKeyBack
-                        If LenB(.Text) > 0 Then
-                            .Text = Left$(.Text, Len(.Text) - 1)
+                        If LenB(.text) > 0 Then
+                            .text = Left$(.text, Len(.text) - 1)
                         End If
                     Case vbKeyReturn
                         ' override for function callbacks
@@ -208,9 +215,20 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
                             Next
                         End If
                     Case Else
-                        ' Respeita o maximo de letras do controle, caso nao tenha limita em 255 characteres
-                        If Len(.Text) < .max Then
-                            .Text = .Text & ChrW$(KeyAscii)
+                        'chatLineIndex
+                        If Ctrl_V Then
+                            Ctrl_V = False
+                            tmpText = GetClipboardText
+                            If LenB(Trim$(tmpText)) > 0 Then
+                                If (Len(.text) + Len(tmpText)) < .max Then
+                                    .text = .text & GetClipboardText
+                                Else
+                                    AddText "String length exceeded limit", BrightRed, , ChatChannel.chGame
+                                End If
+                            End If
+                            ' Respeita o maximo de letras do controle, caso nao tenha limita em 255 characteres
+                        ElseIf Len(.text) < .max Then
+                            .text = .text & ChrW$(KeyAscii)
                         End If
                     End Select
                     ' exit out early - if not chatting
@@ -228,7 +246,7 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
         If Windows(GetWindowIndex("winChatSmall")).Window.visible Then
             ShowChat
             inSmallChat = False
-            
+
             SendStatusDigitando YES
             Exit Sub
         Else
@@ -243,7 +261,7 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
                 Call BroadcastMsg(chatText)
             End If
 
-            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text = vbNullString
+            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text = vbNullString
             HideChat
             Exit Sub
         End If
@@ -256,7 +274,7 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
                 Call GuildMsg(chatText)
             End If
 
-            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text = vbNullString
+            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text = vbNullString
             HideChat
             Exit Sub
         End If
@@ -269,7 +287,7 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
                 Call PartyMsg(chatText)
             End If
 
-            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text = vbNullString
+            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text = vbNullString
             HideChat
             Exit Sub
         End If
@@ -282,7 +300,7 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
                 Call EmoteMsg(chatText)
             End If
 
-            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text = vbNullString
+            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text = vbNullString
             HideChat
             Exit Sub
         End If
@@ -316,7 +334,7 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
                 Call AddText("Usage: !playername (message)", AlertColor)
             End If
 
-            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text = vbNullString
+            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text = vbNullString
             HideChat
             Exit Sub
         End If
@@ -352,11 +370,11 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
                     GoTo continue
                 End If
 
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong CPlayerInfoRequest
-                Buffer.WriteString Command(1)
-                SendData Buffer.ToArray()
-                Set Buffer = Nothing
+                Set buffer = New clsBuffer
+                buffer.WriteLong CPlayerInfoRequest
+                buffer.WriteString Command(1)
+                SendData buffer.ToArray()
+                Set buffer = Nothing
 
                 ' Whos Online
             Case "/who"
@@ -368,10 +386,10 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
 
                 ' Request stats
             Case "/stats"
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong CGetStats
-                SendData Buffer.ToArray()
-                Set Buffer = Nothing
+                Set buffer = New clsBuffer
+                buffer.WriteLong CGetStats
+                SendData buffer.ToArray()
+                Set buffer = Nothing
 
                 ' // Monitor Admin Commands //
                 ' Kicking a player
@@ -586,7 +604,7 @@ Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
 
             'continue label where we go instead of exiting the sub
 continue:
-            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text = vbNullString
+            Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text = vbNullString
             HideChat
             Exit Sub
         End If
@@ -596,7 +614,7 @@ continue:
             Call SayMsg(chatText)
         End If
 
-        Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text = vbNullString
+        Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text = vbNullString
 
         ' hide/show chat window
         If Windows(GetWindowIndex("winChat")).Window.visible Then HideChat

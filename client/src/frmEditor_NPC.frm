@@ -710,7 +710,7 @@ Private Sub chkRndSpawn_Click()
 End Sub
 
 Private Sub chkShadow_Click()
-NPC(EditorIndex).Shadow = chkShadow.Value
+    NPC(EditorIndex).Shadow = chkShadow.Value
 End Sub
 
 Private Sub cmbBehaviour_Click()
@@ -730,8 +730,8 @@ Private Sub cmdAddItem_Click()
     ' make sure it's not a clear
     If Not cmbItems.list(cmbItems.ListIndex) = "No Items" Then
         NPC(EditorIndex).DropItem(lstItems.ListIndex + 1) = cmbItems.ListIndex
-        NPC(EditorIndex).DropItemValue(lstItems.ListIndex + 1) = txtAmount.Text
-        NPC(EditorIndex).DropChance(lstItems.ListIndex + 1) = txtDrop.Text
+        NPC(EditorIndex).DropItemValue(lstItems.ListIndex + 1) = txtAmount.text
+        NPC(EditorIndex).DropChance(lstItems.ListIndex + 1) = txtDrop.text
     Else
         NPC(EditorIndex).DropItem(lstItems.ListIndex + 1) = 0
         NPC(EditorIndex).DropItemValue(lstItems.ListIndex + 1) = 0
@@ -783,9 +783,9 @@ Private Sub opPercent_10_Click()
     NPC(EditorIndex).Percent_10 = Abs(CInt(opPercent_10.Value))
     NPC(EditorIndex).Percent_20 = Abs(CInt(opPercent_20.Value))
 
-    If Not IsNumeric(txtEXP.Text) Then Exit Sub
+    If Not IsNumeric(txtExp.text) Then Exit Sub
     If lblOutput.visible Then
-        ThisExp = CLng(txtEXP.Text)
+        ThisExp = CLng(txtExp.text)
         RangeLow = ThisExp - (ThisExp * 0.1)
         RangeHigh = ThisExp + (ThisExp * 0.1)
         lblOutput.caption = "Variação Exp: " & RangeLow & " - " & RangeHigh
@@ -799,9 +799,9 @@ Private Sub opPercent_20_Click()
     NPC(EditorIndex).Percent_10 = Abs(CInt(opPercent_10.Value))
     NPC(EditorIndex).Percent_20 = Abs(CInt(opPercent_20.Value))
 
-    If Not IsNumeric(txtEXP.Text) Then Exit Sub
+    If Not IsNumeric(txtExp.text) Then Exit Sub
     If lblOutput.visible Then
-        ThisExp = CLng(txtEXP.Text)
+        ThisExp = CLng(txtExp.text)
         RangeLow = ThisExp - (ThisExp * 0.2)
         RangeHigh = ThisExp + (ThisExp * 0.2)
         lblOutput.caption = "Variação Exp: " & RangeLow & " - " & RangeHigh
@@ -815,9 +815,9 @@ Private Sub opPercent_5_Click()
     NPC(EditorIndex).Percent_10 = Abs(CInt(opPercent_10.Value))
     NPC(EditorIndex).Percent_20 = Abs(CInt(opPercent_20.Value))
 
-    If Not IsNumeric(txtEXP.Text) Then Exit Sub
+    If Not IsNumeric(txtExp.text) Then Exit Sub
     If lblOutput.visible Then
-        ThisExp = CLng(txtEXP.Text)
+        ThisExp = CLng(txtExp.text)
         RangeLow = ThisExp - (ThisExp * 0.05)
         RangeHigh = ThisExp + (ThisExp * 0.05)
         lblOutput.caption = "Variacion Exp: " & RangeLow & " - " & RangeHigh
@@ -850,7 +850,7 @@ Private Sub scrlBalao_Change()
     Case 10
         lblBalao.caption = "Balão: Cegado"
     End Select
-    
+
     NPC(EditorIndex).Balao = scrlBalao.Value
 
     'Important = 1    ' !
@@ -895,10 +895,10 @@ Private Sub lstIndex_Click()
 End Sub
 
 Private Sub scrlAnimation_Change()
-    Dim sString As String
+    Dim SString As String
 
-    If scrlAnimation.Value = 0 Then sString = "None" Else sString = Trim$(Animation(scrlAnimation.Value).Name)
-    lblAnimation.caption = "Anim: " & sString
+    If scrlAnimation.Value = 0 Then SString = "None" Else SString = Trim$(Animation(scrlAnimation.Value).Name)
+    lblAnimation.caption = "Anim: " & SString
     NPC(EditorIndex).Animation = scrlAnimation.Value
 End Sub
 
@@ -931,19 +931,19 @@ Private Sub scrlRange_Change()
 End Sub
 
 Private Sub txtAttackSay_Change()
-    NPC(EditorIndex).AttackSay = txtAttackSay.Text
+    NPC(EditorIndex).AttackSay = txtAttackSay.text
 End Sub
 
 Private Sub txtEXP_Change()
 
-    If Not Len(txtEXP.Text) > 0 Then Exit Sub
-    If IsNumeric(txtEXP.Text) Then NPC(EditorIndex).EXP = Val(txtEXP.Text)
+    If Not Len(txtExp.text) > 0 Then Exit Sub
+    If IsNumeric(txtExp.text) Then NPC(EditorIndex).EXP = Val(txtExp.text)
 End Sub
 
 Private Sub txtLevel_Change()
 
-    If Not Len(txtLevel.Text) > 0 Then Exit Sub
-    If IsNumeric(txtLevel.Text) Then NPC(EditorIndex).Level = Val(txtLevel.Text)
+    If Not Len(txtLevel.text) > 0 Then Exit Sub
+    If IsNumeric(txtLevel.text) Then NPC(EditorIndex).Level = Val(txtLevel.text)
 End Sub
 
 Public Sub txtName_Validate(Cancel As Boolean)
@@ -951,7 +951,7 @@ Public Sub txtName_Validate(Cancel As Boolean)
 
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    NPC(EditorIndex).Name = Trim$(txtName.Text)
+    NPC(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & NPC(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
@@ -959,8 +959,8 @@ End Sub
 
 Private Sub txtSpawnSecs_Change()
 
-    If Not Len(txtSpawnSecs.Text) > 0 Then Exit Sub
-    NPC(EditorIndex).SpawnSecs = Val(txtSpawnSecs.Text)
+    If Not Len(txtSpawnSecs.text) > 0 Then Exit Sub
+    NPC(EditorIndex).SpawnSecs = Val(txtSpawnSecs.text)
 End Sub
 
 Private Sub cmbSound_Click()
@@ -974,39 +974,39 @@ Private Sub cmbSound_Click()
 End Sub
 
 Private Sub txtSpawnSecsMin_Change()
-    If Not Len(txtSpawnSecsMin.Text) > 0 Then
-        txtSpawnSecsMin.Text = 0
+    If Not Len(txtSpawnSecsMin.text) > 0 Then
+        txtSpawnSecsMin.text = 0
         Exit Sub
     End If
 
-    If Not IsNumeric(txtSpawnSecsMin.Text) Then
-        txtSpawnSecsMin.Text = 0
+    If Not IsNumeric(txtSpawnSecsMin.text) Then
+        txtSpawnSecsMin.text = 0
         Exit Sub
     End If
 
-    If Val(txtSpawnSecsMin.Text) > MAX_LONG Or Val(txtSpawnSecsMin.Text) < 0 Then
-        txtSpawnSecsMin.Text = 0
+    If Val(txtSpawnSecsMin.text) > MAX_LONG Or Val(txtSpawnSecsMin.text) < 0 Then
+        txtSpawnSecsMin.text = 0
         Exit Sub
     End If
 
-    NPC(EditorIndex).SpawnSecsMin = Val(txtSpawnSecsMin.Text)
+    NPC(EditorIndex).SpawnSecsMin = Val(txtSpawnSecsMin.text)
 End Sub
 
 Private Sub txtStat_Change(Index As Integer)
-    If Not Len(txtStat(Index).Text) > 0 Then
-        txtStat(Index).Text = 0
+    If Not Len(txtStat(Index).text) > 0 Then
+        txtStat(Index).text = 0
         Exit Sub
     End If
 
-    If Not IsNumeric(txtStat(Index).Text) Then
-        txtStat(Index).Text = 0
+    If Not IsNumeric(txtStat(Index).text) Then
+        txtStat(Index).text = 0
         Exit Sub
     End If
 
-    If Val(txtStat(Index).Text) > MAX_LONG Or Val(txtStat(Index).Text) < 0 Then
-        txtStat(Index).Text = 0
+    If Val(txtStat(Index).text) > MAX_LONG Or Val(txtStat(Index).text) < 0 Then
+        txtStat(Index).text = 0
         Exit Sub
     End If
 
-    NPC(EditorIndex).Stat(Index) = txtStat(Index).Text
+    NPC(EditorIndex).Stat(Index) = txtStat(Index).text
 End Sub

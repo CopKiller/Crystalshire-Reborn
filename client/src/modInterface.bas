@@ -68,7 +68,7 @@ End Enum
 ' Button States
 Public Enum entStates
     Normal = 0
-    Hover
+    hover
     MouseDown
     MouseMove
     MouseUp
@@ -118,14 +118,14 @@ Type As Byte
     max As Long
     Min As Long
     Value As Long
-    Text As String
+    text As String
     image(0 To entStates.state_Count - 1) As Long
     design(0 To entStates.state_Count - 1) As Long
     EntCallBack(0 To entStates.state_Count - 1) As Long
     Alpha As Long
     clickThrough As Boolean
-    XOffSet As Long
-    YOffSet As Long
+    xOffset As Long
+    yOffset As Long
     align As Byte
     font As Long
     textColour As Long
@@ -180,8 +180,8 @@ Public zOrder_Con As Long
 
 Public Sub CreateEntity(winNum As Long, zOrder As Long, Name As String, tType As EntityTypes, ByRef design() As Long, ByRef image() As Long, ByRef EntCallBack() As Long, _
                         Optional Left As Long, Optional top As Long, Optional Width As Long, Optional Height As Long, Optional visible As Boolean = True, Optional canDrag As Boolean, Optional max As Long, _
-                        Optional Min As Long, Optional Value As Long, Optional Text As String, Optional align As Byte, Optional font As Long = Fonts.georgia_16, Optional textColour As Long = White, _
-                        Optional Alpha As Long = 255, Optional clickThrough As Boolean, Optional XOffSet As Long, Optional YOffSet As Long, Optional zChange As Byte, Optional ByVal Icon As Long, _
+                        Optional Min As Long, Optional Value As Long, Optional text As String, Optional align As Byte, Optional font As Long = Fonts.georgia_16, Optional textColour As Long = White, _
+                        Optional Alpha As Long = 255, Optional clickThrough As Boolean, Optional xOffset As Long, Optional yOffset As Long, Optional zChange As Byte, Optional ByVal Icon As Long, _
                         Optional ByVal onDraw As Long, Optional isActive As Boolean, Optional isCensor As Boolean, Optional textColour_Hover As Long, Optional textColour_Click As Long, _
                         Optional tooltip As String, Optional group As Long)
     Dim i As Long
@@ -220,7 +220,7 @@ Public Sub CreateEntity(winNum As Long, zOrder As Long, Name As String, tType As
         .max = max
         .Min = Min
         .Value = Value
-        .Text = Text
+        .text = text
         .align = align
         .font = font
         .textColour = textColour
@@ -228,8 +228,8 @@ Public Sub CreateEntity(winNum As Long, zOrder As Long, Name As String, tType As
         .textColour_Click = textColour_Click
         .Alpha = Alpha
         .clickThrough = clickThrough
-        .XOffSet = XOffSet
-        .YOffSet = YOffSet
+        .xOffset = xOffset
+        .yOffset = yOffset
         .zChange = zChange
         .zOrder = zOrder
         .enabled = True
@@ -323,8 +323,8 @@ Public Sub RenderEntities()
 End Sub
 
 Public Sub RenderEntity(winNum As Long, entNum As Long)
-    Dim xO As Integer, yO As Integer, hor_centre As Long, ver_centre As Long, Height As Long, Width As Long, Left As Long, texNum As Long, XOffSet As Long
-    Dim Callback As Long, taddText As String, Colour As Long, textArray() As String, Count As Long, YOffSet As Long, i As Long, Y As Long, X As Long
+    Dim xO As Integer, yO As Integer, hor_centre As Long, ver_centre As Long, Height As Long, Width As Long, Left As Long, texNum As Long, xOffset As Long
+    Dim Callback As Long, taddText As String, Colour As Long, textArray() As String, Count As Long, yOffset As Long, i As Long, Y As Long, X As Long
     Dim TextOrigin As String, top As Integer
 
     ' check if the window exists
@@ -351,8 +351,6 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
             If .design(.state) > 0 Then RenderDesign .design(.state), .Left + xO, .top + yO, .Width, .Height, .Alpha
             ' render image
             If .image(.state) > 0 Then RenderTexture .image(.state), .Left + xO, .top + yO, 0, 0, .Width, .Height, .Width, .Height, DX8Colour(White, .Alpha)
-
-            ' textbox
         Case EntityTypes.entTextBox
             ' render specific designs
             If .design(.state) > 0 Then RenderDesign .design(.state), .Left + xO, .top + yO, .Width, .Height, .Alpha
@@ -362,9 +360,9 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
             If activeWindow = winNum And Windows(winNum).activeControl = entNum Then taddText = chatShowLine
             ' if it's censored then render censored
             If Not .isCensor Then
-                TextOrigin = .Text
+                TextOrigin = .text
             Else
-                TextOrigin = CensorWord(.Text)
+                TextOrigin = CensorWord(.text)
             End If
             Select Case .align
             Case Alignment.alignLeft
@@ -376,16 +374,16 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                     Count = UBound(textArray)
                     For i = 1 To Count
                         If i = UBound(textArray) Then
-                            RenderText font(.font), textArray(i) & taddText, .Left + xO + .XOffSet, .top + yO + YOffSet + .YOffSet, .textColour
+                            RenderText font(.font), textArray(i) & taddText, .Left + xO + .xOffset, .top + yO + yOffset + .yOffset, .textColour
                         Else
-                            RenderText font(.font), textArray(i), .Left + xO + .XOffSet, .top + yO + YOffSet + .YOffSet, .textColour
+                            RenderText font(.font), textArray(i), .Left + xO + .xOffset, .top + yO + yOffset + .yOffset, .textColour
                         End If
 
-                        YOffSet = YOffSet + 14
+                        yOffset = yOffset + 14
                     Next
                 Else
                     ' just one line
-                    RenderText font(.font), TextOrigin & taddText, .Left + xO + .XOffSet, .top + yO + .YOffSet, .textColour
+                    RenderText font(.font), TextOrigin & taddText, .Left + xO + .xOffset, .top + yO + .yOffset, .textColour
                 End If
             Case Alignment.alignRight
                 ' check if need to word wrap
@@ -397,16 +395,16 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                     For i = 1 To Count
                         Left = .Left + .Width - TextWidth(font(.font), textArray(i))
                         If i = UBound(textArray) Then
-                            RenderText font(.font), textArray(i) & taddText, Left + xO, .top + yO + YOffSet + .YOffSet, .textColour, .Alpha
+                            RenderText font(.font), textArray(i) & taddText, Left + xO, .top + yO + yOffset + .yOffset, .textColour, .Alpha
                         Else
-                            RenderText font(.font), textArray(i), Left + xO, .top + yO + YOffSet + .YOffSet, .textColour, .Alpha
+                            RenderText font(.font), textArray(i), Left + xO, .top + yO + yOffset + .yOffset, .textColour, .Alpha
                         End If
-                        YOffSet = YOffSet + 14
+                        yOffset = yOffset + 14
                     Next
                 Else
                     ' just one line
                     Left = .Left + .Width - TextWidth(font(.font), TextOrigin)
-                    RenderText font(.font), TextOrigin & taddText, Left + xO + .XOffSet, .top + yO + .YOffSet, .textColour
+                    RenderText font(.font), TextOrigin & taddText, Left + xO + .xOffset, .top + yO + .yOffset, .textColour
                 End If
             Case Alignment.alignCentre
                 ' check if need to word wrap
@@ -418,22 +416,23 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                     For i = 1 To Count
                         Left = .Left + (.Width \ 2) - (TextWidth(font(.font), textArray(i)) \ 2)
                         If i = UBound(textArray) Then
-                            RenderText font(.font), textArray(i) & taddText, Left + xO + .XOffSet, .top + yO + YOffSet + .YOffSet, .textColour, .Alpha
+                            RenderText font(.font), textArray(i) & taddText, Left + xO + .xOffset, .top + yO + yOffset + .yOffset, .textColour, .Alpha
                         Else
-                            RenderText font(.font), textArray(i), Left + xO + .XOffSet, .top + yO + YOffSet + .YOffSet, .textColour, .Alpha
+                            RenderText font(.font), textArray(i), Left + xO + .xOffset, .top + yO + yOffset + .yOffset, .textColour, .Alpha
                         End If
-                        YOffSet = YOffSet + 14
+                        yOffset = yOffset + 14
                     Next
                 Else
                     ' just one line
                     Left = .Left + (.Width \ 2) - (TextWidth(font(.font), TextOrigin) \ 2)
-                    RenderText font(.font), TextOrigin & taddText, Left + xO + .XOffSet, .top + yO + .YOffSet, .textColour
+                    RenderText font(.font), TextOrigin & taddText, Left + xO + .xOffset, .top + yO + .yOffset, .textColour
                 End If
             End Select
 
             ' buttons
         Case EntityTypes.entButton
             ' render specific designs
+
             If .design(.state) > 0 Then
                 If .design(.state) > 0 Then
                     RenderDesign .design(.state), .Left + xO, .top + yO, .Width, .Height
@@ -449,10 +448,10 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
             If .Icon > 0 Then
                 Width = mTexture(.Icon).w
                 Height = mTexture(.Icon).h
-                RenderTexture .Icon, .Left + xO + .XOffSet, .top + yO + .YOffSet, 0, 0, Width, Height, Width, Height
+                RenderTexture .Icon, .Left + xO + .xOffset, .top + yO + .yOffset, 0, 0, Width, Height, Width, Height
             End If
             ' for changing the text space
-            XOffSet = Width
+            xOffset = Width
             ' calculate the vertical centre
             Height = TextHeight(font(Fonts.georgiaDec_16))
             If Height > .Height Then
@@ -461,14 +460,14 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                 ver_centre = .top + yO + ((.Height - Height) \ 2) + 1
             End If
             ' calculate the horizontal centre
-            Width = TextWidth(font(.font), .Text)
+            Width = TextWidth(font(.font), .text)
             If Width > .Width Then
-                hor_centre = .Left + xO + XOffSet
+                hor_centre = .Left + xO + xOffset
             Else
-                hor_centre = .Left + xO + XOffSet + ((.Width - Width - XOffSet) \ 2)
+                hor_centre = .Left + xO + xOffset + ((.Width - Width - xOffset) \ 2)
             End If
             ' get the colour
-            If .state = Hover Then
+            If .state = hover Then
                 Colour = .textColour_Hover
                 If .tooltip <> vbNullString Then
                     Call RenderEntity_Square(Tex_Design(6), (hor_centre - (TextWidth(font(.font), .tooltip) / 2)) - 22, (ver_centre - PIC_Y) - 2, TextWidth(font(.font), .tooltip) + 10, 20, 5, 200)
@@ -479,60 +478,61 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
             Else
                 Colour = .textColour
             End If
-            RenderText font(.font), .Text, hor_centre, ver_centre, Colour
+
+            RenderText font(.font), .text, hor_centre, ver_centre, Colour
 
             ' labels
         Case EntityTypes.entLabel
-            If Len(.Text) > 0 Then
+            If Len(.text) > 0 Then
                 Select Case .align
                 Case Alignment.alignLeft
                     ' check if need to word wrap
-                    If TextWidth(font(.font), .Text) > .Width Then
+                    If TextWidth(font(.font), .text) > .Width Then
                         ' wrap text
-                        WordWrap_Array .Text, .Width, textArray()
+                        WordWrap_Array .text, .Width, textArray()
                         ' render text
                         Count = UBound(textArray)
                         For i = 1 To Count
-                            RenderText font(.font), textArray(i), .Left + xO, .top + yO + YOffSet, .textColour, .Alpha
-                            YOffSet = YOffSet + 14
+                            RenderText font(.font), textArray(i), .Left + xO, .top + yO + yOffset, .textColour, .Alpha
+                            yOffset = yOffset + 14
                         Next
                     Else
                         ' just one line
-                        RenderText font(.font), .Text, .Left + xO, .top + yO, .textColour, .Alpha
+                        RenderText font(.font), .text, .Left + xO, .top + yO, .textColour, .Alpha
                     End If
                 Case Alignment.alignRight
                     ' check if need to word wrap
-                    If TextWidth(font(.font), .Text) > .Width Then
+                    If TextWidth(font(.font), .text) > .Width Then
                         ' wrap text
-                        WordWrap_Array .Text, .Width, textArray()
+                        WordWrap_Array .text, .Width, textArray()
                         ' render text
                         Count = UBound(textArray)
                         For i = 1 To Count
                             Left = .Left + .Width - TextWidth(font(.font), textArray(i))
-                            RenderText font(.font), textArray(i), Left + xO, .top + yO + YOffSet, .textColour, .Alpha
-                            YOffSet = YOffSet + 14
+                            RenderText font(.font), textArray(i), Left + xO, .top + yO + yOffset, .textColour, .Alpha
+                            yOffset = yOffset + 14
                         Next
                     Else
                         ' just one line
-                        Left = .Left + .Width - TextWidth(font(.font), .Text)
-                        RenderText font(.font), .Text, Left + xO, .top + yO, .textColour, .Alpha
+                        Left = .Left + .Width - TextWidth(font(.font), .text)
+                        RenderText font(.font), .text, Left + xO, .top + yO, .textColour, .Alpha
                     End If
                 Case Alignment.alignCentre
                     ' check if need to word wrap
-                    If TextWidth(font(.font), .Text) > .Width Then
+                    If TextWidth(font(.font), .text) > .Width Then
                         ' wrap text
-                        WordWrap_Array .Text, .Width, textArray()
+                        WordWrap_Array .text, .Width, textArray()
                         ' render text
                         Count = UBound(textArray)
                         For i = 1 To Count
                             Left = .Left + (.Width \ 2) - (TextWidth(font(.font), textArray(i)) \ 2)
-                            RenderText font(.font), textArray(i), Left + xO, .top + yO + YOffSet, .textColour, .Alpha
-                            YOffSet = YOffSet + 14
+                            RenderText font(.font), textArray(i), Left + xO, .top + yO + yOffset, .textColour, .Alpha
+                            yOffset = yOffset + 14
                         Next
                     Else
                         ' just one line
-                        Left = .Left + (.Width \ 2) - (TextWidth(font(.font), .Text) \ 2)
-                        RenderText font(.font), .Text, Left + xO, .top + yO, .textColour, .Alpha
+                        Left = .Left + (.Width \ 2) - (TextWidth(font(.font), .text) \ 2)
+                        RenderText font(.font), .text, Left + xO, .top + yO, .textColour, .Alpha
                     End If
                 End Select
             End If
@@ -551,20 +551,20 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                 Case Alignment.alignLeft
                     Left = .Left + 18 + xO
                 Case Alignment.alignRight
-                    Left = .Left + 18 + (.Width - 18) - TextWidth(font(.font), .Text) + xO
+                    Left = .Left + 18 + (.Width - 18) - TextWidth(font(.font), .text) + xO
                 Case Alignment.alignCentre
-                    Left = .Left + 18 + ((.Width - 18) / 2) - (TextWidth(font(.font), .Text) / 2) + xO
+                    Left = .Left + 18 + ((.Width - 18) / 2) - (TextWidth(font(.font), .text) / 2) + xO
                 End Select
                 ' render text
-                RenderText font(.font), .Text, Left, .top + yO, .textColour, .Alpha
+                RenderText font(.font), .text, Left, .top + yO, .textColour, .Alpha
             Case DesignTypes.desChkChat
                 If .Value = 0 Then .Alpha = 150 Else .Alpha = 255
                 ' render box
                 RenderTexture Tex_GUI(51), .Left + xO, .top + yO, 0, 0, 49, 23, 49, 23, DX8Colour(White, .Alpha)
                 ' render text
-                Left = .Left + (49 / 2) - (TextWidth(font(.font), .Text) / 2) + xO
+                Left = .Left + (49 / 2) - (TextWidth(font(.font), .text) / 2) + xO
                 ' render text
-                RenderText font(.font), .Text, Left, .top + yO + 4, .textColour, .Alpha
+                RenderText font(.font), .text, Left, .top + yO + 4, .textColour, .Alpha
             Case DesignTypes.desChkCustom_Buying
                 If .Value = 0 Then texNum = Tex_GUI(58) Else texNum = Tex_GUI(56)
                 RenderTexture texNum, .Left + xO, .top + yO, 0, 0, 49, 20, 49, 20
@@ -576,9 +576,9 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                 ' render box
                 RenderTexture Tex_GUI(51), .Left + xO, .top + yO, 0, 0, .Width, .Height, 49, 23, DX8Colour(White, .Alpha)
                 ' render text
-                Left = .Left + (.Width / 2) - (TextWidth(font(.font), .Text) / 2) + xO
+                Left = .Left + (.Width / 2) - (TextWidth(font(.font), .text) / 2) + xO
                 ' render text
-                RenderText font(.font), .Text, Left, .top + yO + 4, .textColour, .Alpha
+                RenderText font(.font), .text, Left, .top + yO + 4, .textColour, .Alpha
             End Select
 
             ' comboboxes
@@ -651,9 +651,9 @@ Public Sub RenderWindow(winNum As Long)
             ' render the icon
             Width = mTexture(.Icon).w
             Height = mTexture(.Icon).h
-            RenderTexture .Icon, .Left + .XOffSet, .top - (Width - 18) + .YOffSet, 0, 0, Width, Height, Width, Height
+            RenderTexture .Icon, .Left + .xOffset, .top - (Width - 18) + .yOffset, 0, 0, Width, Height, Width, Height
             ' render the caption
-            RenderText font(.font), Trim$(.Text), .Left + Height + 2, .top + 5, .textColour
+            RenderText font(.font), Trim$(.text), .Left + Height + 2, .top + 5, .textColour
 
         Case DesignTypes.desWin_NoBar
             ' render window
@@ -666,9 +666,9 @@ Public Sub RenderWindow(winNum As Long)
             ' render the icon
             Width = mTexture(.Icon).w
             Height = mTexture(.Icon).h
-            RenderTexture .Icon, .Left + .XOffSet, .top - (Width - 18) + .YOffSet, 0, 0, Width, Height, Width, Height
+            RenderTexture .Icon, .Left + .xOffset, .top - (Width - 18) + .yOffset, 0, 0, Width, Height, Width, Height
             ' render the caption
-            RenderText font(.font), Trim$(.Text), .Left + Height + 2, .top + 5, .textColour
+            RenderText font(.font), Trim$(.text), .Left + Height + 2, .top + 5, .textColour
 
         Case DesignTypes.desWin_Desc
             ' render window
@@ -897,16 +897,16 @@ Public Sub RenderEntity_Square(texNum As Long, X As Long, Y As Long, Width As Lo
     RenderTexture texNum, X + Width - bs, Y + Height - bs, bs + 3, bs + 3, bs, bs, bs, bs, Colour
 End Sub
 
-Sub Combobox_AddItem(winIndex As Long, controlIndex As Long, Text As String)
+Sub Combobox_AddItem(winIndex As Long, controlIndex As Long, text As String)
     Dim Count As Long
     Count = UBound(Windows(winIndex).Controls(controlIndex).list)
     ReDim Preserve Windows(winIndex).Controls(controlIndex).list(0 To Count + 1)
-    Windows(winIndex).Controls(controlIndex).list(Count + 1) = Text
+    Windows(winIndex).Controls(controlIndex).list(Count + 1) = text
 End Sub
 
 Public Sub CreateWindow(Name As String, caption As String, zOrder As Long, Left As Long, top As Long, Width As Long, Height As Long, Icon As Long, _
-                        Optional visible As Boolean = True, Optional font As Long = Fonts.georgia_16, Optional textColour As Long = White, Optional XOffSet As Long, _
-                        Optional YOffSet As Long, Optional design_norm As Long, Optional design_hover As Long, Optional design_mousedown As Long, Optional image_norm As Long, _
+                        Optional visible As Boolean = True, Optional font As Long = Fonts.georgia_16, Optional textColour As Long = White, Optional xOffset As Long, _
+                        Optional yOffset As Long, Optional design_norm As Long, Optional design_hover As Long, Optional design_mousedown As Long, Optional image_norm As Long, _
                         Optional image_hover As Long, Optional image_mousedown As Long, Optional entCallBack_norm As Long, Optional entCallBack_hover As Long, Optional entCallBack_mousedown As Long, _
                         Optional entCallBack_mousemove As Long, Optional entCallBack_dblclick As Long, Optional canDrag As Boolean = True, Optional zChange As Byte = True, Optional ByVal onDraw As Long, _
                         Optional isActive As Boolean, Optional clickThrough As Boolean)
@@ -918,17 +918,17 @@ Public Sub CreateWindow(Name As String, caption As String, zOrder As Long, Left 
 
     ' fill temp arrays
     design(entStates.Normal) = design_norm
-    design(entStates.Hover) = design_hover
+    design(entStates.hover) = design_hover
     design(entStates.MouseDown) = design_mousedown
     design(entStates.DblClick) = design_norm
     design(entStates.MouseUp) = design_norm
     image(entStates.Normal) = image_norm
-    image(entStates.Hover) = image_hover
+    image(entStates.hover) = image_hover
     image(entStates.MouseDown) = image_mousedown
     image(entStates.DblClick) = image_norm
     image(entStates.MouseUp) = image_norm
     EntCallBack(entStates.Normal) = entCallBack_norm
-    EntCallBack(entStates.Hover) = entCallBack_hover
+    EntCallBack(entStates.hover) = entCallBack_hover
     EntCallBack(entStates.MouseDown) = entCallBack_mousedown
     EntCallBack(entStates.MouseMove) = entCallBack_mousemove
     EntCallBack(entStates.DblClick) = entCallBack_dblclick
@@ -956,11 +956,11 @@ Public Sub CreateWindow(Name As String, caption As String, zOrder As Long, Left 
         .Height = Height
         .visible = visible
         .canDrag = canDrag
-        .Text = caption
+        .text = caption
         .font = font
         .textColour = textColour
-        .XOffSet = XOffSet
-        .YOffSet = YOffSet
+        .xOffset = xOffset
+        .yOffset = yOffset
         .Icon = Icon
         .enabled = True
         .zChange = zChange
@@ -975,29 +975,29 @@ Public Sub CreateWindow(Name As String, caption As String, zOrder As Long, Left 
     zOrder_Win = zOrder_Win + 1
 End Sub
 
-Public Sub CreateTextbox(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Height As Long, Optional Text As String, Optional font As Long = Fonts.georgia_16, _
+Public Sub CreateTextbox(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Height As Long, Optional text As String, Optional font As Long = Fonts.georgia_16, _
                          Optional textColour As Long = White, Optional align As Byte = Alignment.alignLeft, Optional visible As Boolean = True, Optional Alpha As Long = 255, Optional image_norm As Long, _
                          Optional image_hover As Long, Optional image_mousedown As Long, Optional design_norm As Long, Optional design_hover As Long, Optional design_mousedown As Long, _
                          Optional entCallBack_norm As Long, Optional entCallBack_hover As Long, Optional entCallBack_mousedown As Long, Optional entCallBack_mousemove As Long, Optional entCallBack_dblclick As Long, _
-                         Optional isActive As Boolean, Optional XOffSet As Long, Optional YOffSet As Long, Optional isCensor As Boolean, Optional entCallBack_enter As Long, Optional MaxLenght As Long = 255)
+                         Optional isActive As Boolean, Optional xOffset As Long, Optional yOffset As Long, Optional isCensor As Boolean, Optional entCallBack_enter As Long, Optional MaxLenght As Long = 255)
     Dim design(0 To entStates.state_Count - 1) As Long
     Dim image(0 To entStates.state_Count - 1) As Long
     Dim EntCallBack(0 To entStates.state_Count - 1) As Long
     ' fill temp arrays
     design(entStates.Normal) = design_norm
-    design(entStates.Hover) = design_hover
+    design(entStates.hover) = design_hover
     design(entStates.MouseDown) = design_mousedown
     image(entStates.Normal) = image_norm
-    image(entStates.Hover) = image_hover
+    image(entStates.hover) = image_hover
     image(entStates.MouseDown) = image_mousedown
     EntCallBack(entStates.Normal) = entCallBack_norm
-    EntCallBack(entStates.Hover) = entCallBack_hover
+    EntCallBack(entStates.hover) = entCallBack_hover
     EntCallBack(entStates.MouseDown) = entCallBack_mousedown
     EntCallBack(entStates.MouseMove) = entCallBack_mousemove
     EntCallBack(entStates.DblClick) = entCallBack_dblclick
     EntCallBack(entStates.Enter) = entCallBack_enter
     ' create the textbox
-    CreateEntity winNum, zOrder_Con, Name, entTextBox, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , MaxLenght, , , Text, align, font, textColour, Alpha, , XOffSet, YOffSet, , , , isActive, isCensor
+    CreateEntity winNum, zOrder_Con, Name, entTextBox, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , MaxLenght, , , text, align, font, textColour, Alpha, , xOffset, yOffset, , , , isActive, isCensor
 End Sub
 
 Public Sub CreatePictureBox(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Height As Long, Optional visible As Boolean = True, Optional canDrag As Boolean, _
@@ -1009,13 +1009,13 @@ Public Sub CreatePictureBox(winNum As Long, Name As String, Left As Long, top As
     Dim EntCallBack(0 To entStates.state_Count - 1) As Long
     ' fill temp arrays
     design(entStates.Normal) = design_norm
-    design(entStates.Hover) = design_hover
+    design(entStates.hover) = design_hover
     design(entStates.MouseDown) = design_mousedown
     image(entStates.Normal) = image_norm
-    image(entStates.Hover) = image_hover
+    image(entStates.hover) = image_hover
     image(entStates.MouseDown) = image_mousedown
     EntCallBack(entStates.Normal) = entCallBack_norm
-    EntCallBack(entStates.Hover) = entCallBack_hover
+    EntCallBack(entStates.hover) = entCallBack_hover
     EntCallBack(entStates.MouseDown) = entCallBack_mousedown
     EntCallBack(entStates.MouseMove) = entCallBack_mousemove
     EntCallBack(entStates.DblClick) = entCallBack_dblclick
@@ -1023,11 +1023,11 @@ Public Sub CreatePictureBox(winNum As Long, Name As String, Left As Long, top As
     CreateEntity winNum, zOrder_Con, Name, entPictureBox, design(), image(), EntCallBack(), Left, top, Width, Height, visible, canDrag, , , , , , , , Alpha, clickThrough, , , , , onDraw
 End Sub
 
-Public Sub CreateButton(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Height As Long, Optional Text As String, Optional font As Fonts = Fonts.georgia_16, _
+Public Sub CreateButton(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Height As Long, Optional text As String, Optional font As Fonts = Fonts.georgia_16, _
                         Optional textColour As Long = White, Optional Icon As Long, Optional visible As Boolean = True, Optional Alpha As Long = 255, Optional image_norm As Long, Optional image_hover As Long, _
                         Optional image_mousedown As Long, Optional design_norm As Long, Optional design_hover As Long, Optional design_mousedown As Long, Optional entCallBack_norm As Long, _
-                        Optional entCallBack_hover As Long, Optional entCallBack_mousedown As Long, Optional entCallBack_mousemove As Long, Optional entCallBack_dblclick As Long, Optional XOffSet As Long, _
-                        Optional YOffSet As Long, Optional textColour_Hover As Long = -1, Optional textColour_Click As Long = -1, Optional tooltip As String)
+                        Optional entCallBack_hover As Long, Optional entCallBack_mousedown As Long, Optional entCallBack_mousemove As Long, Optional entCallBack_dblclick As Long, Optional xOffset As Long, _
+                        Optional yOffset As Long, Optional textColour_Hover As Long = -1, Optional textColour_Click As Long = -1, Optional tooltip As String)
     Dim design(0 To entStates.state_Count - 1) As Long
     Dim image(0 To entStates.state_Count - 1) As Long
     Dim EntCallBack(0 To entStates.state_Count - 1) As Long
@@ -1036,21 +1036,21 @@ Public Sub CreateButton(winNum As Long, Name As String, Left As Long, top As Lon
     If textColour_Click = -1 Then textColour_Click = textColour
     ' fill temp arrays
     design(entStates.Normal) = design_norm
-    design(entStates.Hover) = design_hover
+    design(entStates.hover) = design_hover
     design(entStates.MouseDown) = design_mousedown
     image(entStates.Normal) = image_norm
-    image(entStates.Hover) = image_hover
+    image(entStates.hover) = image_hover
     image(entStates.MouseDown) = image_mousedown
     EntCallBack(entStates.Normal) = entCallBack_norm
-    EntCallBack(entStates.Hover) = entCallBack_hover
+    EntCallBack(entStates.hover) = entCallBack_hover
     EntCallBack(entStates.MouseDown) = entCallBack_mousedown
     EntCallBack(entStates.MouseMove) = entCallBack_mousemove
     EntCallBack(entStates.DblClick) = entCallBack_dblclick
     ' create the box
-    CreateEntity winNum, zOrder_Con, Name, entButton, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , , , , Text, , font, textColour, Alpha, , XOffSet, YOffSet, , Icon, , , , textColour_Hover, textColour_Click, tooltip
+    CreateEntity winNum, zOrder_Con, Name, entButton, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , , , , text, , font, textColour, Alpha, , xOffset, yOffset, , Icon, , , , textColour_Hover, textColour_Click, tooltip
 End Sub
 
-Public Sub CreateLabel(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Optional Height As Long, Optional Text As String, Optional font As Fonts = Fonts.georgia_16, _
+Public Sub CreateLabel(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Optional Height As Long, Optional text As String, Optional font As Fonts = Fonts.georgia_16, _
                        Optional textColour As Long = White, Optional align As Byte = Alignment.alignLeft, Optional visible As Boolean = True, Optional Alpha As Long = 255, Optional clickThrough As Boolean, _
                        Optional entCallBack_norm As Long, Optional entCallBack_hover As Long, Optional entCallBack_mousedown As Long, Optional entCallBack_mousemove As Long, Optional entCallBack_dblclick As Long)
     Dim design(0 To entStates.state_Count - 1) As Long
@@ -1058,15 +1058,15 @@ Public Sub CreateLabel(winNum As Long, Name As String, Left As Long, top As Long
     Dim EntCallBack(0 To entStates.state_Count - 1) As Long
     ' fill temp arrays
     EntCallBack(entStates.Normal) = entCallBack_norm
-    EntCallBack(entStates.Hover) = entCallBack_hover
+    EntCallBack(entStates.hover) = entCallBack_hover
     EntCallBack(entStates.MouseDown) = entCallBack_mousedown
     EntCallBack(entStates.MouseMove) = entCallBack_mousemove
     EntCallBack(entStates.DblClick) = entCallBack_dblclick
     ' create the box
-    CreateEntity winNum, zOrder_Con, Name, entLabel, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , , , , Text, align, font, textColour, Alpha, clickThrough
+    CreateEntity winNum, zOrder_Con, Name, entLabel, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , , , , text, align, font, textColour, Alpha, clickThrough
 End Sub
 
-Public Sub CreateCheckbox(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Optional Height As Long = 15, Optional Value As Long, Optional Text As String, _
+Public Sub CreateCheckbox(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Optional Height As Long = 15, Optional Value As Long, Optional text As String, _
                           Optional font As Fonts = Fonts.georgia_16, Optional textColour As Long = White, Optional align As Byte = Alignment.alignLeft, Optional visible As Boolean = True, Optional Alpha As Long = 255, _
                           Optional theDesign As Long, Optional entCallBack_norm As Long, Optional entCallBack_hover As Long, Optional entCallBack_mousedown As Long, Optional entCallBack_mousemove As Long, _
                           Optional entCallBack_dblclick As Long, Optional group As Long)
@@ -1075,14 +1075,14 @@ Public Sub CreateCheckbox(winNum As Long, Name As String, Left As Long, top As L
     Dim EntCallBack(0 To entStates.state_Count - 1) As Long
     ' fill temp arrays
     EntCallBack(entStates.Normal) = entCallBack_norm
-    EntCallBack(entStates.Hover) = entCallBack_hover
+    EntCallBack(entStates.hover) = entCallBack_hover
     EntCallBack(entStates.MouseDown) = entCallBack_mousedown
     EntCallBack(entStates.MouseMove) = entCallBack_mousemove
     EntCallBack(entStates.DblClick) = entCallBack_dblclick
     ' fill temp array
     design(0) = theDesign
     ' create the box
-    CreateEntity winNum, zOrder_Con, Name, entCheckbox, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , , , Value, Text, align, font, textColour, Alpha, , , , , , , , , , , , group
+    CreateEntity winNum, zOrder_Con, Name, entCheckbox, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , , , Value, text, align, font, textColour, Alpha, , , , , , , , , , , , group
 End Sub
 
 Public Sub CreateComboBox(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Height As Long, design As Long, Optional font As Fonts = Fonts.georgia_16)
@@ -1139,8 +1139,8 @@ End Function
 
 Public Sub CentraliseWindow(curWindow As Long)
     With Windows(curWindow).Window
-        .Left = (ScreenWidth / 2) - (.Width / 2)
-        .top = (ScreenHeight / 2) - (.Height / 2)
+        .Left = (screenWidth / 2) - (.Width / 2)
+        .top = (screenHeight / 2) - (.Height / 2)
         .origLeft = .Left
         .origTop = .top
     End With
@@ -1155,7 +1155,7 @@ End Sub
 
 Public Sub ShowWindow(curWindow As Long, Optional forced As Boolean, Optional resetPosition As Boolean = True)
     Windows(curWindow).Window.visible = True
-    
+
     If forced Then
         UpdateZOrder curWindow, forced
         activeWindow = curWindow
@@ -1174,7 +1174,7 @@ End Sub
 Public Sub HideWindow(curWindow As Long)
     Dim i As Long
     Windows(curWindow).Window.visible = False
-    
+
     ' find next window to set as active
     For i = WindowCount To 1 Step -1
         If Windows(i).Window.visible And Windows(i).Window.zChange Then
@@ -1267,12 +1267,12 @@ End Sub
 
 Private Sub CheckBirthDayFormat()
     Dim SString As String, StrArray() As String
-    
+
     If GetKeyState(vbKeyBack) < 0 Then Exit Sub
 
     With Windows(GetWindowIndex("winRegister"))
 
-        SString = Trim$(.Controls(GetControlIndex("winRegister", "txtBirthDay")).Text)
+        SString = Trim$(.Controls(GetControlIndex("winRegister", "txtBirthDay")).text)
 
         If SString <> vbNullString Then
             StrArray = Split(SString, "/")
@@ -1286,8 +1286,8 @@ Private Sub CheckBirthDayFormat()
                 End If
             End If
 
-            If SString <> Trim$(.Controls(GetControlIndex("winRegister", "txtBirthDay")).Text) Then
-                .Controls(GetControlIndex("winRegister", "txtBirthDay")).Text = SString
+            If SString <> Trim$(.Controls(GetControlIndex("winRegister", "txtBirthDay")).text) Then
+                .Controls(GetControlIndex("winRegister", "txtBirthDay")).text = SString
             End If
         End If
     End With
@@ -1556,6 +1556,8 @@ Public Sub CreateWindow_Chat()
     ' buttons
     CreateButton WindowCount, "btnUp", 328, 28, 11, 13, , , , , , , Tex_GUI(4), Tex_GUI(52), Tex_GUI(4), , , , , , GetAddress(AddressOf btnChat_Up)
     CreateButton WindowCount, "btnDown", 327, 122, 11, 13, , , , , , , Tex_GUI(5), Tex_GUI(53), Tex_GUI(5), , , , , , GetAddress(AddressOf btnChat_Down)
+    ' Scroll
+    CreateButton WindowCount, "btnScroll", 330, 50, 15, 78, , , , , False, , Tex_GUI(78), Tex_GUI(78), Tex_GUI(78), , , , , , GetAddress(AddressOf ChatScroll_MouseDown), GetAddress(AddressOf ChatScroll_MouseMove)
 
     ' Custom Handlers for mouse up
     Windows(WindowCount).Controls(GetControlIndex("winChat", "btnUp")).EntCallBack(entStates.MouseUp) = GetAddress(AddressOf btnChat_Up_MouseUp)
@@ -1637,7 +1639,7 @@ Public Sub CreateWindow_Shop()
     Windows(WindowCount).Window.EntCallBack(entStates.MouseUp) = GetAddress(AddressOf Shop_MouseMove)
     ' Centralise it
     CentraliseWindow WindowCount
-    
+
     zOrder_Con = 1
 
     ' Close button
@@ -1667,7 +1669,7 @@ Public Sub CreateWindow_NpcChat()
     CreateWindow "winNpcChat", "Conversation with [Name]", zOrder_Win, 0, 0, 480, 228, Tex_Item(111), False, Fonts.rockwellDec_15, , 2, 11, DesignTypes.desWin_Norm, DesignTypes.desWin_Norm, DesignTypes.desWin_Norm
     ' Centralise it
     CentraliseWindow WindowCount
-    
+
     zOrder_Con = 1
 
     ' Close Button
@@ -1701,7 +1703,7 @@ Public Sub CreateWindow_Message()
     CreateWindow "winMessage", "Mensagem!", zOrder_Win, 0, 0, 358, 169, Tex_Item(111), False, Fonts.rockwellDec_15, , 2, 11, DesignTypes.desWin_Norm, DesignTypes.desWin_Norm, DesignTypes.desWin_Norm
     ' Centralise it
     CentraliseWindow WindowCount
-    
+
     zOrder_Con = 1
 
     ' Close Button
@@ -1726,7 +1728,7 @@ Public Sub CreateWindow_PlayerMenu()
     CreateWindow "winPlayerMenu", "", zOrder_Win, 0, 0, 110, 106, 0, , , , , , DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, , , , , , GetAddress(AddressOf RightClick_Close), , , False
     ' Centralise it
     CentraliseWindow WindowCount
-    
+
     zOrder_Con = 1
 
     ' Name
@@ -1741,9 +1743,9 @@ End Sub
 Public Sub CreateWindow_Party()
 ' Create window
     CreateWindow "winParty", "", zOrder_Win, 4, 78, 252, 158, 0, , , , , , DesignTypes.desWin_Party, DesignTypes.desWin_Party, DesignTypes.desWin_Party, , , , , , , , , False
-    
+
     zOrder_Con = 1
-    
+
     ' Name labels
     CreateLabel WindowCount, "lblName1", 60, 20, 173, , "Richard - Level 10", rockwellDec_10
     CreateLabel WindowCount, "lblName2", 60, 60, 173, , "Anna - Level 18", rockwellDec_10
@@ -1776,20 +1778,20 @@ End Sub
 
 Public Sub CreateWindow_Invitations()
 ' Create window
-    CreateWindow "winInvite_Party", "", zOrder_Win, ScreenWidth - 234, ScreenHeight - 80, 223, 37, 0, , , , , , DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, , , , , , , , , False
-    
+    CreateWindow "winInvite_Party", "", zOrder_Win, screenWidth - 234, screenHeight - 80, 223, 37, 0, , , , , , DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, , , , , , , , , False
+
     zOrder_Con = 1
-    
+
     ' Button
     CreateButton WindowCount, "btnInvite", 11, 12, 201, 14, ColourChar & White & "Richard " & ColourChar & "-1" & "has invited you to a party.", verdana_12, Grey, , , , , , , , , , , , GetAddress(AddressOf btnInvite_Party), , , , , Green
 
     ' Create window
-    CreateWindow "winInvite_Trade", "", zOrder_Win, ScreenWidth - 234, ScreenHeight - 80, 223, 37, 0, , , , , , DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, , , , , , , , , False
+    CreateWindow "winInvite_Trade", "", zOrder_Win, screenWidth - 234, screenHeight - 80, 223, 37, 0, , , , , , DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, , , , , , , , , False
     ' Button
     CreateButton WindowCount, "btnInvite", 11, 12, 201, 14, ColourChar & White & "Richard " & ColourChar & "-1" & "has invited you to a party.", verdana_12, Grey, , , , , , , , , , , , GetAddress(AddressOf btnInvite_Trade), , , , , Green
-    
+
     ' Create window
-    CreateWindow "winInvite_Guild", "", zOrder_Win, ScreenWidth - 234, ScreenHeight - 80, 223, 37, 0, , , , , , DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, , , , , , , , , False
+    CreateWindow "winInvite_Guild", "", zOrder_Win, screenWidth - 234, screenHeight - 80, 223, 37, 0, , , , , , DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, DesignTypes.desWin_Desc, , , , , , , , , False
     ' Button
     CreateButton WindowCount, "btnInvite", 11, 12, 201, 14, ColourChar & White & "Richard " & ColourChar & "-1" & "has invited you to a Guild.", verdana_12, Grey, , , , , , , , , , , , GetAddress(AddressOf btnInvite_Guild), , , , , Green
 End Sub
@@ -1799,7 +1801,7 @@ Public Sub CreateWindow_Trade()
     CreateWindow "winTrade", "Trading with [Name]", zOrder_Win, 0, 0, 412, 386, Tex_Item(112), False, Fonts.rockwellDec_15, , 2, 5, DesignTypes.desWin_Empty, DesignTypes.desWin_Empty, DesignTypes.desWin_Empty, , , , , , , , , , , GetAddress(AddressOf DrawTrade)
     ' Centralise it
     CentraliseWindow WindowCount
-    
+
     zOrder_Con = 1
 
     ' Close Button
@@ -1831,7 +1833,7 @@ Public Sub CreateWindow_Combobox()
     CreateWindow "winComboMenuBG", "ComboMenuBG", zOrder_Win, 0, 0, 800, 600, 0, , , , , , , , , , , , , , GetAddress(AddressOf CloseComboMenu), , , False, False
 
     zOrder_Con = 1
-    
+
     ' window
     CreateWindow "winComboMenu", "ComboMenu", zOrder_Win, 0, 0, 100, 100, 0, , Fonts.verdana_12, , , , DesignTypes.desComboMenuNorm, , , , , , , , , , , False, False
     ' centralise it
@@ -1886,6 +1888,7 @@ Public Sub InitGUI()
     CreateWindow_Lottery
 
     ' Menus
+    CreateWindow_Clipboard
     CreateWindow_RightClick
     CreateWindow_PlayerMenu
 End Sub

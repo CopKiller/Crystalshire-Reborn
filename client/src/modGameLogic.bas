@@ -21,7 +21,7 @@ Public Sub GameLoop()
         End If
 
         ' handle input
-        If GetForegroundWindow() = frmMain.hWnd Then
+        If GetForegroundWindow() = frmMain.hwnd Then
             HandleMouseInput
         End If
 
@@ -83,7 +83,7 @@ Public Sub GameLoop()
                     LotteryInfo.LotteryTime = LotteryInfo.LotteryTime - 1
 
                     If Windows(GetWindowIndex("winLottery")).Window.visible Then
-                        Windows(GetWindowIndex("winLottery")).Controls(GetControlIndex("winLottery", "lblNLottery")).Text = "Next Lottery: " & ColourChar & GetColStr(BrightRed) & SecondsToHMS(LotteryInfo.LotteryTime)
+                        Windows(GetWindowIndex("winLottery")).Controls(GetControlIndex("winLottery", "lblNLottery")).text = "Next Lottery: " & ColourChar & GetColStr(BrightRed) & SecondsToHMS(LotteryInfo.LotteryTime)
                     End If
                 End If
             End If
@@ -104,7 +104,7 @@ Public Sub GameLoop()
             ' Check In Diary
             Call Graphic_ArrowInDay_Animated
 
-            If GetForegroundWindow() = frmMain.hWnd Then
+            If GetForegroundWindow() = frmMain.hwnd Then
                 Call CheckInputKeys    ' Check which keys were pressed
             End If
 
@@ -146,9 +146,9 @@ Public Sub GameLoop()
                 Next i
                 For i = 1 To MAX_MAP_NPCS
                     With MapNpc(i)
-                        If .num > 0 Then
+                        If .Num > 0 Then
                             If Map.MapData.NPC(i) > 0 Then
-                                If NPC(.num).Balao > 0 Or .StunDuration > 0 Or CheckNpcHaveQuest(.num) Or CheckNpcQuestProgress(.num) Or .Dead > 0 Then
+                                If NPC(.Num).Balao > 0 Or .StunDuration > 0 Or CheckNpcHaveQuest(.Num) Or CheckNpcQuestProgress(.Num) Or .Dead > 0 Then
                                     .StatusFrame = .StatusFrame + 1
                                     If .StatusFrame >= 8 Then
                                         .StatusFrame = 1
@@ -163,7 +163,7 @@ Public Sub GameLoop()
             End If
 
             ' ****** Parallax X ******
-            If ParallaxX = -ScreenWidth Then
+            If ParallaxX = -screenWidth Then
                 ParallaxX = 0
             Else
                 ParallaxX = ParallaxX - 1
@@ -187,8 +187,8 @@ Public Sub GameLoop()
             ' check for map animation changes#
             If tmr100 < Tick Then
                 For i = 1 To MAX_MAP_ITEMS
-                    If MapItem(i).num > 0 Then
-                        ItemPic = Item(MapItem(i).num).Pic
+                    If MapItem(i).Num > 0 Then
+                        ItemPic = Item(MapItem(i).Num).Pic
                         If ItemPic > 0 Or ItemPic <= Count_Item Then
                             MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
                             If MaxFrames > 1 Then
@@ -266,8 +266,8 @@ Public Sub GameLoop()
                 ' In Trade visible? play animation item!
                 If Windows(GetWindowIndex("winTrade")).Window.visible Then
                     For i = 1 To MAX_INV
-                        If GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).num) > 0 Then
-                            ItemPic = Item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).num)).Pic
+                        If GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).Num) > 0 Then
+                            ItemPic = Item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).Num)).Pic
                             If ItemPic > 0 Or ItemPic <= Count_Item Then
                                 MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
                                 If MaxFrames > 1 Then
@@ -279,8 +279,8 @@ Public Sub GameLoop()
                                 End If
                             End If
                         End If
-                        If TradeTheirOffer(i).num > 0 Then
-                            ItemPic = Item(TradeTheirOffer(i).num).Pic
+                        If TradeTheirOffer(i).Num > 0 Then
+                            ItemPic = Item(TradeTheirOffer(i).Num).Pic
                             If ItemPic > 0 Or ItemPic <= Count_Item Then
                                 MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
                                 If MaxFrames > 1 Then
@@ -350,7 +350,7 @@ Public Sub GameLoop()
             If chatLastRemove + CHAT_DIFFERENCE_TIMER < getTime Then
                 ' remove timed out messages from chat
                 For i = Chat_HighIndex To 1 Step -1
-                    If Len(Chat(i).Text) > 0 Then
+                    If Len(Chat(i).text) > 0 Then
                         If Chat(i).visible Then
                             If Chat(i).Timer + CHAT_TIMER < Tick Then
                                 Chat(i).visible = False
@@ -382,7 +382,7 @@ Public Sub GameLoop()
             SetBarWidth BarWidth_GuiSP_Max, BarWidth_GuiSP
             SetBarWidth BarWidth_GuiEXP_Max, BarWidth_GuiEXP
             For i = 1 To MAX_MAP_NPCS
-                If MapNpc(i).num > 0 Then
+                If MapNpc(i).Num > 0 Then
                     SetBarWidth BarWidth_NpcHP_Max(i), BarWidth_NpcHP(i)
                 End If
             Next
@@ -516,7 +516,7 @@ Public Sub MenuLoop()
         End If
 
         ' handle input
-        If GetForegroundWindow() = frmMain.hWnd Then
+        If GetForegroundWindow() = frmMain.hwnd Then
             HandleMouseInput
         End If
 
@@ -534,7 +534,7 @@ Public Sub MenuLoop()
         End If
 
         ' ****** Parallax X ******
-        If ParallaxX = -ScreenWidth Then
+        If ParallaxX = -screenWidth Then
             ParallaxX = 0
         Else
             ParallaxX = ParallaxX - 1
@@ -722,8 +722,8 @@ Sub ProcessNpcMovement(ByVal MapNpcNum As Long)
 End Sub
 
 Sub CheckMapGetItem()
-    Dim Buffer As New clsBuffer, tmpIndex As Long, i As Long, X As Long
-    Set Buffer = New clsBuffer
+    Dim buffer As New clsBuffer, tmpIndex As Long, i As Long, X As Long
+    Set buffer = New clsBuffer
 
     If getTime > Player(MyIndex).MapGetTimer + 250 Then
 
@@ -731,8 +731,8 @@ Sub CheckMapGetItem()
         For i = 1 To MAX_MAP_ITEMS
 
             If MapItem(i).X = Player(MyIndex).X And MapItem(i).Y = Player(MyIndex).Y Then
-                If MapItem(i).num > 0 Then
-                    If Item(MapItem(i).num).BindType = 1 Then
+                If MapItem(i).Num > 0 Then
+                    If Item(MapItem(i).Num).BindType = 1 Then
 
                         ' make sure it's not a party drop
                         If Party.Leader > 0 Then
@@ -742,8 +742,8 @@ Sub CheckMapGetItem()
 
                                 If tmpIndex > 0 Then
                                     If Trim$(GetPlayerName(tmpIndex)) = Trim$(MapItem(i).playerName) Then
-                                        If Item(MapItem(i).num).ClassReq > 0 Then
-                                            If Item(MapItem(i).num).ClassReq <> Player(MyIndex).Class Then
+                                        If Item(MapItem(i).Num).ClassReq > 0 Then
+                                            If Item(MapItem(i).Num).ClassReq <> Player(MyIndex).Class Then
                                                 Dialogue "Loot Check", "This item is BoP and is not for your class.", "Are you sure you want to pick it up?", TypeLOOTITEM, StyleYesNo
                                                 Exit Sub
                                             End If
@@ -766,15 +766,15 @@ Sub CheckMapGetItem()
 
         ' nevermind, pick it up
         Player(MyIndex).MapGetTimer = getTime
-        Buffer.WriteLong CMapGetItem
-        SendData Buffer.ToArray()
+        buffer.WriteLong CMapGetItem
+        SendData buffer.ToArray()
     End If
 
-    Set Buffer = Nothing
+    Set buffer = Nothing
 End Sub
 
 Public Sub CheckAttack()
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim attackspeed As Long
 
     If ControlDown Then
@@ -787,7 +787,7 @@ Public Sub CheckAttack()
         Else
             attackspeed = 1000
         End If
-        
+
         If TimeSinceAttack + attackspeed > Tick Then
             Exit Sub
         End If
@@ -795,17 +795,17 @@ Public Sub CheckAttack()
         If Player(MyIndex).Attacking = 0 Then
             Player(MyIndex).LastMoving = getTime
 
-                With Player(MyIndex)
-                    .Attacking = 1
-                    .AttackTimer = getTime
-                End With
+            With Player(MyIndex)
+                .Attacking = 1
+                .AttackTimer = getTime
+            End With
 
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong CAttack
-                SendData Buffer.ToArray()
-                Set Buffer = Nothing
-                
-                TimeSinceAttack = Tick
+            Set buffer = New clsBuffer
+            buffer.WriteLong CAttack
+            SendData buffer.ToArray()
+            Set buffer = Nothing
+
+            TimeSinceAttack = Tick
         End If
     End If
 
@@ -1086,7 +1086,7 @@ Function CheckDirection(ByVal direction As Byte) As Boolean
 
     ' Check to see if a npc is already on that tile
     For i = 1 To Npc_HighIndex
-        If MapNpc(i).num > 0 And MapNpc(i).Dead = NO Then
+        If MapNpc(i).Num > 0 And MapNpc(i).Dead = NO Then
             If MapNpc(i).X = X Then
                 If MapNpc(i).Y = Y Then
                     CheckDirection = True
@@ -1279,7 +1279,7 @@ Public Function IsEqSlot(ByVal startX As Long, ByVal startY As Long, ByVal InvSl
     Dim xO As Integer, yO As Integer
     Dim EqType As Byte
     Dim ItemID As Long
-    
+
     ItemID = GetPlayerInvItemNum(MyIndex, InvSlot)
 
     If ItemID <= 0 Or ItemID > MAX_ITEMS Then Exit Function
@@ -1400,7 +1400,7 @@ Public Sub UseItem()
 End Sub
 
 Public Sub ForgetSpell(ByVal spellSlot As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' Check for subscript out of range
     If spellSlot < 1 Or spellSlot > MAX_PLAYER_SPELLS Then
@@ -1420,11 +1420,11 @@ Public Sub ForgetSpell(ByVal spellSlot As Long)
     End If
 
     If PlayerSpells(spellSlot).Spell > 0 Then
-        Set Buffer = New clsBuffer
-        Buffer.WriteLong CForgetSpell
-        Buffer.WriteLong spellSlot
-        SendData Buffer.ToArray()
-        Set Buffer = Nothing
+        Set buffer = New clsBuffer
+        buffer.WriteLong CForgetSpell
+        buffer.WriteLong spellSlot
+        SendData buffer.ToArray()
+        Set buffer = Nothing
     Else
         AddText "No spell here.", BrightRed
     End If
@@ -1432,7 +1432,7 @@ Public Sub ForgetSpell(ByVal spellSlot As Long)
 End Sub
 
 Public Sub CastSpell(ByVal spellSlot As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' Check for subscript out of range
     If spellSlot < 1 Or spellSlot > MAX_PLAYER_SPELLS Then
@@ -1443,10 +1443,10 @@ Public Sub CastSpell(ByVal spellSlot As Long)
         AddText "Spell has not cooled down yet!", BrightRed
         Exit Sub
     End If
-    
+
     If Player(MyIndex).StunDuration > 0 Then
         AddText "Nao pode usar Stunado!", BrightRed
-    Exit Sub
+        Exit Sub
     End If
 
     ' make sure we're not casting same spell
@@ -1468,11 +1468,11 @@ Public Sub CastSpell(ByVal spellSlot As Long)
     If PlayerSpells(spellSlot).Spell > 0 Then
         If getTime > Player(MyIndex).AttackTimer + 1000 Then
             If Player(MyIndex).Moving = 0 Then
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong CCast
-                Buffer.WriteLong spellSlot
-                SendData Buffer.ToArray()
-                Set Buffer = Nothing
+                Set buffer = New clsBuffer
+                buffer.WriteLong CCast
+                buffer.WriteLong spellSlot
+                SendData buffer.ToArray()
+                Set buffer = Nothing
                 SpellBuffer = spellSlot
                 SpellBufferTimer = getTime
             Else
@@ -1501,11 +1501,11 @@ Sub ClearTempTile()
 
 End Sub
 
-Public Sub DevMsg(ByVal Text As String, ByVal Color As Byte)
+Public Sub DevMsg(ByVal text As String, ByVal Color As Byte)
 
     If InGame Then
         If GetPlayerAccess(MyIndex) > ADMIN_DEVELOPER Then
-            Call AddText(Text, Color)
+            Call AddText(text, Color)
         End If
     End If
 End Sub
@@ -1683,11 +1683,11 @@ Public Function GetBankItemNum(ByVal BankSlot As Long) As Long
         Exit Function
     End If
 
-    GetBankItemNum = Bank.Item(BankSlot).num
+    GetBankItemNum = Bank.Item(BankSlot).Num
 End Function
 
 Public Sub SetBankItemNum(ByVal BankSlot As Long, ByVal itemNum As Long)
-    Bank.Item(BankSlot).num = itemNum
+    Bank.Item(BankSlot).Num = itemNum
 End Sub
 
 Public Function GetBankItemValue(ByVal BankSlot As Long) As Long
@@ -1803,10 +1803,10 @@ Public Sub Dialogue(ByVal header As String, ByVal body As String, ByVal body2 As
         End If
 
         ' set labels
-        .Controls(GetControlIndex("winDialogue", "lblHeader")).Text = header
-        .Controls(GetControlIndex("winDialogue", "lblBody_1")).Text = body
-        .Controls(GetControlIndex("winDialogue", "lblBody_2")).Text = body2
-        .Controls(GetControlIndex("winDialogue", "txtInput")).Text = vbNullString
+        .Controls(GetControlIndex("winDialogue", "lblHeader")).text = header
+        .Controls(GetControlIndex("winDialogue", "lblBody_1")).text = body
+        .Controls(GetControlIndex("winDialogue", "lblBody_2")).text = body2
+        .Controls(GetControlIndex("winDialogue", "txtInput")).text = vbNullString
     End With
 
     ' set it all up
@@ -1822,10 +1822,10 @@ End Sub
 Public Sub dialogueHandler(ByVal Index As Long)
     Dim Value As Long, diaInput As String
 
-    Dim Buffer As New clsBuffer
-    Set Buffer = New clsBuffer
+    Dim buffer As New clsBuffer
+    Set buffer = New clsBuffer
 
-    diaInput = Trim$(Windows(GetWindowIndex("winDialogue")).Controls(GetControlIndex("winDialogue", "txtInput")).Text)
+    diaInput = Trim$(Windows(GetWindowIndex("winDialogue")).Controls(GetControlIndex("winDialogue", "txtInput")).text)
 
     ' find out which button
     If Index = 1 Then    ' okay button
@@ -1870,13 +1870,13 @@ Public Sub dialogueHandler(ByVal Index As Long)
         Case TypeLOOTITEM
             ' send the packet
             Player(MyIndex).MapGetTimer = getTime
-            Buffer.WriteLong CMapGetItem
-            SendData Buffer.ToArray()
+            buffer.WriteLong CMapGetItem
+            SendData buffer.ToArray()
         Case TypeGUILD
-            Buffer.WriteLong CGuildInviteResposta
-            Buffer.WriteByte 1
-            SendData Buffer.ToArray()
-        
+            buffer.WriteLong CGuildInviteResposta
+            buffer.WriteByte 1
+            SendData buffer.ToArray()
+
         End Select
 
     ElseIf Index = 3 Then    ' no button
@@ -1889,11 +1889,11 @@ Public Sub dialogueHandler(ByVal Index As Long)
 
         Case TypePARTY
             SendDeclineParty
-        
+
         Case TypeGUILD
-            Buffer.WriteLong CGuildInviteResposta
-            Buffer.WriteByte 0
-            SendData Buffer.ToArray()
+            buffer.WriteLong CGuildInviteResposta
+            buffer.WriteByte 0
+            SendData buffer.ToArray()
         End Select
     End If
 
@@ -2194,7 +2194,7 @@ End Sub
 
 Public Sub cacheRenderState(ByVal X As Long, ByVal Y As Long, ByVal layernum As Long)
     Dim quarterNum As Long
-    
+
     On Error Resume Next
 
     ' exit out early
@@ -2802,9 +2802,9 @@ Public Sub OpenNpcChat(ByVal NpcNum As Long, ByVal mT As String, ByRef o() As St
     With Windows(GetWindowIndex("winNpcChat"))
         ' set main text
 
-        .Window.Text = "Conversation with " & Trim$(NPC(NpcNum).Name)
+        .Window.text = "Conversation with " & Trim$(NPC(NpcNum).Name)
 
-        .Controls(GetControlIndex("winNpcChat", "lblChat")).Text = mT
+        .Controls(GetControlIndex("winNpcChat", "lblChat")).text = mT
         ' make everything visible
 
         For i = 1 To 4
@@ -2831,7 +2831,7 @@ Public Sub OpenNpcChat(ByVal NpcNum As Long, ByVal mT As String, ByRef o() As St
         ' set labels
         X = convOptions
         For i = 1 To 4
-            .Controls(GetControlIndex("winNpcChat", "btnOpt" & i)).Text = X & ". " & o(i)
+            .Controls(GetControlIndex("winNpcChat", "btnOpt" & i)).text = X & ". " & o(i)
             X = X - 1
         Next
 
@@ -2915,7 +2915,7 @@ End Sub
 
 Public Sub ScrollChatBox(ByVal direction As Byte)
     If direction = 0 Then    ' up
-        If ChatScroll < ChatLines Then
+        If ChatScroll < Chat_HighIndex - ChatHeight_Lines Then
             ChatScroll = ChatScroll + 1
         End If
     Else
@@ -2997,7 +2997,7 @@ Public Sub FindNearestTarget()
         bestY = 255
 
         For i = 1 To MAX_MAP_NPCS
-            If MapNpc(i).num > 0 Then
+            If MapNpc(i).Num > 0 Then
                 X = MapNpc(i).X
                 Y = MapNpc(i).Y
                 ' find the difference - x
@@ -3104,7 +3104,7 @@ Public Sub FindTarget()
     ' check npcs
     For i = 1 To MAX_MAP_NPCS
 
-        If MapNpc(i).num > 0 Then
+        If MapNpc(i).Num > 0 Then
             X = (MapNpc(i).X * 32) + MapNpc(i).xOffset + 32
             Y = (MapNpc(i).Y * 32) + MapNpc(i).yOffset + 32
 
@@ -3150,7 +3150,7 @@ Public Sub AttemptLogin()
 
     ' send login packet
     If ConnectToServer Then
-        SendLogin Windows(GetWindowIndex("winLogin")).Controls(GetControlIndex("winLogin", "txtUser")).Text
+        SendLogin Windows(GetWindowIndex("winLogin")).Controls(GetControlIndex("winLogin", "txtUser")).text
         Exit Sub
     End If
 
@@ -3267,7 +3267,7 @@ Public Sub DialogueAlert(ByVal Index As Long)
         header = "Error, Birthday Incorrect"
         body = "Use o formato '##/##/####"
         body2 = "Pode usar '\' ou '/' ou '-' para separar o dia, mes e ano!"
-        
+
     Case MsgLOTTERYMAXBID
         header = "Invalid Bet"
         body = "Exceeded the maximum value"
@@ -3341,8 +3341,8 @@ Public Sub ShowClasses()
     newCharClass = 1
     newCharSprite = 1
     newCharGender = SEX_MALE
-    Windows(GetWindowIndex("winClasses")).Controls(GetControlIndex("winClasses", "lblClassName")).Text = Trim$(Class(newCharClass).Name)
-    Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "txtName")).Text = vbNullString
+    Windows(GetWindowIndex("winClasses")).Controls(GetControlIndex("winClasses", "lblClassName")).text = Trim$(Class(newCharClass).Name)
+    Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "txtName")).text = vbNullString
     Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "chkMale")).Value = 1
     Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "chkFemale")).Value = 0
     ShowWindow GetWindowIndex("winClasses")
@@ -3358,8 +3358,8 @@ Public Sub SetGoldLabel()
     '        End If
     '    End If
     'Next
-    Windows(GetWindowIndex("winShop")).Controls(GetControlIndex("winShop", "lblGold")).Text = Format$(Amount, "#,###,###,###") & " $"
-    Windows(GetWindowIndex("winInventory")).Controls(GetControlIndex("winInventory", "lblGold")).Text = Format$(Amount, "#,###,###,###") & " $"
+    Windows(GetWindowIndex("winShop")).Controls(GetControlIndex("winShop", "lblGold")).text = Format$(Amount, "#,###,###,###") & " $"
+    Windows(GetWindowIndex("winInventory")).Controls(GetControlIndex("winInventory", "lblGold")).text = Format$(Amount, "#,###,###,###") & " $"
 End Sub
 
 Public Sub ShowInvDesc(X As Long, Y As Long, invNum As Long)
@@ -3432,7 +3432,7 @@ Public Sub ShowSpellDesc(X As Long, Y As Long, spellnum As Long, spellSlot As Lo
     ' set variables
     With Windows(GetWindowIndex("winDescription"))
         ' set name
-        .Controls(GetControlIndex("winDescription", "lblName")).Text = Trim$(Spell(spellnum).Name)
+        .Controls(GetControlIndex("winDescription", "lblName")).text = Trim$(Spell(spellnum).Name)
         .Controls(GetControlIndex("winDescription", "lblName")).textColour = White
 
         ' find ranks
@@ -3463,7 +3463,7 @@ Public Sub ShowSpellDesc(X As Long, Y As Long, spellnum As Long, spellSlot As Lo
             .Controls(GetControlIndex("winDescription", "lblClass")).visible = True
             .Controls(GetControlIndex("winDescription", "picBar")).visible = True
             'set vals
-            .Controls(GetControlIndex("winDescription", "lblClass")).Text = sUse
+            .Controls(GetControlIndex("winDescription", "lblClass")).text = sUse
             .Controls(GetControlIndex("winDescription", "lblClass")).textColour = Colour
         Else
             ' hide some controls
@@ -3551,7 +3551,7 @@ Public Sub ShowItemDesc(X As Long, Y As Long, itemNum As Long, SoulBound As Bool
         Else
             theName = "(SB) " & Trim$(Item(itemNum).Name)
         End If
-        .Controls(GetControlIndex("winDescription", "lblName")).Text = theName
+        .Controls(GetControlIndex("winDescription", "lblName")).text = theName
 
         Colour = GetItemNameColour(Item(itemNum).Rarity)
 
@@ -3594,7 +3594,7 @@ Public Sub ShowItemDesc(X As Long, Y As Long, itemNum As Long, SoulBound As Bool
             className = "No class req."
             Colour = Green
         End If
-        .Controls(GetControlIndex("winDescription", "lblClass")).Text = className
+        .Controls(GetControlIndex("winDescription", "lblClass")).text = className
         .Controls(GetControlIndex("winDescription", "lblClass")).textColour = Colour
         ' level
         If Item(itemNum).LevelReq > 0 Then
@@ -3609,7 +3609,7 @@ Public Sub ShowItemDesc(X As Long, Y As Long, itemNum As Long, SoulBound As Bool
             levelTxt = "No level req."
             Colour = Green
         End If
-        .Controls(GetControlIndex("winDescription", "lblLevel")).Text = levelTxt
+        .Controls(GetControlIndex("winDescription", "lblLevel")).text = levelTxt
         .Controls(GetControlIndex("winDescription", "lblLevel")).textColour = Colour
     End With
 
@@ -3782,11 +3782,11 @@ Public Function GetItemNameColour(ByVal Rarity As Byte) As Long
     End Select
 End Function
 
-Public Sub AddDescInfo(Text As String, Optional Colour As Long = White)
+Public Sub AddDescInfo(text As String, Optional Colour As Long = White)
     Dim Count As Long
     Count = UBound(descText)
     ReDim Preserve descText(1 To Count + 1) As TextColourRec
-    descText(Count + 1).Text = Text
+    descText(Count + 1).text = text
     descText(Count + 1).Colour = Colour
 End Sub
 
@@ -3871,20 +3871,20 @@ Sub UpdateShop()
             shopSelectedItem = Shop(InShop).TradeItem(shopSelectedSlot).Item
             ' labels
             If shopSelectedItem > 0 Then
-                .Controls(GetControlIndex("winShop", "lblName")).Text = Trim$(Item(shopSelectedItem).Name)
+                .Controls(GetControlIndex("winShop", "lblName")).text = Trim$(Item(shopSelectedItem).Name)
                 ' check if it's gold
                 If Shop(InShop).TradeItem(shopSelectedSlot).CostItem = 1 Then
                     ' it's gold
-                    .Controls(GetControlIndex("winShop", "lblCost")).Text = Shop(InShop).TradeItem(shopSelectedSlot).CostValue & "g"
+                    .Controls(GetControlIndex("winShop", "lblCost")).text = Shop(InShop).TradeItem(shopSelectedSlot).CostValue & "g"
                 Else
                     ' if it's one then just print the name
                     If Shop(InShop).TradeItem(shopSelectedSlot).CostValue = 1 Then
-                        .Controls(GetControlIndex("winShop", "lblCost")).Text = Trim$(Item(Shop(InShop).TradeItem(shopSelectedSlot).CostItem).Name)
+                        .Controls(GetControlIndex("winShop", "lblCost")).text = Trim$(Item(Shop(InShop).TradeItem(shopSelectedSlot).CostItem).Name)
                     Else
                         If Shop(InShop).TradeItem(shopSelectedSlot).CostItem > 0 Then
-                            .Controls(GetControlIndex("winShop", "lblCost")).Text = Shop(InShop).TradeItem(shopSelectedSlot).CostValue & " " & Trim$(Item(Shop(InShop).TradeItem(shopSelectedSlot).CostItem).Name)
+                            .Controls(GetControlIndex("winShop", "lblCost")).text = Shop(InShop).TradeItem(shopSelectedSlot).CostValue & " " & Trim$(Item(Shop(InShop).TradeItem(shopSelectedSlot).CostItem).Name)
                         Else
-                            .Controls(GetControlIndex("winShop", "lblCost")).Text = Shop(InShop).TradeItem(shopSelectedSlot).CostValue & " $"
+                            .Controls(GetControlIndex("winShop", "lblCost")).text = Shop(InShop).TradeItem(shopSelectedSlot).CostValue & " $"
                         End If
 
                     End If
@@ -3894,8 +3894,8 @@ Sub UpdateShop()
                     .Controls(GetControlIndex("winShop", "picItem")).image(i) = Tex_Item(Item(shopSelectedItem).Pic)
                 Next
             Else
-                .Controls(GetControlIndex("winShop", "lblName")).Text = "Empty Slot"
-                .Controls(GetControlIndex("winShop", "lblCost")).Text = vbNullString
+                .Controls(GetControlIndex("winShop", "lblName")).text = "Empty Slot"
+                .Controls(GetControlIndex("winShop", "lblCost")).text = vbNullString
                 ' draw the item
                 For i = 0 To 5
                     .Controls(GetControlIndex("winShop", "picItem")).image(i) = 0
@@ -3905,17 +3905,17 @@ Sub UpdateShop()
             shopSelectedItem = GetPlayerInvItemNum(MyIndex, shopSelectedSlot)
             ' labels
             If shopSelectedItem > 0 Then
-                .Controls(GetControlIndex("winShop", "lblName")).Text = Trim$(Item(shopSelectedItem).Name)
+                .Controls(GetControlIndex("winShop", "lblName")).text = Trim$(Item(shopSelectedItem).Name)
                 ' calc cost
                 CostValue = (Item(shopSelectedItem).price / 100) * Shop(InShop).BuyRate
-                .Controls(GetControlIndex("winShop", "lblCost")).Text = CostValue & "g"
+                .Controls(GetControlIndex("winShop", "lblCost")).text = CostValue & "g"
                 ' draw the item
                 For i = 0 To 5
                     .Controls(GetControlIndex("winShop", "picItem")).image(i) = Tex_Item(Item(shopSelectedItem).Pic)
                 Next
             Else
-                .Controls(GetControlIndex("winShop", "lblName")).Text = "Empty Slot"
-                .Controls(GetControlIndex("winShop", "lblCost")).Text = vbNullString
+                .Controls(GetControlIndex("winShop", "lblName")).text = "Empty Slot"
+                .Controls(GetControlIndex("winShop", "lblCost")).text = vbNullString
                 ' draw the item
                 For i = 0 To 5
                     .Controls(GetControlIndex("winShop", "picItem")).image(i) = 0
@@ -3951,7 +3951,7 @@ Sub ShowPlayerMenu(Index As Long, X As Long, Y As Long)
     If PlayerMenuIndex = 0 Then Exit Sub
     Windows(GetWindowIndex("winPlayerMenu")).Window.Left = X - 5
     Windows(GetWindowIndex("winPlayerMenu")).Window.top = Y - 5
-    Windows(GetWindowIndex("winPlayerMenu")).Controls(GetControlIndex("winPlayerMenu", "btnName")).Text = Trim$(GetPlayerName(PlayerMenuIndex))
+    Windows(GetWindowIndex("winPlayerMenu")).Controls(GetControlIndex("winPlayerMenu", "btnName")).text = Trim$(GetPlayerName(PlayerMenuIndex))
     ShowWindow GetWindowIndex("winRightClickBG")
     ShowWindow GetWindowIndex("winPlayerMenu"), , False
 End Sub
@@ -3969,15 +3969,15 @@ End Function
 Sub UpdateStats_UI()
 ' set the bar labels
     With Windows(GetWindowIndex("winBars"))
-        .Controls(GetControlIndex("winBars", "lblHP")).Text = GetPlayerVital(MyIndex, HP) & "/" & GetPlayerMaxVital(MyIndex, HP)
-        .Controls(GetControlIndex("winBars", "lblMP")).Text = GetPlayerVital(MyIndex, MP) & "/" & GetPlayerMaxVital(MyIndex, MP)
-        .Controls(GetControlIndex("winBars", "lblEXP")).Text = GetPlayerExp(MyIndex) & "/" & TNL
+        .Controls(GetControlIndex("winBars", "lblHP")).text = GetPlayerVital(MyIndex, HP) & "/" & GetPlayerMaxVital(MyIndex, HP)
+        .Controls(GetControlIndex("winBars", "lblMP")).text = GetPlayerVital(MyIndex, MP) & "/" & GetPlayerMaxVital(MyIndex, MP)
+        .Controls(GetControlIndex("winBars", "lblEXP")).text = GetPlayerExp(MyIndex) & "/" & TNL
     End With
     ' update character screen
     With Windows(GetWindowIndex("winCharacter"))
-        .Controls(GetControlIndex("winCharacter", "lblHealth")).Text = "Health: " & GetPlayerVital(MyIndex, HP) & "/" & GetPlayerMaxVital(MyIndex, HP)
-        .Controls(GetControlIndex("winCharacter", "lblSpirit")).Text = "Spirit: " & GetPlayerVital(MyIndex, MP) & "/" & GetPlayerMaxVital(MyIndex, MP)
-        .Controls(GetControlIndex("winCharacter", "lblExperience")).Text = "Exp: " & Player(MyIndex).EXP & "/" & TNL
+        .Controls(GetControlIndex("winCharacter", "lblHealth")).text = "Health: " & GetPlayerVital(MyIndex, HP) & "/" & GetPlayerMaxVital(MyIndex, HP)
+        .Controls(GetControlIndex("winCharacter", "lblSpirit")).text = "Spirit: " & GetPlayerVital(MyIndex, MP) & "/" & GetPlayerMaxVital(MyIndex, MP)
+        .Controls(GetControlIndex("winCharacter", "lblExperience")).text = "Exp: " & Player(MyIndex).EXP & "/" & TNL
     End With
 End Sub
 
@@ -3996,7 +3996,7 @@ Sub UpdatePartyInterface()
     With Windows(GetWindowIndex("winParty"))
         ' clear controls first
         For i = 1 To 3
-            .Controls(GetControlIndex("winParty", "lblName" & i)).Text = vbNullString
+            .Controls(GetControlIndex("winParty", "lblName" & i)).text = vbNullString
             .Controls(GetControlIndex("winParty", "picEmptyBar_HP" & i)).visible = False
             .Controls(GetControlIndex("winParty", "picEmptyBar_SP" & i)).visible = False
             .Controls(GetControlIndex("winParty", "picBar_HP" & i)).visible = False
@@ -4015,7 +4015,7 @@ Sub UpdatePartyInterface()
                     If IsPlaying(pIndex) Then
                         ' name and level
                         .Controls(GetControlIndex("winParty", "lblName" & cIn)).visible = True
-                        .Controls(GetControlIndex("winParty", "lblName" & cIn)).Text = Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex)
+                        .Controls(GetControlIndex("winParty", "lblName" & cIn)).text = Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex)
                         ' picture
                         .Controls(GetControlIndex("winParty", "picShadow" & cIn)).visible = True
                         .Controls(GetControlIndex("winParty", "picChar" & cIn)).visible = True
@@ -4068,8 +4068,8 @@ Sub UpdatePartyBars()
                 If pIndex > 0 Then
                     If IsPlaying(pIndex) Then
                         ' get playername and level atualization
-                        If .Controls(GetControlIndex("winParty", "lblName" & i)).Text <> Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex) Then
-                            .Controls(GetControlIndex("winParty", "lblName" & i)).Text = Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex)
+                        If .Controls(GetControlIndex("winParty", "lblName" & i)).text <> Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex) Then
+                            .Controls(GetControlIndex("winParty", "lblName" & i)).text = Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex)
                         End If
                         ' get their health
                         If GetPlayerVital(pIndex, HP) > 0 And GetPlayerMaxVital(pIndex, HP) > 0 Then
@@ -4097,12 +4097,12 @@ Sub ShowTrade()
     ShowWindow GetWindowIndex("winTrade")
     ' set the controls up
     With Windows(GetWindowIndex("winTrade"))
-        .Window.Text = "Trading with " & Trim$(GetPlayerName(InTrade))
-        .Controls(GetControlIndex("winTrade", "lblYourTrade")).Text = Trim$(GetPlayerName(MyIndex)) & "'s Offer"
-        .Controls(GetControlIndex("winTrade", "lblTheirTrade")).Text = Trim$(GetPlayerName(InTrade)) & "'s Offer"
-        .Controls(GetControlIndex("winTrade", "lblYourValue")).Text = "0 $"
-        .Controls(GetControlIndex("winTrade", "lblTheirValue")).Text = "0 $"
-        .Controls(GetControlIndex("winTrade", "lblStatus")).Text = "Choose items to offer."
+        .Window.text = "Trading with " & Trim$(GetPlayerName(InTrade))
+        .Controls(GetControlIndex("winTrade", "lblYourTrade")).text = Trim$(GetPlayerName(MyIndex)) & "'s Offer"
+        .Controls(GetControlIndex("winTrade", "lblTheirTrade")).text = Trim$(GetPlayerName(InTrade)) & "'s Offer"
+        .Controls(GetControlIndex("winTrade", "lblYourValue")).text = "0 $"
+        .Controls(GetControlIndex("winTrade", "lblTheirValue")).text = "0 $"
+        .Controls(GetControlIndex("winTrade", "lblStatus")).text = "Choose items to offer."
     End With
 End Sub
 
@@ -4222,32 +4222,32 @@ Sub ResizeGUI()
     Dim top As Long
 
     ' move hotbar
-    Windows(GetWindowIndex("winHotbar")).Window.Left = ScreenWidth - 430
+    Windows(GetWindowIndex("winHotbar")).Window.Left = screenWidth - 430
     ' move chat
-    Windows(GetWindowIndex("winChat")).Window.top = ScreenHeight - 178
-    Windows(GetWindowIndex("winChatSmall")).Window.top = ScreenHeight - 162
+    Windows(GetWindowIndex("winChat")).Window.top = screenHeight - 178
+    Windows(GetWindowIndex("winChatSmall")).Window.top = screenHeight - 162
     ' move menu
-    Windows(GetWindowIndex("winMenu")).Window.Left = ScreenWidth - 236
-    Windows(GetWindowIndex("winMenu")).Window.top = ScreenHeight - 37
+    Windows(GetWindowIndex("winMenu")).Window.Left = screenWidth - 236
+    Windows(GetWindowIndex("winMenu")).Window.top = screenHeight - 37
     ' move invitations
-    Windows(GetWindowIndex("winInvite_Party")).Window.Left = ScreenWidth - 234
-    Windows(GetWindowIndex("winInvite_Party")).Window.top = ScreenHeight - 80
+    Windows(GetWindowIndex("winInvite_Party")).Window.Left = screenWidth - 234
+    Windows(GetWindowIndex("winInvite_Party")).Window.top = screenHeight - 80
     ' loop through
-    top = ScreenHeight - 80
+    top = screenHeight - 80
     If Windows(GetWindowIndex("winInvite_Party")).Window.visible Then
         top = top - 37
     End If
-    Windows(GetWindowIndex("winInvite_Trade")).Window.Left = ScreenWidth - 234
+    Windows(GetWindowIndex("winInvite_Trade")).Window.Left = screenWidth - 234
     Windows(GetWindowIndex("winInvite_Trade")).Window.top = top
     ' re-size right-click background
-    Windows(GetWindowIndex("winRightClickBG")).Window.Width = ScreenWidth
-    Windows(GetWindowIndex("winRightClickBG")).Window.Height = ScreenHeight
+    Windows(GetWindowIndex("winRightClickBG")).Window.Width = screenWidth
+    Windows(GetWindowIndex("winRightClickBG")).Window.Height = screenHeight
     ' re-size black background
-    Windows(GetWindowIndex("winBlank")).Window.Width = ScreenWidth
-    Windows(GetWindowIndex("winBlank")).Window.Height = ScreenHeight
+    Windows(GetWindowIndex("winBlank")).Window.Width = screenWidth
+    Windows(GetWindowIndex("winBlank")).Window.Height = screenHeight
     ' re-size combo background
-    Windows(GetWindowIndex("winComboMenuBG")).Window.Width = ScreenWidth
-    Windows(GetWindowIndex("winComboMenuBG")).Window.Height = ScreenHeight
+    Windows(GetWindowIndex("winComboMenuBG")).Window.Width = screenWidth
+    Windows(GetWindowIndex("winComboMenuBG")).Window.Height = screenHeight
     ' centralise windows
     CentraliseWindow GetWindowIndex("winLogin")
     CentraliseWindow GetWindowIndex("winLoading")
@@ -4273,6 +4273,7 @@ Sub ResizeGUI()
     CentraliseWindow GetWindowIndex("winMessage")
     CentraliseWindow GetWindowIndex("winCheckIn")
     CentraliseWindow GetWindowIndex("winLottery")
+    CentraliseWindow GetWindowIndex("winClipboard")
 End Sub
 
 Sub SetResolution()
@@ -4280,8 +4281,8 @@ Sub SetResolution()
     curResolution = Options.Resolution
     GetResolutionSize curResolution, Width, Height
     Resize Width, Height
-    ScreenWidth = Width
-    ScreenHeight = Height
+    screenWidth = Width
+    screenHeight = Height
     TileWidth = (Width / 32) - 1
     TileHeight = (Height / 32) - 1
     ScreenX = (TileWidth) * PIC_X
@@ -4300,7 +4301,7 @@ Sub ShowComboMenu(curWindow As Long, curControl As Long)
         Windows(GetWindowIndex("winComboMenu")).Window.Height = 2 + (UBound(.list) * 16)
         Windows(GetWindowIndex("winComboMenu")).Window.Left = Windows(curWindow).Window.Left + .Left + 2
         top = Windows(curWindow).Window.top + .top + .Height
-        If top + Windows(GetWindowIndex("winComboMenu")).Window.Height > ScreenHeight Then top = ScreenHeight - Windows(GetWindowIndex("winComboMenu")).Window.Height
+        If top + Windows(GetWindowIndex("winComboMenu")).Window.Height > screenHeight Then top = screenHeight - Windows(GetWindowIndex("winComboMenu")).Window.Height
         Windows(GetWindowIndex("winComboMenu")).Window.top = top
         Windows(GetWindowIndex("winComboMenu")).Window.Width = .Width - 4
         ' set the values
@@ -4400,10 +4401,10 @@ Sub EventLogic()
     With Map.TileData.Events(eventNum).EventPage(eventPageNum)
         Select Case .Commands(eventCommandNum).Type
         Case EventType.evAddText
-            AddText .Commands(eventCommandNum).Text, .Commands(eventCommandNum).Colour, , .Commands(eventCommandNum).channel
+            AddText .Commands(eventCommandNum).text, .Commands(eventCommandNum).Colour, , .Commands(eventCommandNum).channel
         Case EventType.evShowChatBubble
             If .Commands(eventCommandNum).TargetType = TARGET_TYPE_PLAYER Then Target = MyIndex Else Target = .Commands(eventCommandNum).Target
-            AddChatBubble Target, .Commands(eventCommandNum).TargetType, .Commands(eventCommandNum).Text, .Commands(eventCommandNum).Colour
+            AddChatBubble Target, .Commands(eventCommandNum).TargetType, .Commands(eventCommandNum).text, .Commands(eventCommandNum).Colour
         Case EventType.evPlayerVar
             If .Commands(eventCommandNum).Target > 0 Then Player(MyIndex).Variable(.Commands(eventCommandNum).Target) = .Commands(eventCommandNum).Colour
         End Select
@@ -4537,7 +4538,7 @@ Sub CheckAppearTiles()
         End If
     Next
     For i = 1 To MAX_MAP_NPCS
-        If MapNpc(i).num > 0 Then
+        If MapNpc(i).Num > 0 Then
             If MapNpc(i).Vital(Vitals.HP) > 0 Then
                 X = MapNpc(i).X
                 Y = MapNpc(i).Y
@@ -4747,11 +4748,11 @@ Public Sub SetBloodHighIndex()
 
 End Sub
 
-Public Function KeepTwoDigit(num As Byte)
-    If (num < 10) Then
-        KeepTwoDigit = "0" & num
+Public Function KeepTwoDigit(Num As Byte)
+    If (Num < 10) Then
+        KeepTwoDigit = "0" & Num
     Else
-        KeepTwoDigit = num
+        KeepTwoDigit = Num
     End If
 End Function
 
@@ -4773,25 +4774,25 @@ Public Function IsDay() As Boolean
 End Function
 
 Public Sub ShowMessageWindow(ByRef WindowName As String, ByRef message As String)
-    
+
     With Windows(GetWindowIndex("winMessage"))
-        .Window.Text = WindowName
-        .Controls(GetControlIndex("winMessage", "lblChat")).Text = message
+        .Window.text = WindowName
+        .Controls(GetControlIndex("winMessage", "lblChat")).text = message
     End With
-    
+
     ShowWindow GetWindowIndex("winMessage")
 End Sub
 
 Public Sub SetPlayerGold(ByVal Index As Long, ByVal Value As Long)
-    
+
     If Not IsPlaying(Index) Then Exit Sub
-    
+
     Player(Index).Gold = Value
 End Sub
 
 Public Function GetPlayerGold(ByVal Index As Long) As Long
     If Not IsPlaying(Index) Then Exit Function
-    
+
     GetPlayerGold = Player(Index).Gold
 End Function
 

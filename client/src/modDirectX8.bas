@@ -10,11 +10,33 @@ Attribute Tex_Paperdoll.VB_VarUserMemId = 1073741824
 Attribute Tex_Resource.VB_VarUserMemId = 1073741824
 Public Tex_Spellicon() As Long, Tex_Tileset() As Long, Tex_Fog() As Long, Tex_GUI() As Long, Tex_Design() As Long, Tex_Gradient() As Long, Tex_Surface() As Long
 Attribute Tex_Spellicon.VB_VarUserMemId = 1073741830
+Attribute Tex_Tileset.VB_VarUserMemId = 1073741830
+Attribute Tex_Fog.VB_VarUserMemId = 1073741830
+Attribute Tex_GUI.VB_VarUserMemId = 1073741830
+Attribute Tex_Design.VB_VarUserMemId = 1073741830
+Attribute Tex_Gradient.VB_VarUserMemId = 1073741830
+Attribute Tex_Surface.VB_VarUserMemId = 1073741830
 Public Tex_Bars As Long, Tex_Blood As Long, Tex_Direction As Long, Tex_Misc As Long, Tex_Target As Long, Tex_Shadow As Long, Tex_Weather As Long
 Attribute Tex_Bars.VB_VarUserMemId = 1073741837
+Attribute Tex_Blood.VB_VarUserMemId = 1073741837
+Attribute Tex_Direction.VB_VarUserMemId = 1073741837
+Attribute Tex_Misc.VB_VarUserMemId = 1073741837
+Attribute Tex_Target.VB_VarUserMemId = 1073741837
+Attribute Tex_Shadow.VB_VarUserMemId = 1073741837
+Attribute Tex_Weather.VB_VarUserMemId = 1073741837
 Public Tex_Fader As Long, Tex_Blank As Long, Tex_Event As Long, Tex_Light As Long, Tex_LightMap As Long
 Attribute Tex_Fader.VB_VarUserMemId = 1073741843
-Public Tex_Captcha() As Long, Tex_Panoramas() As Long, Tex_Flags() As Long, Tex_Status() As Long, Tex_Sun() As Long
+Attribute Tex_Blank.VB_VarUserMemId = 1073741843
+Attribute Tex_Event.VB_VarUserMemId = 1073741843
+Attribute Tex_Light.VB_VarUserMemId = 1073741843
+Attribute Tex_LightMap.VB_VarUserMemId = 1073741843
+Public Tex_Captcha() As Long, Tex_Panoramas() As Long, Tex_Flags() As Long, Tex_Status() As Long, Tex_Sun() As Long, Tex_Cursor() As Long
+Attribute Tex_Captcha.VB_VarUserMemId = 1073741841
+Attribute Tex_Panoramas.VB_VarUserMemId = 1073741841
+Attribute Tex_Flags.VB_VarUserMemId = 1073741841
+Attribute Tex_Status.VB_VarUserMemId = 1073741841
+Attribute Tex_Sun.VB_VarUserMemId = 1073741841
+Attribute Tex_Cursor.VB_VarUserMemId = 1073741841
 
 ' Texture count
 Public Count_Anim As Long, Count_Char As Long, Count_Face As Long, Count_GUI As Long, Count_Design As Long, Count_Gradient As Long
@@ -32,11 +54,17 @@ Attribute Count_Spellicon.VB_VarUserMemId = 1073741853
 Attribute Count_Tileset.VB_VarUserMemId = 1073741853
 Attribute Count_Fog.VB_VarUserMemId = 1073741853
 Attribute Count_Surface.VB_VarUserMemId = 1073741853
-Public Count_Captcha As Long, Count_Panoramas As Long, Count_Flags As Long, Count_Status As Long, Count_Sun As Long
+Public Count_Captcha As Long, Count_Panoramas As Long, Count_Flags As Long, Count_Status As Long, Count_Sun As Long, Count_Cursor As Long
 Attribute Count_Captcha.VB_VarUserMemId = 1073741860
+Attribute Count_Panoramas.VB_VarUserMemId = 1073741860
+Attribute Count_Flags.VB_VarUserMemId = 1073741860
+Attribute Count_Status.VB_VarUserMemId = 1073741860
+Attribute Count_Sun.VB_VarUserMemId = 1073741860
+Attribute Count_Cursor.VB_VarUserMemId = 1073741860
 
 ' Menu BackGround Randomics
 Public MenuBG As Byte
+Attribute MenuBG.VB_VarUserMemId = 1073741852
 
 ' Variables
 Public DX8 As DirectX8
@@ -90,9 +118,9 @@ Attribute mTextures.VB_VarUserMemId = 1073741872
 Public CurrentTexture As Long
 Attribute CurrentTexture.VB_VarUserMemId = 1073741873
 
-Public ScreenWidth As Long, ScreenHeight As Long
-Attribute ScreenWidth.VB_VarUserMemId = 1073741874
-Attribute ScreenHeight.VB_VarUserMemId = 1073741874
+Public screenWidth As Long, screenHeight As Long
+Attribute screenWidth.VB_VarUserMemId = 1073741874
+Attribute screenHeight.VB_VarUserMemId = 1073741874
 Public TileWidth As Long, TileHeight As Long
 Attribute TileWidth.VB_VarUserMemId = 1073741876
 Attribute TileHeight.VB_VarUserMemId = 1073741876
@@ -111,10 +139,10 @@ Public Const DEC_EXT As String = ".png"
 Public Const ENC_EXT As String = ".dat"
 
 
-Public Sub InitDX8(ByVal hWnd As Long)
+Public Sub InitDX8(ByVal hwnd As Long)
     Dim DispMode As D3DDISPLAYMODE, Width As Long, Height As Long
 
-    mhWnd = hWnd
+    mhWnd = hwnd
 
     Set DX8 = New DirectX8
     Set D3D = DX8.Direct3DCreate
@@ -122,8 +150,8 @@ Public Sub InitDX8(ByVal hWnd As Long)
 
     ' set size
     GetResolutionSize curResolution, Width, Height
-    ScreenWidth = Width
-    ScreenHeight = Height
+    screenWidth = Width
+    screenHeight = Height
     TileWidth = (Width / 32) - 1
     TileHeight = (Height / 32) - 1
     ScreenX = (TileWidth) * PIC_X
@@ -136,7 +164,7 @@ Public Sub InitDX8(ByVal hWnd As Long)
     If Options.Fullscreen = 0 Then
         isFullscreen = False
         D3DWindow.SwapEffect = D3DSWAPEFFECT_COPY
-        D3DWindow.hDeviceWindow = hWnd
+        D3DWindow.hDeviceWindow = hwnd
         D3DWindow.BackBufferFormat = DispMode.Format
         D3DWindow.Windowed = 1
     Else
@@ -144,13 +172,13 @@ Public Sub InitDX8(ByVal hWnd As Long)
         D3DWindow.SwapEffect = D3DSWAPEFFECT_COPY
         D3DWindow.BackBufferCount = 1
         D3DWindow.BackBufferFormat = DispMode.Format
-        D3DWindow.BackBufferWidth = ScreenWidth
-        D3DWindow.BackBufferHeight = ScreenHeight
+        D3DWindow.BackBufferWidth = screenWidth
+        D3DWindow.BackBufferHeight = screenHeight
     End If
 
     Select Case Options.Render
     Case 1    ' hardware
-        If LoadDirectX(D3DCREATE_HARDWARE_VERTEXPROCESSING, hWnd) <> 0 Then
+        If LoadDirectX(D3DCREATE_HARDWARE_VERTEXPROCESSING, hwnd) <> 0 Then
             Options.Fullscreen = 0
             Options.Resolution = 0
             Options.Render = 0
@@ -159,7 +187,7 @@ Public Sub InitDX8(ByVal hWnd As Long)
             Call DestroyGame
         End If
     Case 2    ' mixed
-        If LoadDirectX(D3DCREATE_MIXED_VERTEXPROCESSING, hWnd) <> 0 Then
+        If LoadDirectX(D3DCREATE_MIXED_VERTEXPROCESSING, hwnd) <> 0 Then
             Options.Fullscreen = 0
             Options.Resolution = 0
             Options.Render = 0
@@ -168,7 +196,7 @@ Public Sub InitDX8(ByVal hWnd As Long)
             Call DestroyGame
         End If
     Case 3    ' software
-        If LoadDirectX(D3DCREATE_SOFTWARE_VERTEXPROCESSING, hWnd) <> 0 Then
+        If LoadDirectX(D3DCREATE_SOFTWARE_VERTEXPROCESSING, hwnd) <> 0 Then
             Options.Fullscreen = 0
             Options.Resolution = 0
             Options.Render = 0
@@ -177,9 +205,9 @@ Public Sub InitDX8(ByVal hWnd As Long)
             Call DestroyGame
         End If
     Case Else    ' auto
-        If LoadDirectX(D3DCREATE_HARDWARE_VERTEXPROCESSING, hWnd) <> 0 Then
-            If LoadDirectX(D3DCREATE_MIXED_VERTEXPROCESSING, hWnd) <> 0 Then
-                If LoadDirectX(D3DCREATE_SOFTWARE_VERTEXPROCESSING, hWnd) <> 0 Then
+        If LoadDirectX(D3DCREATE_HARDWARE_VERTEXPROCESSING, hwnd) <> 0 Then
+            If LoadDirectX(D3DCREATE_MIXED_VERTEXPROCESSING, hwnd) <> 0 Then
+                If LoadDirectX(D3DCREATE_SOFTWARE_VERTEXPROCESSING, hwnd) <> 0 Then
                     Options.Fullscreen = 0
                     Options.Resolution = 0
                     Options.Render = 0
@@ -204,10 +232,10 @@ Public Sub InitDX8(ByVal hWnd As Long)
     Call D3DDevice.SetStreamSource(0, DXVB, Len(Box(0)))
 End Sub
 
-Public Function LoadDirectX(ByVal BehaviourFlags As CONST_D3DCREATEFLAGS, ByVal hWnd As Long)
+Public Function LoadDirectX(ByVal BehaviourFlags As CONST_D3DCREATEFLAGS, ByVal hwnd As Long)
     On Error GoTo ErrorInit
 
-    Set D3DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, BehaviourFlags, D3DWindow)
+    Set D3DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, BehaviourFlags, D3DWindow)
     Exit Function
 
 ErrorInit:
@@ -246,6 +274,7 @@ Public Sub LoadTextures()
     Tex_Status = LoadTextureFiles(Count_Status, App.path & Path_Status)
     Tex_Fog = LoadTextureFiles(Count_Fog, App.path & Path_Fog)
     Tex_Sun = LoadTextureFiles(Count_Sun, App.path & Path_Sun)
+    Tex_Cursor = LoadTextureFiles(Count_Cursor, App.path & Path_Cursor)
     ' Singles
     Tex_Bars = LoadTextureFile(App.path & Path_Misc & "bars.png")
     Tex_Blood = LoadTextureFile(App.path & Path_Misc & "blood.png")
@@ -290,8 +319,16 @@ Public Function LoadTextureFile(ByVal path As String, Optional ByVal DontReuse A
     Dim f As Long
 
     If dir$(path) = vbNullString Then
-        Call MsgBox("""" & path & """ could not be found.")
-        End
+        If Right$(path, 4) = DEC_EXT Then
+            path = Left$(path, Len(path) - 4) & ENC_EXT
+        ElseIf Right$(path, 4) = ENC_EXT Then
+            path = Left$(path, Len(path) - 4) & DEC_EXT
+        End If
+
+        If dir$(path) = vbNullString Then
+            Call MsgBox("""" & path & """ could not be found.")
+            End
+        End If
     End If
 
     f = FreeFile
@@ -383,14 +420,14 @@ Public Sub RenderTexture(Texture As Long, ByVal X As Long, ByVal Y As Long, ByVa
 End Sub
 
 Public Sub RenderGeom(ByVal X As Long, ByVal Y As Long, ByVal sX As Single, ByVal sY As Single, ByVal w As Long, ByVal h As Long, ByVal sW As Single, ByVal sH As Single, Optional ByVal Colour As Long = -1, Optional ByVal offset As Boolean = False, Optional ByVal degress As Single = 0, Optional ByVal Shadow As Byte = 0)
-Dim i As Long
+    Dim i As Long
 
     If CurrentTexture = 0 Then Exit Sub
     If w = 0 Then Exit Sub
     If h = 0 Then Exit Sub
     If sW = 0 Then Exit Sub
     If sH = 0 Then Exit Sub
-    
+
     If mClip.Right <> 0 Then
         If mClip.top <> 0 Then
             If mClip.Left > X Then
@@ -399,37 +436,37 @@ Dim i As Long
                 w = w - (mClip.Left - X)
                 X = mClip.Left
             End If
-            
+
             If mClip.top > Y Then
                 sY = sY + (mClip.top - Y) / (h / sH)
                 sH = sH - (mClip.top - Y) / (h / sH)
                 h = h - (mClip.top - Y)
                 Y = mClip.top
             End If
-            
+
             If mClip.Right < X + w Then
                 sW = sW - (X + w - mClip.Right) / (w / sW)
                 w = -X + mClip.Right
             End If
-            
+
             If mClip.bottom < Y + h Then
                 sH = sH - (Y + h - mClip.bottom) / (h / sH)
                 h = -Y + mClip.bottom
             End If
-            
+
             If w <= 0 Then Exit Sub
             If h <= 0 Then Exit Sub
             If sW <= 0 Then Exit Sub
             If sH <= 0 Then Exit Sub
         End If
     End If
-    
+
     Call GeomCalc(CurrentTexture, X, Y, w, h, sX, sY, sW, sH, Colour, degress, Shadow)
     Call D3DDevice.DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, Box(0), Len(Box(0)))
 End Sub
 
 Public Sub GeomCalc(ByVal TextureNum As Long, ByVal X As Single, ByVal Y As Single, ByVal w As Integer, ByVal h As Integer, ByVal sX As Single, ByVal sY As Single, ByVal sW As Single, ByVal sH As Single, ByVal Color As Long, Optional ByVal degrees As Single = 0, Optional ByVal Shadow As Byte = 0)
-    Dim RadAngle As Single ' The angle in Radians
+    Dim RadAngle As Single    ' The angle in Radians
     Dim CenterX As Single, CenterY As Single
     Dim NewX As Single, NewY As Single
     Dim SinRad As Single, CosRad As Single, i As Long
@@ -438,7 +475,7 @@ Public Sub GeomCalc(ByVal TextureNum As Long, ByVal X As Single, ByVal Y As Sing
     sH = (sH + sY) / mTexture(TextureNum).h + 0.000003
     sX = sX / mTexture(TextureNum).w + 0.000003
     sY = sY / mTexture(TextureNum).h + 0.000003
-    
+
     GeomSetBox X, Y, w, h, Color, sX, sY, sW, sH
 
     ' Check if a rotation is required
@@ -461,10 +498,10 @@ Public Sub GeomCalc(ByVal TextureNum As Long, ByVal X As Single, ByVal Y As Sing
             Box(i).Y = NewY
         Next
     End If
-    
+
     If Shadow > 0 Then
-     'Efeito VbGore Sombra
-     '* 0.3
+        'Efeito VbGore Sombra
+        '* 0.3
         Box(0).X = X + w
         Box(0).Y = Y + h
         Box(1).X = Box(0).X - w
@@ -545,7 +582,7 @@ Public Sub GDIRenderAnimation()
                     RenderTexture Tex_Anim(Animationnum), 0, 0, sX, sY, Width, Height, Width, Height
                     ' Finish Rendering
                     Call D3DDevice.EndScene
-                    Call D3DDevice.Present(sRECT, ByVal 0, frmEditor_Animation.picSprite(i).hWnd, ByVal 0)
+                    Call D3DDevice.Present(sRECT, ByVal 0, frmEditor_Animation.picSprite(i).hwnd, ByVal 0)
                 End If
             End If
         End If
@@ -557,35 +594,35 @@ End Sub
 ' GDI rendering
 Public Sub GDIRenderResource(ByRef picBox As PictureBox, ByVal Sprite As Long)
     Dim Width As Long, Height As Long, sRECT As RECT
-    
+
     ' exit out if doesn't exist
     If Sprite <= 0 Or Sprite > Count_Resource Then
         picBox.Cls
         Exit Sub
     End If
-    
+
     Height = mTexture(Tex_Resource(Sprite)).h
     Width = mTexture(Tex_Resource(Sprite)).w
-    
+
     If Height = 0 Or Width = 0 Then
         Height = 1
         Width = 1
     End If
-    
+
     sRECT.top = 0
     sRECT.bottom = Height
     sRECT.Left = 0
     sRECT.Right = Width
-    
+
     ' Start Rendering
     Call D3DDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
     Call D3DDevice.BeginScene
-    
+
     RenderTexture Tex_Resource(Sprite), 0, 0, 0, 0, Width, Height, Width, Height
     ' Finish Rendering
-    
+
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hwnd, ByVal 0)
 End Sub
 
 Public Sub GDIRenderChar(ByRef picBox As PictureBox, ByVal Sprite As Long)
@@ -605,7 +642,7 @@ Public Sub GDIRenderChar(ByRef picBox As PictureBox, ByVal Sprite As Long)
     RenderTexture Tex_Char(Sprite), 0, 0, 0, 0, Width, Height, Width, Height
     ' Finish Rendering
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hwnd, ByVal 0)
 End Sub
 
 Public Sub GDIRenderLight(ByRef picBox As PictureBox)
@@ -624,7 +661,7 @@ Public Sub GDIRenderLight(ByRef picBox As PictureBox)
     RenderTexture Tex_Light, 0, 0, 0, 0, Width, Height, 128, 128, D3DColorARGB(frmEditor_Map.scrlA, frmEditor_Map.scrlR, frmEditor_Map.scrlG, frmEditor_Map.scrlB)
     ' Finish Rendering
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hwnd, ByVal 0)
 End Sub
 
 Public Sub GDIRenderFace(ByRef picBox As PictureBox, ByVal Sprite As Long)
@@ -651,7 +688,7 @@ Public Sub GDIRenderFace(ByRef picBox As PictureBox, ByVal Sprite As Long)
     RenderTexture Tex_Face(Sprite), 0, 0, 0, 0, Width, Height, Width, Height
     ' Finish Rendering
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hwnd, ByVal 0)
 End Sub
 
 Sub GDIRenderEventGraphic()
@@ -697,7 +734,7 @@ Sub GDIRenderEventGraphic()
     RenderTexture texNum, (frmEditor_Events.picGraphic.ScaleWidth / 2) - 16, (frmEditor_Events.picGraphic.ScaleHeight / 2) - 16, sX * 32, sY * 32, Width, Height, Width, Height
 
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, frmEditor_Events.picGraphic.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, frmEditor_Events.picGraphic.hwnd, ByVal 0)
 End Sub
 
 Sub GDIRenderEventGraphicSel()
@@ -743,7 +780,7 @@ Sub GDIRenderEventGraphicSel()
     RenderDesign DesignTypes.desTileBox, GraphicSelX * 32, GraphicSelY * 32, 32, 32
 
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, frmEditor_Events.picGraphicSel.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, frmEditor_Events.picGraphicSel.hwnd, ByVal 0)
 End Sub
 
 Public Sub GDIRenderTileset()
@@ -807,7 +844,7 @@ Public Sub GDIRenderTileset()
     RenderDesign DesignTypes.desTileBox, shpSelectedLeft, shpSelectedTop, shpSelectedWidth, shpSelectedHeight
     ' Finish Rendering
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, frmEditor_Map.picBackSelect.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, frmEditor_Map.picBackSelect.hwnd, ByVal 0)
 End Sub
 
 Public Sub GDIRenderItem(ByRef picBox As PictureBox, ByVal Sprite As Long)
@@ -828,7 +865,7 @@ Public Sub GDIRenderItem(ByRef picBox As PictureBox, ByVal Sprite As Long)
     RenderTexture Tex_Item(Sprite), 0, 0, 0, 0, 32, 32, 32, 32
     ' Finish Rendering
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hwnd, ByVal 0)
 End Sub
 
 Public Sub GDIRenderSpell(ByRef picBox As PictureBox, ByVal Sprite As Long)
@@ -855,7 +892,7 @@ Public Sub GDIRenderSpell(ByRef picBox As PictureBox, ByVal Sprite As Long)
     RenderTexture Tex_Spellicon(Sprite), 0, 0, 0, 0, 32, 32, 32, 32
     ' Finish Rendering
     Call D3DDevice.EndScene
-    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hWnd, ByVal 0)
+    Call D3DDevice.Present(sRECT, ByVal 0, picBox.hwnd, ByVal 0)
 End Sub
 
 ' Directional blocking
@@ -886,7 +923,7 @@ Public Sub DrawDirection(ByVal X As Long, ByVal Y As Long)
 End Sub
 
 Public Sub DrawFade()
-    RenderTexture Tex_Blank, 0, 0, 0, 0, ScreenWidth, ScreenHeight, 32, 32, DX8Colour(White, fadeAlpha)
+    RenderTexture Tex_Blank, 0, 0, 0, 0, screenWidth, screenHeight, 32, 32, DX8Colour(White, fadeAlpha)
 End Sub
 
 Private Sub DrawFog()
@@ -899,13 +936,13 @@ Private Sub DrawFog()
     Color = D3DColorRGBA(255, 255, 255, 255 - Map.MapData.FogOpacity)
     fogWidth = mTexture(Tex_Fog(fogNum)).w
     fogHeight = mTexture(Tex_Fog(fogNum)).h
-    
+
     ' reset the position
     If fogOffsetX < (256 * -1) Then fogOffsetX = 0
     If fogOffsetY < (256 * -1) Then fogOffsetY = 0
-    
-    For X = 0 To (ScreenWidth / fogWidth) + 1
-        For Y = 0 To ((ScreenHeight) / fogHeight) + 1
+
+    For X = 0 To (screenWidth / fogWidth) + 1
+        For Y = 0 To ((screenHeight) / fogHeight) + 1
             RenderTexture Tex_Fog(fogNum), (X * fogWidth) + fogOffsetX, (Y * fogHeight) + fogOffsetY, 0, 0, fogWidth, fogHeight, fogWidth, fogHeight, Color
         Next Y
     Next X
@@ -938,15 +975,15 @@ Private Sub DrawSun()
 
     If Not IsDay Then Exit Sub
     If Map.MapData.Sun = 0 Then Exit Sub
-    
-        Width = mTexture(Tex_Sun(Map.MapData.Sun)).w
-        Height = mTexture(Tex_Sun(Map.MapData.Sun)).h
 
-        RenderTexture Tex_Sun(Map.MapData.Sun), 0, 0, 0, 0, ScreenWidth, ScreenHeight, Width, Height, D3DColorRGBA(255, 255, 255, 100)
+    Width = mTexture(Tex_Sun(Map.MapData.Sun)).w
+    Height = mTexture(Tex_Sun(Map.MapData.Sun)).h
 
-        D3DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-        D3DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-        D3DDevice.SetTextureStageState 0, D3DTSS_COLOROP, D3DTOP_MODULATE
+    RenderTexture Tex_Sun(Map.MapData.Sun), 0, 0, 0, 0, screenWidth, screenHeight, Width, Height, D3DColorRGBA(255, 255, 255, 100)
+
+    D3DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+    D3DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+    D3DDevice.SetTextureStageState 0, D3DTSS_COLOROP, D3DTOP_MODULATE
 End Sub
 
 Public Sub DrawAutoTile(ByVal layernum As Long, ByVal destX As Long, ByVal destY As Long, ByVal quarterNum As Long, ByVal X As Long, ByVal Y As Long)
@@ -1169,7 +1206,7 @@ Public Sub RenderMapName()
         Colour = Grey
     End If
 
-    RenderText font(Fonts.rockwellDec_10), Trim$(Map.MapData.Name) & " - " & zonetype, ScreenWidth - 15 - TextWidth(font(Fonts.rockwellDec_10), Trim$(Map.MapData.Name) & " - " & zonetype), 45, Colour, 255
+    RenderText font(Fonts.rockwellDec_10), Trim$(Map.MapData.Name) & " - " & zonetype, screenWidth - 15 - TextWidth(font(Fonts.rockwellDec_10), Trim$(Map.MapData.Name) & " - " & zonetype), 45, Colour, 255
 End Sub
 
 Public Sub DrawShopBackground()
@@ -1329,7 +1366,7 @@ Sub DrawYourTrade()
 
     ' your items
     For i = 1 To MAX_INV
-        itemNum = GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).num)
+        itemNum = GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).Num)
         If itemNum > 0 And itemNum <= MAX_ITEMS Then
             ItemPic = Item(itemNum).Pic
             If ItemPic > 0 And ItemPic <= Count_Item Then
@@ -1374,7 +1411,7 @@ Sub DrawTheirTrade()
 
     ' their items
     For i = 1 To MAX_INV
-        itemNum = TradeTheirOffer(i).num
+        itemNum = TradeTheirOffer(i).Num
         If itemNum > 0 And itemNum <= MAX_ITEMS Then
             ItemPic = Item(itemNum).Pic
             If ItemPic > 0 And ItemPic <= Count_Item Then
@@ -1449,8 +1486,8 @@ Public Sub DrawInventory()
                 amountModifier = 0
                 If InTrade > 0 Then
                     For X = 1 To MAX_INV
-                        tmpItem = GetPlayerInvItemNum(MyIndex, TradeYourOffer(X).num)
-                        If TradeYourOffer(X).num = i Then
+                        tmpItem = GetPlayerInvItemNum(MyIndex, TradeYourOffer(X).Num)
+                        If TradeYourOffer(X).Num = i Then
                             ' check if currency
                             If Not Item(tmpItem).Stackable > 0 Then
                                 ' normal item, exit out
@@ -1695,13 +1732,13 @@ Public Sub DrawPlayer(ByVal Index As Long)
         spritetop = 1
     End Select
 
-   ' With rec
-   '     .top = spritetop * (mTexture(Tex_Char(Sprite)).h / 4)
+    ' With rec
+    '     .top = spritetop * (mTexture(Tex_Char(Sprite)).h / 4)
     '    .Height = (mTexture(Tex_Char(Sprite)).h / 4)
     '    .Left = Anim * (mTexture(Tex_Char(Sprite)).w / 4)
     '    .Width = (mTexture(Tex_Char(Sprite)).w / 4)
-   ' End With
-    
+    ' End With
+
     With rec
         .top = (mTexture(Tex_Char(Sprite)).h / 4) * spritetop
         .bottom = .top + mTexture(Tex_Char(Sprite)).h / 4
@@ -1774,13 +1811,13 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
     Dim attackspeed As Long
 
     ' pre-load texture for calculations
-    Sprite = NPC(MapNpc(MapNpcNum).num).Sprite
+    Sprite = NPC(MapNpc(MapNpcNum).Num).Sprite
 
     'SetTexture Tex_Char(Sprite)
     If Sprite < 1 Or Sprite > Count_Char Then Exit Sub
     attackspeed = 1000
 
-    If Not isConstAnimated(NPC(MapNpc(MapNpcNum).num).Sprite) Then
+    If Not isConstAnimated(NPC(MapNpc(MapNpcNum).Num).Sprite) Then
         ' Reset frame
         Anim = 1
 
@@ -1837,11 +1874,11 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
             .Attacking = 0
             .AttackTimer = 0
         End If
-        
-    If .Dead > 0 Then
-        Anim = 3
-    End If
-    
+
+        If .Dead > 0 Then
+            Anim = 3
+        End If
+
     End With
 
     ' Set the left
@@ -1860,14 +1897,14 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
         spritetop = 1
     End Select
 
-   ' With rec
+    ' With rec
     '    .top = (mTexture(Tex_Char(Sprite)).h / 4) * spritetop
     '    .Height = mTexture(Tex_Char(Sprite)).h / 4
-   '     .Left = Anim * (mTexture(Tex_Char(Sprite)).w / 4)
-   '     .Width = (mTexture(Tex_Char(Sprite)).w / 4)
-   ' End With
-   
-   With rec
+    '     .Left = Anim * (mTexture(Tex_Char(Sprite)).w / 4)
+    '     .Width = (mTexture(Tex_Char(Sprite)).w / 4)
+    ' End With
+
+    With rec
         .top = (mTexture(Tex_Char(Sprite)).h / 4) * spritetop
         .bottom = .top + mTexture(Tex_Char(Sprite)).h / 4
         .Left = Anim * (mTexture(Tex_Char(Sprite)).w / 4)
@@ -1887,12 +1924,12 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
     End If
 
     ' Sombra do npc
-    If NPC(MapNpc(MapNpcNum).num).Shadow > 0 And IsDay And MapNpc(MapNpcNum).Dead = NO Then
+    If NPC(MapNpc(MapNpcNum).Num).Shadow > 0 And IsDay And MapNpc(MapNpcNum).Dead = NO Then
         DrawShadow Sprite, X, Y + 5, rec, 50, 0, 0, 0
     End If
 
     RenderTexture Tex_Char(Sprite), ConvertMapX(X), ConvertMapY(Y), rec.Left, rec.top, rec.Right - rec.Left, rec.bottom - rec.top, rec.Right - rec.Left, rec.bottom - rec.top
-    
+
     ' Mostra o npc animado na janela do enemybars!
     'If myTarget > 0 Then
     '    If myTargetType = TARGET_TYPE_NPC Then
@@ -1908,7 +1945,7 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
     '        End If
     '    End If
     'End If
-        
+
 End Sub
 
 Sub DrawEvent(eventNum As Long, pageNum As Long)
@@ -2010,6 +2047,7 @@ Public Sub DrawTargetHover()
                     X = ConvertMapX(X)
                     Y = ConvertMapY(Y)
                     RenderTexture Tex_Target, X - 16 - (Width / 2), Y - 16 - (Height / 2), Width, 0, Width, Height, Width, Height
+                    Call SetCursor(Button)
                 End If
             End If
         End If
@@ -2018,7 +2056,7 @@ Public Sub DrawTargetHover()
 
     For i = 1 To MAX_MAP_NPCS
 
-        If MapNpc(i).num > 0 Then
+        If MapNpc(i).Num > 0 Then
             X = (MapNpc(i).X * 32) + MapNpc(i).xOffset + 32
             Y = (MapNpc(i).Y * 32) + MapNpc(i).yOffset + 32
 
@@ -2027,6 +2065,7 @@ Public Sub DrawTargetHover()
                     X = ConvertMapX(X)
                     Y = ConvertMapY(Y)
                     RenderTexture Tex_Target, X - 16 - (Width / 2), Y - 16 - (Height / 2), Width, 0, Width, Height, Width, Height
+                    Call SetCursor(Button)
                 End If
             End If
         End If
@@ -2042,8 +2081,8 @@ Public Sub DrawResource(ByVal Resource_num As Long)
     Dim rec As RECT
     Dim X As Long, Y As Long
     Dim Width As Long, Height As Long, i As Long, Alpha As Byte
-    Dim sString As String
-    
+    Dim SString As String
+
     X = MapResource(Resource_num).X
     Y = MapResource(Resource_num).Y
 
@@ -2088,7 +2127,7 @@ Public Sub DrawResource(ByVal Resource_num As Long)
     Else
         Alpha = 255
     End If
-    
+
     If Resource(Resource_master).Shadow > 0 Then
         If Alpha <> 100 Then
             ', rec.Left, rec.top, rec.Right - rec.Left, rec.bottom - rec.top, rec.Right - rec.Left, rec.bottom - rec.top
@@ -2110,12 +2149,13 @@ Public Sub DrawResource(ByVal Resource_num As Long)
                     X = ConvertMapX(MapResource(Resource_num).X * PIC_X) + (mTexture(Tex_GUI(4)).w / 2)
                     Y = ConvertMapY(MapResource(Resource_num).Y * PIC_Y) + 32
                     RenderTexture_Animated Tex_GUI(4), X, Y, 0, 0, 13, 13, 13, 13, TextureQuestObj, D3DColorARGB(255, 255, 255, 0)
-                    
+
                     If GlobalX >= X And GlobalX <= X + 13 Then
                         If GlobalY >= Y And GlobalY <= Y + 13 Then
-                            sString = "Objetivo de Missao!"
-                            Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
-                            Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, Yellow)
+                            If VerifyWindowsIsInCur Then Exit Sub
+                            SString = "Objetivo de Missao!"
+                            Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
+                            Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, Yellow)
                         End If
                     End If
                 End If
@@ -2144,14 +2184,14 @@ End Sub
 
 Public Sub DrawItem(ByVal itemNum As Long)
     Dim PicNum As Integer, dontRender As Boolean, i As Long, tmpIndex As Long, Colour As Byte, textX As Long, textY As Long
-    Dim sString As String, ItemSizeMouse As Long, rec As RECT
-    PicNum = Item(MapItem(itemNum).num).Pic
-    
+    Dim SString As String, ItemSizeMouse As Long, rec As RECT
+    PicNum = Item(MapItem(itemNum).Num).Pic
+
     ' Default item size
     ItemSizeMouse = 32
 
     If PicNum < 1 Or PicNum > Count_Item Then Exit Sub
-    
+
     ' Animação ao dropar
     If MapItem(itemNum).Gravity < 0 Then
         MapItem(itemNum).Gravity = MapItem(itemNum).Gravity + 1
@@ -2159,7 +2199,7 @@ Public Sub DrawItem(ByVal itemNum As Long)
     ElseIf MapItem(itemNum).Gravity < 11 Then
         MapItem(itemNum).Gravity = MapItem(itemNum).Gravity + 1
         MapItem(itemNum).yOffset = MapItem(itemNum).yOffset + 3
-        
+
         If MapItem(itemNum).Gravity = 11 Then
             MapItem(itemNum).yOffset = 0
         End If
@@ -2194,38 +2234,40 @@ Public Sub DrawItem(ByVal itemNum As Long)
 
     'If Not dontRender Then EngineRenderRectangle Tex_Item(PicNum), ConvertMapX(MapItem(itemnum).x * PIC_X), ConvertMapY(MapItem(itemnum).y * PIC_Y), 0, 0, 32, 32, 32, 32, 32, 32
     If Not dontRender Then
-    
-        
+
+
         With rec
             rec.top = 0
             rec.Left = MapItem(itemNum).Frame * PIC_X
         End With
-        
-        
+
+
         ' Recicles variables to use in Centralize Item on mousepoint
         textX = MapItem(itemNum).X * PIC_X
         'textY = MapItem(itemNum).Y * PIC_Y
-        
+
         textY = (MapItem(itemNum).Y * PIC_Y) + MapItem(itemNum).yOffset
-    
+
         If GlobalX >= ConvertMapX(MapItem(itemNum).X * PIC_X) And GlobalX <= ConvertMapX(MapItem(itemNum).X * PIC_X) + PIC_X Then
             If GlobalY >= ConvertMapY(MapItem(itemNum).Y * PIC_Y) And GlobalY <= ConvertMapY(MapItem(itemNum).Y * PIC_Y) + PIC_Y Then
                 ItemSizeMouse = (PIC_X + (PIC_X / 2))
                 textX = textX - ((ItemSizeMouse - PIC_X) / 2)
                 textY = textY - ((ItemSizeMouse - PIC_Y) / 2)
-                Call GroundItem_MouseMove(GlobalX, GlobalY, MapItem(itemNum).num, MapItem(itemNum).bound)
+                Call GroundItem_MouseMove(GlobalX, GlobalY, MapItem(itemNum).Num, MapItem(itemNum).bound)
             End If
         End If
-        
+
         If Options.ItemAnimation = YES Then
             RenderTexture_Animated Tex_Item(PicNum), ConvertMapX(textX), ConvertMapY(textY), rec.Left, rec.top, ItemSizeMouse, ItemSizeMouse, PIC_X, PIC_Y, TextureItem
         Else
             RenderTexture Tex_Item(PicNum), ConvertMapX(textX), ConvertMapY(textY), 0, 0, ItemSizeMouse, ItemSizeMouse, PIC_X, PIC_Y
         End If
-        
-        Colour = GetItemNameColour(Item(MapItem(itemNum).num).Rarity)
+
+        Call SetCursor(Button)
+
+        Colour = GetItemNameColour(Item(MapItem(itemNum).Num).Rarity)
         If Options.ItemName = YES Or CurX = MapItem(itemNum).X And CurY = MapItem(itemNum).Y Then
-            RenderText font(Fonts.rockwell_15), Trim$(Item(MapItem(itemNum).num).Name), 16 + ConvertMapX(MapItem(itemNum).X * PIC_X) - (TextWidth(font(Fonts.rockwell_15), Trim$(Item(MapItem(itemNum).num).Name)) / 2), ConvertMapY(MapItem(itemNum).Y * PIC_Y) - 10, Colour
+            RenderText font(Fonts.rockwell_15), Trim$(Item(MapItem(itemNum).Num).Name), 16 + ConvertMapX(MapItem(itemNum).X * PIC_X) - (TextWidth(font(Fonts.rockwell_15), Trim$(Item(MapItem(itemNum).Num).Name)) / 2), ConvertMapY(MapItem(itemNum).Y * PIC_Y) - 10, Colour
         End If
     End If
 
@@ -2233,16 +2275,17 @@ Public Sub DrawItem(ByVal itemNum As Long)
         'check if the npc is the next task to any quest: [?] symbol
         If Trim$(Quest(i).Name) <> "" Then
             If Player(MyIndex).PlayerQuest(i).Status = QUEST_STARTED Then
-                If Quest(i).Task(Player(MyIndex).PlayerQuest(i).ActualTask).Item = MapItem(itemNum).num Then
+                If Quest(i).Task(Player(MyIndex).PlayerQuest(i).ActualTask).Item = MapItem(itemNum).Num Then
                     textX = 16 + ConvertMapX(MapItem(itemNum).X * PIC_X) - (mTexture(Tex_GUI(5)).w / 2)
                     textY = ConvertMapY(MapItem(itemNum).Y * PIC_Y) - 20
                     RenderTexture_Animated Tex_GUI(5), textX, textY, 0, 0, 13, 13, 13, 13, TextureQuestObj, D3DColorARGB(255, 255, 255, 0)
 
                     If GlobalX >= textX And GlobalX <= textX + 13 Then
                         If GlobalY >= textY And GlobalY <= textY + 13 Then
-                            sString = "Objetivo de Missao!"
-                            Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
-                            Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, Yellow)
+                            If VerifyWindowsIsInCur Then Exit Sub
+                            SString = "Objetivo de Missao!"
+                            Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
+                            Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, Yellow)
                         End If
                     End If
 
@@ -2261,27 +2304,32 @@ Private Sub GroundItem_MouseMove(ByVal X As Long, ByVal Y As Long, ByVal itemNum
     ' exit out early if dragging
     If DragBox.Type <> part_None Then Exit Sub
 
-        ' exit out if we're offering that item
-        ' make sure we're not dragging the item
-        If DragBox.Type = Part_Item And DragBox.Value = itemNum Then Exit Sub
-        ' calc position
-        X = GlobalX - Windows(GetWindowIndex("winDescription")).Window.Width
-        Y = GlobalY - Windows(GetWindowIndex("winDescription")).Window.Height
-        ' offscreen?
-        If X < 0 Then
-            ' switch to right
-            X = GlobalX
-        End If
-        
-        If Y < 0 Then
-            ' switch to right
-            Y = GlobalY
-        End If
-        ' go go go
-        
-        If SoulBound > 0 Then IsBound = True
-        
-        ShowItemDesc X, Y, itemNum, IsBound
+    ' exit out if we're offering that item
+    ' make sure we're not dragging the item
+    If DragBox.Type = Part_Item And DragBox.Value = itemNum Then Exit Sub
+
+    Dim z As Long
+
+    If VerifyWindowsIsInCur Then Exit Sub
+
+    ' calc position
+    X = GlobalX - Windows(GetWindowIndex("winDescription")).Window.Width
+    Y = GlobalY - Windows(GetWindowIndex("winDescription")).Window.Height
+    ' offscreen?
+    If X < 0 Then
+        ' switch to right
+        X = GlobalX
+    End If
+
+    If Y < 0 Then
+        ' switch to right
+        Y = GlobalY
+    End If
+    ' go go go
+
+    If SoulBound > 0 Then IsBound = True
+
+    ShowItemDesc X, Y, itemNum, IsBound
 End Sub
 
 Public Sub DrawBars()
@@ -2297,7 +2345,7 @@ Public Sub DrawBars()
 
     ' render npc health bars
     For i = 1 To MAX_MAP_NPCS
-        NpcNum = MapNpc(i).num
+        NpcNum = MapNpc(i).Num
         ' exists?
         If NpcNum > 0 Then
             ' alive?
@@ -2378,8 +2426,8 @@ End Sub
 Sub DrawMenuBG()
 
 'renderiza a parallax do menu
-    RenderTexture Tex_Panoramas(MenuBG), ParallaxX, 0, 0, 0, ScreenWidth, ScreenHeight, 800, 600
-    RenderTexture Tex_Panoramas(MenuBG), ParallaxX + ScreenWidth, 0, 0, 0, ScreenWidth, ScreenHeight, 800, 600
+    RenderTexture Tex_Panoramas(MenuBG), ParallaxX, 0, 0, 0, screenWidth, screenHeight, 800, 600
+    RenderTexture Tex_Panoramas(MenuBG), ParallaxX + screenWidth, 0, 0, 0, screenWidth, screenHeight, 800, 600
 End Sub
 
 Public Sub DrawAnimation(ByVal Index As Long, ByVal Layer As Long)
@@ -2432,7 +2480,7 @@ Public Sub DrawAnimation(ByVal Index As Long, ByVal Layer As Long)
             lockindex = AnimInstance(Index).lockindex
 
             ' check if NPC exists
-            If MapNpc(lockindex).num > 0 Then
+            If MapNpc(lockindex).Num > 0 Then
 
                 ' check if alive
                 If MapNpc(lockindex).Vital(Vitals.HP) > 0 Then
@@ -2472,9 +2520,9 @@ Public Sub DrawGDI()
         GDIRenderItem frmEditor_Item.picItem, frmEditor_Item.scrlPic.Value
     ElseIf frmEditor_Map.visible Then
         GDIRenderTileset
-        
+
         If frmEditor_Map.fraLight.visible Then GDIRenderLight frmEditor_Map.picLight
-        
+
         If frmEditor_Events.visible Then
             GDIRenderEventGraphic
             GDIRenderEventGraphicSel
@@ -2529,8 +2577,8 @@ Retry:
     End If
 
     If Map.MapData.Panorama > 0 And Map.MapData.Panorama <= Count_Panoramas Then
-        RenderTexture Tex_Panoramas(Map.MapData.Panorama), ParallaxX, 0, 0, 0, ScreenWidth, ScreenHeight, 800, 600
-        RenderTexture Tex_Panoramas(Map.MapData.Panorama), ParallaxX + ScreenWidth, 0, 0, 0, ScreenWidth, ScreenHeight, 800, 600
+        RenderTexture Tex_Panoramas(Map.MapData.Panorama), ParallaxX, 0, 0, 0, screenWidth, screenHeight, 800, 600
+        RenderTexture Tex_Panoramas(Map.MapData.Panorama), ParallaxX + screenWidth, 0, 0, 0, screenWidth, screenHeight, 800, 600
     End If
 
     ' Render appear tile fades
@@ -2548,7 +2596,7 @@ Retry:
     End If
 
     For i = 1 To MAX_MAP_NPCS
-        If MapNpc(i).num > 0 Then    ' no npc set
+        If MapNpc(i).Num > 0 Then    ' no npc set
             If MapNpc(i).Dead = YES Then
                 Call DrawNpc(i)
             End If
@@ -2563,7 +2611,7 @@ Retry:
     ' render the items
     If Count_Item > 0 Then
         For i = 1 To MAX_MAP_ITEMS
-            If MapItem(i).num > 0 Then
+            If MapItem(i).Num > 0 Then
                 Call DrawItem(i)
             End If
         Next
@@ -2604,7 +2652,7 @@ Retry:
 
             ' Npcs
             For i = 1 To MAX_MAP_NPCS
-                If MapNpc(i).num > 0 Then    ' no npc set
+                If MapNpc(i).Num > 0 Then    ' no npc set
                     If MapNpc(i).Dead = NO Then
                         If MapNpc(i).Y = RenderY Then
                             Call DrawNpc(i)
@@ -2726,7 +2774,7 @@ Retry:
     If Not screenshotMode Then
         For i = 1 To MAX_MAP_NPCS
             With MapNpc(i)
-                If .num > 0 Then
+                If .Num > 0 Then
                     If myTargetType = TARGET_TYPE_NPC And myTarget = i Then
                         Call DrawNpcStatus(i)
                         Call DrawNpcName(i)
@@ -2770,8 +2818,8 @@ Retry:
 
     ' Not ScreenShot Mode
     If Not screenshotMode Then
-        RenderTexture Tex_GUI(43), 0, 0, 0, 0, ScreenWidth, 64, 1, 64
-        RenderTexture Tex_GUI(42), 0, ScreenHeight - 64, 0, 0, ScreenWidth, 64, 1, 64
+        RenderTexture Tex_GUI(43), 0, 0, 0, 0, screenWidth, 64, 1, 64
+        RenderTexture Tex_GUI(42), 0, screenHeight - 64, 0, 0, screenWidth, 64, 1, 64
 
         If Options.FPSConection = YES Then
             RenderText font(Fonts.rockwell_15), "FPS: " & GameFPS & Space(24) & "Ping: " & Ping, 1, 1, White
@@ -2779,7 +2827,7 @@ Retry:
 
         ' Not Hide Gui, Not ScreenShot Mode - Game Hour
         If Not hideGUI Then
-            RenderText font(Fonts.rockwellDec_10), KeepTwoDigit(GameHours) & ":" & KeepTwoDigit(GameMinutes) & ":" & KeepTwoDigit(GameSeconds), ScreenWidth - 15 - TextWidth(font(Fonts.rockwellDec_10), KeepTwoDigit(GameHours) & ":" & KeepTwoDigit(GameMinutes) & ":" & KeepTwoDigit(GameSeconds)), 65, Yellow
+            RenderText font(Fonts.rockwellDec_10), KeepTwoDigit(GameHours) & ":" & KeepTwoDigit(GameMinutes) & ":" & KeepTwoDigit(GameSeconds), screenWidth - 15 - TextWidth(font(Fonts.rockwellDec_10), KeepTwoDigit(GameHours) & ":" & KeepTwoDigit(GameMinutes) & ":" & KeepTwoDigit(GameSeconds)), 65, Yellow
 
             If QuestTimeToFinish <> vbNullString And QuestNameToFinish <> vbNullString Then
                 If QuestSelect > 0 Then
@@ -2790,7 +2838,7 @@ Retry:
             ' Not Map Editor, Not Hide Gui, Not ScreenShot Mode
             If Not InMapEditor Then
                 If DrawThunder > 0 Then
-                    RenderTexture Tex_Blank, 0, 0, 0, 0, ScreenWidth, ScreenHeight, 32, 32, D3DColorRGBA(255, 255, 255, 160)
+                    RenderTexture Tex_Blank, 0, 0, 0, 0, screenWidth, screenHeight, 32, 32, D3DColorRGBA(255, 255, 255, 160)
                     DrawThunder = DrawThunder - 1
                 End If
 
@@ -2808,6 +2856,8 @@ Retry:
                 DrawTileSelection
             End If
         End If
+
+        Call RenderCursor
     End If
 
     ' End the rendering
@@ -2837,8 +2887,12 @@ Public Sub Render_Menu()
     If Options.FPSConection = YES Then
         RenderText font(Fonts.rockwell_15), "FPS: " & GameFPS, 1, 1, White
     End If
+
+    Call RenderCursor
+
     ' End the rendering
     Call D3DDevice.EndScene
+
 
     If D3DDevice.TestCooperativeLevel = D3D_OK And Not D3DDevice.TestCooperativeLevel = D3DERR_DEVICELOST And Not D3DDevice.TestCooperativeLevel = D3DERR_DEVICENOTRESET Then
         D3DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
@@ -2848,7 +2902,7 @@ End Sub
 Public Sub DrawBlood(ByVal Index As Long)
 
     BloodCount = mTexture(Tex_Blood).w / 32
-    
+
     With Blood(Index)
         RenderTexture Tex_Blood, ConvertMapX(.X * PIC_X), ConvertMapY(.Y * PIC_Y), Index * 32, 0, 32, 32, 32, 32, D3DColorARGB(Blood(Index).Alpha, 255, 255, 255)
     End With
@@ -2856,7 +2910,7 @@ Public Sub DrawBlood(ByVal Index As Long)
 End Sub
 
 Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
-    Dim X As Long, Y As Long, XX As Long, YY As Long, rec As RECT, sString As String
+    Dim X As Long, Y As Long, XX As Long, YY As Long, rec As RECT, SString As String
 
     With MapNpc(MapNpcNum)
         X = (.X * PIC_X) + .xOffset
@@ -2870,28 +2924,29 @@ Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
             rec.Left = .StatusFrame * PIC_X
             RenderTexture Tex_Status(Status.Confused), X, Y, rec.Left, rec.top, 25, 25, 32, 32
 
-            sString = "Npc está confuso!"
+            SString = "Npc está confuso!"
             If GlobalX >= X And GlobalX <= X + PIC_X Then
                 If GlobalY >= Y And GlobalY <= Y + PIC_Y Then
-                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
-                    Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, Red)
+                    If VerifyWindowsIsInCur Then Exit Sub
+                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
+                    Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, Red)
                 End If
             End If
 
             Exit Sub
         End If
 
-        If CheckNpcHaveQuest(.num) Then
+        If CheckNpcHaveQuest(.Num) Then
             rec.top = 0
             rec.Left = .StatusFrame * PIC_X
             RenderTexture Tex_Status(Status.Question), X, Y, rec.Left, rec.top, 25, 25, 32, 32
 
-            sString = "Missao Disponivel!"
+            SString = "Missao Disponivel!"
             If GlobalX >= X And GlobalX <= X + PIC_X Then
                 If GlobalY >= Y And GlobalY <= Y + PIC_Y Then
-
+                    If VerifyWindowsIsInCur Then Exit Sub
                     ' calc position
-                    XX = GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5
+                    XX = GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5
                     YY = GlobalY - 35
                     ' offscreen?
                     If XX < 0 Then
@@ -2903,50 +2958,52 @@ Private Sub DrawNpcStatus(ByVal MapNpcNum As Long)
                         ' switch to right
                         YY = GlobalY
                     End If
-                    Call RenderEntity_Square(Tex_Design(6), XX, YY, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
-                    Call RenderText(font(Fonts.georgiaBold_16), sString, XX + 5, YY + 3, Green)
+                    Call RenderEntity_Square(Tex_Design(6), XX, YY, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
+                    Call RenderText(font(Fonts.georgiaBold_16), SString, XX + 5, YY + 3, Green)
                 End If
             End If
 
             Exit Sub
         End If
 
-        If CheckNpcQuestProgress(.num) Then
+        If CheckNpcQuestProgress(.Num) Then
             rec.top = 0
             rec.Left = .StatusFrame * PIC_X
             RenderTexture Tex_Status(Status.Important), X, Y, rec.Left, rec.top, 25, 25, 32, 32
 
-            sString = "Missao em Progresso!"
+            SString = "Missao em Progresso!"
             If GlobalX >= X And GlobalX <= X + PIC_X Then
                 If GlobalY >= Y And GlobalY <= Y + PIC_Y Then
-                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
-                    Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, Yellow)
+                    If VerifyWindowsIsInCur Then Exit Sub
+                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
+                    Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, Yellow)
                 End If
             End If
 
             Exit Sub
         End If
 
-        If NPC(.num).Balao > 0 Then
+        If NPC(.Num).Balao > 0 Then
             rec.top = 0
             rec.Left = .StatusFrame * PIC_X
-            RenderTexture Tex_Status(NPC(.num).Balao), X, Y, rec.Left, rec.top, 25, 25, 32, 32
+            RenderTexture Tex_Status(NPC(.Num).Balao), X, Y, rec.Left, rec.top, 25, 25, 32, 32
 
-            Select Case NPC(.num).Balao
+            Select Case NPC(.Num).Balao
             Case Status.typing
-                sString = "Npc Conversa..."
+                SString = "Npc Conversa..."
             Case Status.Afk
-                sString = "Npc Dormindo..."
+                SString = "Npc Dormindo..."
             Case Status.Confused
-                sString = "Npc Confuso..."
+                SString = "Npc Confuso..."
             Case Else
-                sString = "Status de Npc..."
+                SString = "Status de Npc..."
             End Select
 
             If GlobalX >= X And GlobalX <= X + PIC_X Then
                 If GlobalY >= Y And GlobalY <= Y + PIC_Y Then
-                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), sString) + 10, 20, 5, 200)
-                    Call RenderText(font(Fonts.georgiaBold_16), sString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), sString) / 2)), GlobalY - 32, White)
+                    If VerifyWindowsIsInCur Then Exit Sub
+                    Call RenderEntity_Square(Tex_Design(6), GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)) - 5, GlobalY - 35, TextWidth(font(Fonts.georgiaBold_16), SString) + 10, 20, 5, 200)
+                    Call RenderText(font(Fonts.georgiaBold_16), SString, GlobalX - ((TextWidth(font(Fonts.georgiaBold_16), SString) / 2)), GlobalY - 32, White)
                 End If
             End If
         End If
@@ -3051,9 +3108,9 @@ Sub DrawNight()
     ElseIf GameHours = 6 Then
         Alpha = 50
     ElseIf GameHours >= 7 And GameHours < 18 Then
-            Alpha = 0
+        Alpha = 0
     End If
-    
+
     Alpha = 250
 
     RenderTexture Tex_LightMap, ConvertMapX(GetPlayerX(MyIndex) * 32) + Player(MyIndex).xOffset + 16 - 1300, ConvertMapY(GetPlayerY(MyIndex) * 32) + Player(MyIndex).yOffset - 812.5, 0, 0, 2600, 1625, 2600, 1625, D3DColorARGB(Alpha, 0, 0, 0)

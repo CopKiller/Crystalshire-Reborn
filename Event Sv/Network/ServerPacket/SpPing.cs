@@ -13,7 +13,7 @@ namespace Event_Server.Network.ServerPacket {
         }
 
         // Exemplo de como enviar uma packet pro client sem precisar do servidor principal acioná-la!
-        public void SendPacket()
+        public static void SendPacket()
         {
             if (Connection.HighIndex > 0)
             {

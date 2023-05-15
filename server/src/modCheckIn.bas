@@ -123,6 +123,7 @@ Public Sub HandleCheckIn(ByVal Index As Long, ByRef Data() As Byte, ByVal StartA
     End If
 
     Player(Index).LastCheckIn = Date
+    Player(Index).CheckIn = Player(Index).CheckIn + 1
 End Sub
 
 Public Function GetPlayerLastCheckIn(ByVal Index As Long) As Date

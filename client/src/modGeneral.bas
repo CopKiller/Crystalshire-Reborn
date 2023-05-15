@@ -9,19 +9,19 @@ Public Sub Main()
     Dim i As Long
 
     'verifica se o player ta rodando em modo de administrador
-   ' If Not GetWindowsVersion = "Windows XP" Then
-   '     If Not IsElevatedAccess And App.LogMode <> 0 Then
-   '         Call MsgBox("Por Favor, Rode-o em modo Administrador.", vbOKOnly, GAME_NAME)
-   '         End
-   '     End If
-   ' End If
+    ' If Not GetWindowsVersion = "Windows XP" Then
+    '     If Not IsElevatedAccess And App.LogMode <> 0 Then
+    '         Call MsgBox("Por Favor, Rode-o em modo Administrador.", vbOKOnly, GAME_NAME)
+    '         End
+    '     End If
+    ' End If
 
     InitCRC32
 
     InitCryptographyKey
-    
+
     'GenerateKeyAndIV
-    
+
     ' This must be called before any Tick calls because it states what the values of Tick will be
     InitTime
 
@@ -57,11 +57,11 @@ Public Sub Main()
     End If
 
     frmMain.Show
-    InitDX8 frmMain.hWnd
-    
+    InitDX8 frmMain.hwnd
+
     ' Do this only if we are running from a .exe. If run from IDE it messes up debugging
-    If App.LogMode = 1 Then HookForMouseWheel frmMain.hWnd
-    myHWnd = frmMain.hWnd
+    If App.LogMode = 1 Then HookForMouseWheel frmMain.hwnd
+    myHWnd = frmMain.hwnd
 
     If PeekMessage(M, 0, 0, 0, PM_NOREMOVE) Then DoEvents
 
@@ -78,7 +78,7 @@ Public Sub Main()
     vbQuote = ChrW$(34)
     ' randomize rnd's seed
     Randomize
-    
+
     Call SetCaption("Initializing TCP settings.")
     Call TcpInit(AUTH_SERVER_IP, AUTH_SERVER_PORT)
     Call InitMessages
@@ -96,7 +96,7 @@ Public Sub Main()
     ' Load npcs
     Call SetCaption("Carregando Npcs...")
     Call LoadNpcs
-    
+
     ' set values for directional blocking arrows
     DirArrowX(1) = 12    ' up
     DirArrowY(1) = 0
@@ -124,7 +124,7 @@ Public Sub Main()
     inSmallChat = True
     ' Set the loop going
     fadeAlpha = 255
-    
+
     If Options.PlayIntro = 1 Then
         PlayIntro
     Else
@@ -133,45 +133,48 @@ Public Sub Main()
         ' play the menu music
         If Len(Trim$(MenuMusic)) > 0 Then Play_Music Trim$(MenuMusic)
     End If
-    
+
     MenuBG = Rand(1, Count_Panoramas)
-    
+
     ' Colocar informações do tooltip no menu do jogador, sobre as teclas pré-configuradas no editor de controles de cada menu!
     RefreshMenu_Tooltip
-    
+
     SetCaption vbNullString
-    
+
     ' Set the active control
-    If Not Len(Windows(GetWindowIndex("winLogin")).Controls(GetControlIndex("winLogin", "txtUser")).Text) > 0 Then
+    If Not Len(Windows(GetWindowIndex("winLogin")).Controls(GetControlIndex("winLogin", "txtUser")).text) > 0 Then
         SetActiveControl GetWindowIndex("winLogin"), GetControlIndex("winLogin", "txtUser")
     Else
         SetActiveControl GetWindowIndex("winLogin"), GetControlIndex("winLogin", "txtPass")
     End If
-        
+
+
+    'Call ShowCursor(False)
+
     MenuLoop
 End Sub
 
 Public Sub RefreshMenu_Tooltip()
-Dim sString As String, tmpString() As String
-' Colocar informações do tooltip no menu do jogador, sobre as teclas pré-configuradas no editor de controles de cada menu!
-' Utiliza do split pra não acumular atalhos no nome do menu!
-        With Windows(GetWindowIndex("winMenu"))
-            sString = .Controls(GetControlIndex("winMenu", "btnInv")).tooltip
-            tmpString = Split(sString, "(")
-            .Controls(GetControlIndex("winMenu", "btnInv")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Bolsa) & ")"
-            sString = .Controls(GetControlIndex("winMenu", "btnSkills")).tooltip
-            tmpString = Split(sString, "(")
-            .Controls(GetControlIndex("winMenu", "btnSkills")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Magias) & ")"
-            sString = .Controls(GetControlIndex("winMenu", "btnChar")).tooltip
-            tmpString = Split(sString, "(")
-            .Controls(GetControlIndex("winMenu", "btnChar")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Personagem) & ")"
-            sString = .Controls(GetControlIndex("winMenu", "btnGuild")).tooltip
-            tmpString = Split(sString, "(")
-            .Controls(GetControlIndex("winMenu", "btnGuild")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Guild) & ")"
-            sString = .Controls(GetControlIndex("winMenu", "btnQuest")).tooltip
-            tmpString = Split(sString, "(")
-            .Controls(GetControlIndex("winMenu", "btnQuest")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Quests) & ")"
-        End With
+    Dim SString As String, tmpString() As String
+    ' Colocar informações do tooltip no menu do jogador, sobre as teclas pré-configuradas no editor de controles de cada menu!
+    ' Utiliza do split pra não acumular atalhos no nome do menu!
+    With Windows(GetWindowIndex("winMenu"))
+        SString = .Controls(GetControlIndex("winMenu", "btnInv")).tooltip
+        tmpString = Split(SString, "(")
+        .Controls(GetControlIndex("winMenu", "btnInv")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Bolsa) & ")"
+        SString = .Controls(GetControlIndex("winMenu", "btnSkills")).tooltip
+        tmpString = Split(SString, "(")
+        .Controls(GetControlIndex("winMenu", "btnSkills")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Magias) & ")"
+        SString = .Controls(GetControlIndex("winMenu", "btnChar")).tooltip
+        tmpString = Split(SString, "(")
+        .Controls(GetControlIndex("winMenu", "btnChar")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Personagem) & ")"
+        SString = .Controls(GetControlIndex("winMenu", "btnGuild")).tooltip
+        tmpString = Split(SString, "(")
+        .Controls(GetControlIndex("winMenu", "btnGuild")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Guild) & ")"
+        SString = .Controls(GetControlIndex("winMenu", "btnQuest")).tooltip
+        tmpString = Split(SString, "(")
+        .Controls(GetControlIndex("winMenu", "btnQuest")).tooltip = tmpString(0) & "(" & KeycodeChar(Options.Quests) & ")"
+    End With
 End Sub
 
 Public Sub AddChar(Name As String, sex As Long, Class As Long, Sprite As Long)
@@ -198,7 +201,7 @@ Public Sub Login(Name As String, Password As String)
         If Options.SaveUser Then Options.Username = Name Else Options.Username = vbNullString
         If Options.SavePass Then Options.Password = Password Else Options.Password = vbNullString
         SaveOptions
-        
+
         ' Temporário pro auto reconnect!
         Options.TmpLogin = Name
         Options.TmpPassword = Password
@@ -233,7 +236,7 @@ Public Sub logoutGame()
     For i = 1 To MAX_BYTE
         ClearAnimInstance (i)
     Next
-    
+
     If MyIndex > 0 Then
         Call ZeroMemory(ByVal VarPtr(Player(MyIndex)), LenB(Player(MyIndex)))
     End If
@@ -261,13 +264,13 @@ Public Sub logoutGame()
     Unload frmEditor_Premium
     ' clear chat
     For i = 1 To ChatLines
-        Chat(i).Text = vbNullString
+        Chat(i).text = vbNullString
     Next
-    
+
     Call ClearAllGameData
 
     Call ResetReconnectVariables
-    
+
     inMenu = True
     MenuLoop
 End Sub
@@ -313,13 +316,18 @@ Public Sub DestroyGame()
     ' destroy music & sound engines
     Destroy_Music
     Call UnloadAllForms
-    
+
     Call UnHookMouseWheel
+
     'destroy objects in reverse order
     DestroyDX8
-    
+
+    If Not IsCursorVisible Then
+        Call CursorVisibility(True)
+    End If
+
     Sleep 500    ' Give it some time ;)
-    
+
     End
 End Sub
 
@@ -335,15 +343,15 @@ End Sub
 Public Sub SetStatus(ByVal caption As String)
 
 ' Não seta o status se tiver reconectando
-If isReconnect Then Exit Sub
+    If isReconnect Then Exit Sub
 
     HideWindows
     If Len(Trim$(caption)) > 0 Then
         ShowWindow GetWindowIndex("winLoading")
-        Windows(GetWindowIndex("winLoading")).Controls(GetControlIndex("winLoading", "lblLoading")).Text = caption
+        Windows(GetWindowIndex("winLoading")).Controls(GetControlIndex("winLoading", "lblLoading")).text = caption
     Else
         HideWindow GetWindowIndex("winLoading")
-        Windows(GetWindowIndex("winLoading")).Controls(GetControlIndex("winLoading", "lblLoading")).Text = vbNullString
+        Windows(GetWindowIndex("winLoading")).Controls(GetControlIndex("winLoading", "lblLoading")).text = vbNullString
     End If
 End Sub
 
@@ -361,12 +369,12 @@ End Sub
 Public Sub TextAdd(ByVal Txt As TextBox, Msg As String, NewLine As Boolean)
 
     If NewLine Then
-        Txt.Text = Txt.Text + Msg + vbCrLf
+        Txt.text = Txt.text + Msg + vbCrLf
     Else
-        Txt.Text = Txt.Text + Msg
+        Txt.text = Txt.text + Msg
     End If
 
-    Txt.SelStart = Len(Txt.Text) - 1
+    Txt.SelStart = Len(Txt.text) - 1
 End Sub
 
 Public Function Rand(ByVal Low As Long, ByVal High As Long) As Long

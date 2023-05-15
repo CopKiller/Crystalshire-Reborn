@@ -413,8 +413,8 @@ Public Sub UpdateText()
         lblData3.visible = False
         ' set the strings
         lblData1.caption = "Quest: 0"
-        
-        Case 5    ' ProtectDrop
+
+    Case 5    ' ProtectDrop
         scrlData1.max = 1
         scrlData2.max = 1
         scrlData3.max = 1
@@ -465,11 +465,11 @@ Private Sub scrlConv_Change()
     fraConv.caption = "Conversation - " & curConv
 
     With Conv(EditorIndex).Conv(curConv)
-        txtConv.Text = .Conv
+        txtConv.text = .Conv
 
         For X = 1 To 4
             If .rTarget(X) > Conv(EditorIndex).chatCount Then .rTarget(X) = 0
-            txtReply(X).Text = .rText(X)
+            txtReply(X).text = .rText(X)
             cmbReply(X).ListIndex = .rTarget(X)
         Next
 
@@ -505,7 +505,7 @@ Private Sub scrlData1_Change()
         lblData1.caption = "Data1: " & scrlData1.Value
     Case 5    ' Quest
         If scrlData1.Value > 0 Then
-        lblData1.caption = "Quest: " & scrlData1.Value & "-" & Trim$(Quest(scrlData1.Value).Name)
+            lblData1.caption = "Quest: " & scrlData1.Value & "-" & Trim$(Quest(scrlData1.Value).Name)
         Else
             lblData1.caption = "Quest: 0"
         End If
@@ -540,7 +540,7 @@ Private Sub scrlData3_Change()
 End Sub
 
 Private Sub txtConv_Change()
-    Conv(EditorIndex).Conv(curConv).Conv = txtConv.Text
+    Conv(EditorIndex).Conv(curConv).Conv = txtConv.text
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
@@ -548,14 +548,14 @@ Private Sub txtName_Validate(Cancel As Boolean)
 
     If EditorIndex = 0 Or EditorIndex > MAX_CONVS Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Conv(EditorIndex).Name = Trim$(txtName.Text)
+    Conv(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Conv(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
 End Sub
 
 Private Sub txtReply_Change(Index As Integer)
-    Conv(EditorIndex).Conv(curConv).rText(Index) = txtReply(Index).Text
+    Conv(EditorIndex).Conv(curConv).rText(Index) = txtReply(Index).text
 End Sub
 
 Private Sub cmbReply_Click(Index As Integer)

@@ -20,7 +20,7 @@ Public Sub TryPlayerAttackNpc(ByVal Index As Long, ByVal mapnpcnum As Long)
 
         ' check if NPC can avoid the attack
         If CanNpcDodge(NpcNum, Index) Then
-            SendActionMsg MapNum, "Dodge!", Pink, 1, (MapNpc(MapNum).NPC(mapnpcnum).x * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
+            SendActionMsg MapNum, "Dodge!", Pink, 1, (MapNpc(MapNum).NPC(mapnpcnum).X * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
             Exit Sub
         End If
 
@@ -32,7 +32,7 @@ Public Sub TryPlayerAttackNpc(ByVal Index As Long, ByVal mapnpcnum As Long)
 
         If blockAmount > 0 Then
             Damage = Damage - blockAmount
-            SendActionMsg MapNum, "Block " & blockAmount, Pink, 1, (MapNpc(MapNum).NPC(mapnpcnum).x * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
+            SendActionMsg MapNum, "Block " & blockAmount, Pink, 1, (MapNpc(MapNum).NPC(mapnpcnum).X * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
         End If
 
         ' take away armour
@@ -107,16 +107,16 @@ Public Function CanPlayerAttackNpc(ByVal Attacker As Long, ByVal mapnpcnum As Lo
             ' Check if at same coordinates
             Select Case GetPlayerDir(Attacker)
             Case DIR_UP
-                NpcX = MapNpc(MapNum).NPC(mapnpcnum).x
+                NpcX = MapNpc(MapNum).NPC(mapnpcnum).X
                 NpcY = MapNpc(MapNum).NPC(mapnpcnum).Y + 1
             Case DIR_DOWN
-                NpcX = MapNpc(MapNum).NPC(mapnpcnum).x
+                NpcX = MapNpc(MapNum).NPC(mapnpcnum).X
                 NpcY = MapNpc(MapNum).NPC(mapnpcnum).Y - 1
             Case DIR_LEFT
-                NpcX = MapNpc(MapNum).NPC(mapnpcnum).x + 1
+                NpcX = MapNpc(MapNum).NPC(mapnpcnum).X + 1
                 NpcY = MapNpc(MapNum).NPC(mapnpcnum).Y
             Case DIR_RIGHT
-                NpcX = MapNpc(MapNum).NPC(mapnpcnum).x - 1
+                NpcX = MapNpc(MapNum).NPC(mapnpcnum).X - 1
                 NpcY = MapNpc(MapNum).NPC(mapnpcnum).Y
             End Select
 
@@ -180,16 +180,16 @@ Public Sub PlayerAttackNpc(ByVal Attacker As Long, ByVal mapnpcnum As Long, ByVa
 
     If Damage >= MapNpc(MapNum).NPC(mapnpcnum).Vital(Vitals.HP) Then
 
-        SendActionMsg GetPlayerMap(Attacker), "-" & MapNpc(MapNum).NPC(mapnpcnum).Vital(Vitals.HP), BrightRed, 1, (MapNpc(MapNum).NPC(mapnpcnum).x * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
-        SendBlood GetPlayerMap(Attacker), MapNpc(MapNum).NPC(mapnpcnum).x, MapNpc(MapNum).NPC(mapnpcnum).Y
+        SendActionMsg GetPlayerMap(Attacker), "-" & MapNpc(MapNum).NPC(mapnpcnum).Vital(Vitals.HP), BrightRed, 1, (MapNpc(MapNum).NPC(mapnpcnum).X * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
+        SendBlood GetPlayerMap(Attacker), MapNpc(MapNum).NPC(mapnpcnum).X, MapNpc(MapNum).NPC(mapnpcnum).Y
 
         ' send the sound
-        If SpellNum > 0 Then SendMapSound Attacker, MapNpc(MapNum).NPC(mapnpcnum).x, MapNpc(MapNum).NPC(mapnpcnum).Y, SoundEntity.seSpell, SpellNum
+        If SpellNum > 0 Then SendMapSound Attacker, MapNpc(MapNum).NPC(mapnpcnum).X, MapNpc(MapNum).NPC(mapnpcnum).Y, SoundEntity.seSpell, SpellNum
 
         ' send animation
         If n > 0 Then
             If Not overTime Then
-                If SpellNum = 0 Then Call SendAnimation(MapNum, Item(GetPlayerEquipmentNum(Attacker, Weapon)).Animation, MapNpc(MapNum).NPC(mapnpcnum).x, MapNpc(MapNum).NPC(mapnpcnum).Y)
+                If SpellNum = 0 Then Call SendAnimation(MapNum, Item(GetPlayerEquipmentNum(Attacker, Weapon)).Animation, MapNpc(MapNum).NPC(mapnpcnum).X, MapNpc(MapNum).NPC(mapnpcnum).Y)
             End If
         End If
 
@@ -229,11 +229,12 @@ Public Sub PlayerAttackNpc(ByVal Attacker As Long, ByVal mapnpcnum As Long, ByVa
 
                 R = Int(Rnd * NPC(NpcNum).DropItemValue(n)) + 1
 
-                If (DP + TempPlayer(Attacker).Bonus.Drop) > 0 Then
-                    SendActionMsg MapNum, "Drop Chance + " & (DP + TempPlayer(Attacker).Bonus.Drop) & "%", Yellow, ACTIONMSG_SCROLL, GetPlayerX(Attacker) * 32, GetPlayerY(Attacker) * 32 - 16
-                End If
                 If I = 1 Then
-                    Call SpawnItem(NPC(NpcNum).DropItem(n), R, MapNum, MapNpc(MapNum).NPC(mapnpcnum).x, MapNpc(MapNum).NPC(mapnpcnum).Y, GetPlayerName(Attacker))
+                    If (DP + TempPlayer(Attacker).Bonus.Drop) > 0 Then
+                        SendActionMsg MapNum, "Drop Chance + " & (DP + TempPlayer(Attacker).Bonus.Drop) & "%", Yellow, ACTIONMSG_SCROLL, GetPlayerX(Attacker) * 32, GetPlayerY(Attacker) * 32 - 16
+                    End If
+                    
+                    Call SpawnItem(NPC(NpcNum).DropItem(n), R, MapNum, MapNpc(MapNum).NPC(mapnpcnum).X, MapNpc(MapNum).NPC(mapnpcnum).Y, GetPlayerName(Attacker))
                 End If
             End If
 
@@ -314,11 +315,11 @@ Public Sub PlayerAttackNpc(ByVal Attacker As Long, ByVal mapnpcnum As Long, ByVa
         MapNpc(MapNum).NPC(mapnpcnum).Vital(Vitals.HP) = MapNpc(MapNum).NPC(mapnpcnum).Vital(Vitals.HP) - Damage
 
         ' Check for a weapon and say damage
-        SendActionMsg MapNum, "-" & Damage, BrightRed, 1, (MapNpc(MapNum).NPC(mapnpcnum).x * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
-        SendBlood GetPlayerMap(Attacker), MapNpc(MapNum).NPC(mapnpcnum).x, MapNpc(MapNum).NPC(mapnpcnum).Y
+        SendActionMsg MapNum, "-" & Damage, BrightRed, 1, (MapNpc(MapNum).NPC(mapnpcnum).X * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
+        SendBlood GetPlayerMap(Attacker), MapNpc(MapNum).NPC(mapnpcnum).X, MapNpc(MapNum).NPC(mapnpcnum).Y
 
         ' send the sound
-        If SpellNum > 0 Then SendMapSound Attacker, MapNpc(MapNum).NPC(mapnpcnum).x, MapNpc(MapNum).NPC(mapnpcnum).Y, SoundEntity.seSpell, SpellNum
+        If SpellNum > 0 Then SendMapSound Attacker, MapNpc(MapNum).NPC(mapnpcnum).X, MapNpc(MapNum).NPC(mapnpcnum).Y, SoundEntity.seSpell, SpellNum
 
         ' send animation
         If n > 0 Then
@@ -382,7 +383,7 @@ Public Sub TryNpcAttackPlayer(ByVal mapnpcnum As Long, ByVal Index As Long)
 
         ' check if PLAYER can avoid the attack
         If CanPlayerDodge(Index, TARGET_TYPE_NPC, mapnpcnum) Then
-            SendActionMsg MapNum, "Dodge!", Pink, 1, (Player(Index).x * 32), (Player(Index).Y * 32)
+            SendActionMsg MapNum, "Dodge!", Pink, 1, (Player(Index).X * 32), (Player(Index).Y * 32)
             Exit Sub
         End If
 
@@ -394,7 +395,7 @@ Public Sub TryNpcAttackPlayer(ByVal mapnpcnum As Long, ByVal Index As Long)
 
         If blockAmount > 0 Then
             Damage = Damage - blockAmount
-            SendActionMsg MapNum, "Block " & blockAmount, Pink, 1, (Player(Index).x * 32), (Player(Index).Y * 32)
+            SendActionMsg MapNum, "Block " & blockAmount, Pink, 1, (Player(Index).X * 32), (Player(Index).Y * 32)
         End If
 
         ' take away armour
@@ -410,7 +411,7 @@ Public Sub TryNpcAttackPlayer(ByVal mapnpcnum As Long, ByVal Index As Long)
         ' * 1.5 if crit hit
         If CanNpcCrit(NpcNum, Index) Then
             Damage = Damage * 1.5
-            SendActionMsg MapNum, "Critical!", BrightCyan, 1, (MapNpc(MapNum).NPC(mapnpcnum).x * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
+            SendActionMsg MapNum, "Critical!", BrightCyan, 1, (MapNpc(MapNum).NPC(mapnpcnum).X * 32), (MapNpc(MapNum).NPC(mapnpcnum).Y * 32)
             
             ' stun one second
             StunPlayerForTimer Index, 1
@@ -473,16 +474,16 @@ Function CanNpcAttackPlayer(ByVal mapnpcnum As Long, ByVal Index As Long, Option
         If NpcNum > 0 Then
 
             ' Check if at same coordinates
-            If (GetPlayerY(Index) + 1 = MapNpc(MapNum).NPC(mapnpcnum).Y) And (GetPlayerX(Index) = MapNpc(MapNum).NPC(mapnpcnum).x) Then
+            If (GetPlayerY(Index) + 1 = MapNpc(MapNum).NPC(mapnpcnum).Y) And (GetPlayerX(Index) = MapNpc(MapNum).NPC(mapnpcnum).X) Then
                 CanNpcAttackPlayer = True
             Else
-                If (GetPlayerY(Index) - 1 = MapNpc(MapNum).NPC(mapnpcnum).Y) And (GetPlayerX(Index) = MapNpc(MapNum).NPC(mapnpcnum).x) Then
+                If (GetPlayerY(Index) - 1 = MapNpc(MapNum).NPC(mapnpcnum).Y) And (GetPlayerX(Index) = MapNpc(MapNum).NPC(mapnpcnum).X) Then
                     CanNpcAttackPlayer = True
                 Else
-                    If (GetPlayerY(Index) = MapNpc(MapNum).NPC(mapnpcnum).Y) And (GetPlayerX(Index) + 1 = MapNpc(MapNum).NPC(mapnpcnum).x) Then
+                    If (GetPlayerY(Index) = MapNpc(MapNum).NPC(mapnpcnum).Y) And (GetPlayerX(Index) + 1 = MapNpc(MapNum).NPC(mapnpcnum).X) Then
                         CanNpcAttackPlayer = True
                     Else
-                        If (GetPlayerY(Index) = MapNpc(MapNum).NPC(mapnpcnum).Y) And (GetPlayerX(Index) - 1 = MapNpc(MapNum).NPC(mapnpcnum).x) Then
+                        If (GetPlayerY(Index) = MapNpc(MapNum).NPC(mapnpcnum).Y) And (GetPlayerX(Index) - 1 = MapNpc(MapNum).NPC(mapnpcnum).X) Then
                             CanNpcAttackPlayer = True
                         End If
                     End If
@@ -533,7 +534,7 @@ Sub NpcAttackPlayer(ByVal mapnpcnum As Long, ByVal Victim As Long, ByVal Damage 
 
         ' send the sound
         If SpellNum > 0 Then
-            SendMapSound Victim, MapNpc(MapNum).NPC(mapnpcnum).x, MapNpc(MapNum).NPC(mapnpcnum).Y, SoundEntity.seSpell, SpellNum
+            SendMapSound Victim, MapNpc(MapNum).NPC(mapnpcnum).X, MapNpc(MapNum).NPC(mapnpcnum).Y, SoundEntity.seSpell, SpellNum
         Else
             SendMapSound Victim, GetPlayerX(Victim), GetPlayerY(Victim), SoundEntity.seNpc, MapNpc(MapNum).NPC(mapnpcnum).Num
         End If
@@ -548,6 +549,7 @@ Sub NpcAttackPlayer(ByVal mapnpcnum As Long, ByVal Victim As Long, ByVal Damage 
 
         ' Player is dead
         Call GlobalMsg(GetPlayerName(Victim) & " has been killed by " & Name, BrightRed)
+        Call SendDiscordMsg(Death, Victim, Name)
 
         ' Set NPC target to 0
         MapNpc(MapNum).NPC(mapnpcnum).target = 0
@@ -560,7 +562,7 @@ Sub NpcAttackPlayer(ByVal mapnpcnum As Long, ByVal Victim As Long, ByVal Damage 
 
         ' send the sound
         If SpellNum > 0 Then
-            SendMapSound Victim, MapNpc(MapNum).NPC(mapnpcnum).x, MapNpc(MapNum).NPC(mapnpcnum).Y, SoundEntity.seSpell, SpellNum
+            SendMapSound Victim, MapNpc(MapNum).NPC(mapnpcnum).X, MapNpc(MapNum).NPC(mapnpcnum).Y, SoundEntity.seSpell, SpellNum
         Else
             SendMapSound Victim, GetPlayerX(Victim), GetPlayerY(Victim), SoundEntity.seNpc, MapNpc(MapNum).NPC(mapnpcnum).Num
         End If
@@ -840,6 +842,8 @@ Sub PlayerAttackPlayer(ByVal Attacker As Long, ByVal Victim As Long, ByVal Damag
         
         ' send death
         Call OnDeath(Victim)
+        
+        Call SendDiscordMsg(Death, Victim, GetPlayerName(Attacker))
     Else
         ' Player not dead, just do the damage
         Call SetPlayerVital(Victim, Vitals.HP, GetPlayerVital(Victim, Vitals.HP) - Damage)
@@ -992,7 +996,7 @@ Public Sub BufferSpell(ByVal Index As Long, ByVal spellSlot As Long)
                 HasBuffered = True
             Else
                 ' if have target, check in range
-                If Not isInRange(Range, GetPlayerX(Index), GetPlayerY(Index), MapNpc(MapNum).NPC(target).x, MapNpc(MapNum).NPC(target).Y) Then
+                If Not isInRange(Range, GetPlayerX(Index), GetPlayerY(Index), MapNpc(MapNum).NPC(target).X, MapNpc(MapNum).NPC(target).Y) Then
                     PlayerMsg Index, "Target not in range.", BrightRed
                     HasBuffered = False
                 Else
@@ -1092,7 +1096,7 @@ Public Sub NpcBufferSpell(ByVal MapNum As Long, ByVal mapnpcnum As Long, ByVal n
                 ' make sure it's a player
                 If TargetType = TARGET_TYPE_PLAYER Then
                     ' if have target, check in range
-                    If Not isInRange(Range, .x, .Y, GetPlayerX(target), GetPlayerY(target)) Then
+                    If Not isInRange(Range, .X, .Y, GetPlayerX(target), GetPlayerY(target)) Then
                         Exit Sub
                     Else
                         If CanNpcAttackPlayer(mapnpcnum, target, True) Then
@@ -1114,7 +1118,7 @@ Public Sub NpcBufferSpell(ByVal MapNum As Long, ByVal mapnpcnum As Long, ByVal n
 End Sub
 
 Public Sub NpcCastSpell(ByVal MapNum As Long, ByVal mapnpcnum As Long, ByVal spellSlot As Long, ByVal target As Long, ByVal TargetType As Long)
-    Dim SpellNum As Long, mpCost As Long, Vital As Long, DidCast As Boolean, I As Long, AoE As Long, Range As Long, vitalType As Byte, increment As Boolean, x As Long, Y As Long, spellCastType As Long
+    Dim SpellNum As Long, mpCost As Long, Vital As Long, DidCast As Boolean, I As Long, AoE As Long, Range As Long, vitalType As Byte, increment As Boolean, X As Long, Y As Long, spellCastType As Long
 
     DidCast = False
 
@@ -1166,28 +1170,28 @@ Public Sub NpcCastSpell(ByVal MapNum As Long, ByVal mapnpcnum As Long, ByVal spe
             End Select
         Case 1, 3    ' self-cast AOE & targetted AOE
             If spellCastType = 1 Then
-                x = .x
+                X = .X
                 Y = .Y
             ElseIf spellCastType = 3 Then
                 If TargetType = 0 Then Exit Sub
                 If target = 0 Then Exit Sub
 
                 If TargetType = TARGET_TYPE_PLAYER Then
-                    x = GetPlayerX(target)
+                    X = GetPlayerX(target)
                     Y = GetPlayerY(target)
                 Else
-                    x = MapNpc(MapNum).NPC(target).x
+                    X = MapNpc(MapNum).NPC(target).X
                     Y = MapNpc(MapNum).NPC(target).Y
                 End If
 
-                If Not isInRange(Range, .x, .Y, x, Y) Then Exit Sub
+                If Not isInRange(Range, .X, .Y, X, Y) Then Exit Sub
             End If
             Select Case Spell(SpellNum).Type
             Case SPELL_TYPE_DAMAGEHP
                 For I = 1 To Player_HighIndex
                     If IsPlaying(I) Then
                         If GetPlayerMap(I) = MapNum Then
-                            If isInRange(AoE, .x, .Y, GetPlayerX(I), GetPlayerY(I)) Then
+                            If isInRange(AoE, .X, .Y, GetPlayerX(I), GetPlayerY(I)) Then
                                 If CanNpcAttackPlayer(mapnpcnum, I, True) Then
                                     SendAnimation MapNum, Spell(SpellNum).SpellAnim, 0, 0, TARGET_TYPE_PLAYER, I
                                     NpcAttackPlayer mapnpcnum, I, Vital, SpellNum
@@ -1210,7 +1214,7 @@ Public Sub NpcCastSpell(ByVal MapNum As Long, ByVal mapnpcnum As Long, ByVal spe
                     For I = 1 To MAX_MAP_NPCS
                         If MapNpc(MapNum).NPC(I).Num > 0 Then
                             If MapNpc(MapNum).NPC(I).Vital(HP) > 0 Then
-                                If isInRange(AoE, x, Y, MapNpc(MapNum).NPC(I).x, MapNpc(MapNum).NPC(I).Y) Then
+                                If isInRange(AoE, X, Y, MapNpc(MapNum).NPC(I).X, MapNpc(MapNum).NPC(I).Y) Then
                                     SpellNpc_Effect vitalType, increment, I, Vital, SpellNum, MapNum
                                     DidCast = True
                                 End If
@@ -1224,14 +1228,14 @@ Public Sub NpcCastSpell(ByVal MapNum As Long, ByVal mapnpcnum As Long, ByVal spe
             If target = 0 Then Exit Sub
 
             If TargetType = TARGET_TYPE_PLAYER Then
-                x = GetPlayerX(target)
+                X = GetPlayerX(target)
                 Y = GetPlayerY(target)
             Else
-                x = MapNpc(MapNum).NPC(target).x
+                X = MapNpc(MapNum).NPC(target).X
                 Y = MapNpc(MapNum).NPC(target).Y
             End If
 
-            If Not isInRange(Range, .x, .Y, x, Y) Then Exit Sub
+            If Not isInRange(Range, .X, .Y, X, Y) Then Exit Sub
 
             Select Case Spell(SpellNum).Type
             Case SPELL_TYPE_DAMAGEHP
@@ -1270,7 +1274,7 @@ End Sub
 
 Public Sub CastSpell(ByVal Index As Long, ByVal spellSlot As Long, ByVal target As Long, ByVal TargetType As Byte)
     Dim SpellNum As Long, mpCost As Long, LevelReq As Long, MapNum As Long, Vital As Long, DidCast As Boolean, ClassReq As Long
-    Dim AccessReq As Long, I As Long, AoE As Long, Range As Long, vitalType As Byte, increment As Boolean, x As Long, Y As Long
+    Dim AccessReq As Long, I As Long, AoE As Long, Range As Long, vitalType As Byte, increment As Boolean, X As Long, Y As Long
     Dim Buffer As clsBuffer, spellCastType As Long
 
     DidCast = False
@@ -1352,27 +1356,27 @@ Public Sub CastSpell(ByVal Index As Long, ByVal spellSlot As Long, ByVal target 
             DidCast = True
         Case SPELL_TYPE_WARP
             SendAnimation MapNum, Spell(SpellNum).SpellAnim, 0, 0, TARGET_TYPE_PLAYER, Index
-            PlayerWarp Index, Spell(SpellNum).Map, Spell(SpellNum).x, Spell(SpellNum).Y
+            PlayerWarp Index, Spell(SpellNum).Map, Spell(SpellNum).X, Spell(SpellNum).Y
             SendAnimation GetPlayerMap(Index), Spell(SpellNum).SpellAnim, 0, 0, TARGET_TYPE_PLAYER, Index
             DidCast = True
         End Select
     Case 1, 3    ' self-cast AOE & targetted AOE
         If spellCastType = 1 Then
-            x = GetPlayerX(Index)
+            X = GetPlayerX(Index)
             Y = GetPlayerY(Index)
         ElseIf spellCastType = 3 Then
             If TargetType = 0 Then Exit Sub
             If target = 0 Then Exit Sub
 
             If TargetType = TARGET_TYPE_PLAYER Then
-                x = GetPlayerX(target)
+                X = GetPlayerX(target)
                 Y = GetPlayerY(target)
             Else
-                x = MapNpc(MapNum).NPC(target).x
+                X = MapNpc(MapNum).NPC(target).X
                 Y = MapNpc(MapNum).NPC(target).Y
             End If
 
-            If Not isInRange(Range, GetPlayerX(Index), GetPlayerY(Index), x, Y) Then
+            If Not isInRange(Range, GetPlayerX(Index), GetPlayerY(Index), X, Y) Then
                 PlayerMsg Index, "Target not in range.", BrightRed
                 SendClearSpellBuffer Index
             End If
@@ -1383,7 +1387,7 @@ Public Sub CastSpell(ByVal Index As Long, ByVal spellSlot As Long, ByVal target 
                 If IsPlaying(I) Then
                     If I <> Index Then
                         If GetPlayerMap(I) = GetPlayerMap(Index) Then
-                            If isInRange(AoE, x, Y, GetPlayerX(I), GetPlayerY(I)) Then
+                            If isInRange(AoE, X, Y, GetPlayerX(I), GetPlayerY(I)) Then
                                 If CanPlayerAttackPlayer(Index, I, True) Then
                                     SendAnimation MapNum, Spell(SpellNum).SpellAnim, 0, 0, TARGET_TYPE_PLAYER, I
                                     PlayerAttackPlayer Index, I, Vital, SpellNum
@@ -1397,7 +1401,7 @@ Public Sub CastSpell(ByVal Index As Long, ByVal spellSlot As Long, ByVal target 
             For I = 1 To MAX_MAP_NPCS
                 If MapNpc(MapNum).NPC(I).Num > 0 Then
                     If MapNpc(MapNum).NPC(I).Vital(HP) > 0 Then
-                        If isInRange(AoE, x, Y, MapNpc(MapNum).NPC(I).x, MapNpc(MapNum).NPC(I).Y) Then
+                        If isInRange(AoE, X, Y, MapNpc(MapNum).NPC(I).X, MapNpc(MapNum).NPC(I).Y) Then
                             If CanPlayerAttackNpc(Index, I, True) Then
                                 SendAnimation MapNum, Spell(SpellNum).SpellAnim, 0, 0, TARGET_TYPE_NPC, I
                                 PlayerAttackNpc Index, I, Vital, SpellNum
@@ -1422,7 +1426,7 @@ Public Sub CastSpell(ByVal Index As Long, ByVal spellSlot As Long, ByVal target 
             For I = 1 To Player_HighIndex
                 If IsPlaying(I) Then
                     If GetPlayerMap(I) = GetPlayerMap(Index) Then
-                        If isInRange(AoE, x, Y, GetPlayerX(I), GetPlayerY(I)) Then
+                        If isInRange(AoE, X, Y, GetPlayerX(I), GetPlayerY(I)) Then
                             SpellPlayer_Effect vitalType, increment, I, Vital, SpellNum
                             DidCast = True
                         End If
@@ -1434,7 +1438,7 @@ Public Sub CastSpell(ByVal Index As Long, ByVal spellSlot As Long, ByVal target 
                 For I = 1 To MAX_MAP_NPCS
                     If MapNpc(MapNum).NPC(I).Num > 0 Then
                         If MapNpc(MapNum).NPC(I).Vital(HP) > 0 Then
-                            If isInRange(AoE, x, Y, MapNpc(MapNum).NPC(I).x, MapNpc(MapNum).NPC(I).Y) Then
+                            If isInRange(AoE, X, Y, MapNpc(MapNum).NPC(I).X, MapNpc(MapNum).NPC(I).Y) Then
                                 SpellNpc_Effect vitalType, increment, I, Vital, SpellNum, MapNum
                                 DidCast = True
                             End If
@@ -1448,14 +1452,14 @@ Public Sub CastSpell(ByVal Index As Long, ByVal spellSlot As Long, ByVal target 
         If target = 0 Then Exit Sub
 
         If TargetType = TARGET_TYPE_PLAYER Then
-            x = GetPlayerX(target)
+            X = GetPlayerX(target)
             Y = GetPlayerY(target)
         Else
-            x = MapNpc(MapNum).NPC(target).x
+            X = MapNpc(MapNum).NPC(target).X
             Y = MapNpc(MapNum).NPC(target).Y
         End If
 
-        If Not isInRange(Range, GetPlayerX(Index), GetPlayerY(Index), x, Y) Then
+        If Not isInRange(Range, GetPlayerX(Index), GetPlayerY(Index), X, Y) Then
             PlayerMsg Index, "Target not in range.", BrightRed
             SendClearSpellBuffer Index
             Exit Sub
@@ -1612,10 +1616,10 @@ Public Sub SpellNpc_Effect(ByVal Vital As Byte, ByVal increment As Boolean, ByVa
         End If
 
         SendAnimation MapNum, Spell(SpellNum).SpellAnim, 0, 0, TARGET_TYPE_NPC, Index
-        SendActionMsg MapNum, sSymbol & Damage, colour, ACTIONMSG_SCROLL, MapNpc(MapNum).NPC(Index).x * 32, MapNpc(MapNum).NPC(Index).Y * 32
+        SendActionMsg MapNum, sSymbol & Damage, colour, ACTIONMSG_SCROLL, MapNpc(MapNum).NPC(Index).X * 32, MapNpc(MapNum).NPC(Index).Y * 32
 
         ' send the sound
-        SendMapSound Index, MapNpc(MapNum).NPC(Index).x, MapNpc(MapNum).NPC(Index).Y, SoundEntity.seSpell, SpellNum
+        SendMapSound Index, MapNpc(MapNum).NPC(Index).X, MapNpc(MapNum).NPC(Index).Y, SoundEntity.seSpell, SpellNum
 
         NpcNum = MapNpc(MapNum).NPC(Index).Num
         If increment Then
@@ -1759,7 +1763,7 @@ Public Sub HandleHoT_Player(ByVal Index As Long, ByVal hotNum As Long)
         If .Used And .Spell > 0 Then
             ' time to tick?
             If getTime > .Timer + (Spell(.Spell).Interval * 1000) Then
-                SendActionMsg Player(Index).Map, "+" & GetPlayerSpellDamage(.Caster, .Spell), BrightGreen, ACTIONMSG_SCROLL, Player(Index).x * 32, Player(Index).Y * 32
+                SendActionMsg Player(Index).Map, "+" & GetPlayerSpellDamage(.Caster, .Spell), BrightGreen, ACTIONMSG_SCROLL, Player(Index).X * 32, Player(Index).Y * 32
                 Player(Index).Vital(Vitals.HP) = Player(Index).Vital(Vitals.HP) + GetPlayerSpellDamage(.Caster, .Spell)
                 .Timer = getTime
                 ' check if DoT is still active - if player died it'll have been purged
@@ -1810,7 +1814,7 @@ Public Sub HandleHoT_Npc(ByVal MapNum As Long, ByVal Index As Long, ByVal hotNum
         If .Used And .Spell > 0 Then
             ' time to tick?
             If getTime > .Timer + (Spell(.Spell).Interval * 1000) Then
-                SendActionMsg MapNum, "+" & GetPlayerSpellDamage(.Caster, .Spell), BrightGreen, ACTIONMSG_SCROLL, MapNpc(MapNum).NPC(Index).x * 32, MapNpc(MapNum).NPC(Index).Y * 32
+                SendActionMsg MapNum, "+" & GetPlayerSpellDamage(.Caster, .Spell), BrightGreen, ACTIONMSG_SCROLL, MapNpc(MapNum).NPC(Index).X * 32, MapNpc(MapNum).NPC(Index).Y * 32
                 MapNpc(MapNum).NPC(Index).Vital(Vitals.HP) = MapNpc(MapNum).NPC(Index).Vital(Vitals.HP) + GetPlayerSpellDamage(.Caster, .Spell)
                 ' make sure not over max
                 NpcNum = MapNpc(MapNum).NPC(Index).Num

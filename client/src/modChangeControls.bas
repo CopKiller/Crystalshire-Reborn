@@ -4,6 +4,14 @@ Option Explicit
 Public Sub HandleKeyDown(KeyCode As Integer, Shift As Integer)
     Dim i As Byte
 
+    Select Case KeyCode
+    Case VK_V
+        ' Paste Clipboard
+        If GetAsyncKeyState(VK_CONTROL) < 0 Then
+            Ctrl_V = True
+        End If
+    End Select
+
     ' exit out if chatting
     If Not inSmallChat Then Exit Sub
     ' exit out if dialog
@@ -27,7 +35,7 @@ Public Sub HandleKeyDown(KeyCode As Integer, Shift As Integer)
             CloseComboMenu
             ' hide/show chat window
             If Windows(GetWindowIndex("winChat")).Window.visible Then
-                Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).Text = vbNullString
+                Windows(GetWindowIndex("winChat")).Controls(GetControlIndex("winChat", "txtChat")).text = vbNullString
                 HideChat
                 inSmallChat = True
                 Exit Sub
@@ -106,9 +114,9 @@ End Sub
 ' Salvando os dados!
 Public Sub btnSalvar_Return()
 
-    ' Colocar informações do tooltip no menu do jogador, sobre as teclas pré-configuradas no editor de controles de cada menu!
+' Colocar informações do tooltip no menu do jogador, sobre as teclas pré-configuradas no editor de controles de cada menu!
     RefreshMenu_Tooltip
-    
+
     SaveOptions
     HideWindow GetWindowIndex("winChangeControls")
     ShowWindow GetWindowIndex("winOptions"), True, True
@@ -178,36 +186,36 @@ Public Sub CreateWindow_ChangeControls()
     CreateLabel WindowCount, "lblRun", 88, 80, 173, , "CORRER", Fonts.georgiaDec_16, White
     CreateLabel WindowCount, "lblFight", 188, 80, 173, , "ATACAR", Fonts.georgiaDec_16, White
     CreateLabel WindowCount, "lblTargetEnemy", 280, 80, 173, , "TARGET ENEMY", Fonts.georgiaDec_16, White
-    
+
     CreateLabel WindowCount, "lblCharacter", 98, 140, 173, , "CHAR", Fonts.georgiaDec_16, White
     CreateLabel WindowCount, "lblBag", 198, 140, 173, , "BOLSA", Fonts.georgiaDec_16, White
     CreateLabel WindowCount, "lblSpells", 288, 140, 173, , "TECNICAS", Fonts.georgiaDec_16, White
-    
+
     CreateLabel WindowCount, "lblGuild", 98, 200, 173, , "GUILD", Fonts.georgiaDec_16, White
     CreateLabel WindowCount, "lblQuest", 198, 200, 173, , "QUEST", Fonts.georgiaDec_16, White
     CreateLabel WindowCount, "lblOptions", 288, 200, 173, , "OPTIONS", Fonts.georgiaDec_16, White
-    
+
     CreateLabel WindowCount, "lblGetItem", 88, 260, 173, , "GET ITEM", Fonts.georgiaDec_16, White
     CreateLabel WindowCount, "lblChat", 175, 260, 173, , "CHAT OPEN/SEND", Fonts.georgiaDec_16, White
-    
+
     CreateLabel WindowCount, "lblHotbar", 388, 310, 173, , "HOTBARS", Fonts.georgiaDec_16, White
 
     ' Texts Boxs Actions / Key Controls - 28 To .ControlCount
     CreateTextbox WindowCount, "txtRun", 70, 95, 100, 32, KeycodeChar(Options.Correr), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtFight", 170, 95, 100, 32, KeycodeChar(Options.Atacar), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtTargetEnemy", 270, 95, 100, 32, KeycodeChar(Options.Target), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
-    
+
     CreateTextbox WindowCount, "txtCharacter", 70, 155, 100, 32, KeycodeChar(Options.Personagem), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtBag", 170, 155, 100, 32, KeycodeChar(Options.Bolsa), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtSpells", 270, 155, 100, 32, KeycodeChar(Options.Magias), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
-    
+
     CreateTextbox WindowCount, "txtGuild", 70, 215, 100, 32, KeycodeChar(Options.Guild), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtQuest", 170, 215, 100, 32, KeycodeChar(Options.Quests), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtOptions", 270, 215, 100, 32, KeycodeChar(Options.Options), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
-    
+
     CreateTextbox WindowCount, "txtGetItem", 70, 275, 100, 32, KeycodeChar(Options.PegarItem), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtChat", 170, 275, 100, 32, KeycodeChar(Options.Chat), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
-    
+
     'CreateTextbox WindowCount, "txtTarget", 270, 270, 100, 32, KeycodeChar(Options.Target), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtUp", 520, 115, 80, 32, KeycodeChar(Options.Up), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     CreateTextbox WindowCount, "txtDown", 520, 230, 80, 32, KeycodeChar(Options.Down), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
@@ -217,10 +225,10 @@ Public Sub CreateWindow_ChangeControls()
     For i = 1 To MAX_HOTBAR
         CreateTextbox WindowCount, "txtHotbar" & i, 16 + (64 * i), 330, 64, 64, KeycodeChar(Options.Hotbar(i)), Fonts.georgiaDec_16, , Alignment.alignCentre, , , , , , DesignTypes.desTextBlack_Sq, DesignTypes.desTextBlack_Sq, DesignTypes.desTextBlack_Sq, , , GetAddress(AddressOf ChangeControls_Select), , , , , 12
     Next i
-    
+
     ' Fora da contagem
     CreateCheckbox WindowCount, "chkSetas", 415, 280, 142, , Val(Options.UsarSetas), "Usar Setas.", Fonts.georgiaDec_16, , , , , DesignTypes.desChkNorm, , , GetAddress(AddressOf chkSetas_MouseDown)
-    
+
 End Sub
 
 Public Sub ChangeControls_Restore()
@@ -230,18 +238,18 @@ Public Sub ChangeControls_Restore()
     Options.Correr = 16     'Shift
     Options.Atacar = 17     'Ctrl
     Options.Target = 9      'Tab
-    
-    Options.Personagem = 80 'P
+
+    Options.Personagem = 80    'P
     Options.Bolsa = 66      'B
     Options.Magias = 84     'T
-    
+
     Options.Guild = 71      'G
     Options.Quests = 77     'M
     Options.Options = 27    'Esc
-    
+
     Options.PegarItem = 32  'Space
     Options.Chat = 13       'Enter
-    
+
     Options.Up = 87         'Arrow Up
     Options.Down = 83       'Arrow Down
     Options.Left = 65       'Arrow Left
@@ -258,27 +266,27 @@ Public Sub ChangeControls_Restore()
     ' Change in form
     With Windows(GetWindowIndex("winChangeControls"))
         If .Window.visible Then
-            .Controls(GetControlIndex("winChangeControls", "txtRun")).Text = KeycodeChar(Options.Correr)
-            .Controls(GetControlIndex("winChangeControls", "txtFight")).Text = KeycodeChar(Options.Atacar)
-            .Controls(GetControlIndex("winChangeControls", "txtTargetEnemy")).Text = KeycodeChar(Options.Target)
-            
-            .Controls(GetControlIndex("winChangeControls", "txtCharacter")).Text = KeycodeChar(Options.Personagem)
-            .Controls(GetControlIndex("winChangeControls", "txtBag")).Text = KeycodeChar(Options.Bolsa)
-            .Controls(GetControlIndex("winChangeControls", "txtSpells")).Text = KeycodeChar(Options.Magias)
-            
-            .Controls(GetControlIndex("winChangeControls", "txtGuild")).Text = KeycodeChar(Options.Guild)
-            .Controls(GetControlIndex("winChangeControls", "txtQuest")).Text = KeycodeChar(Options.Quests)
-            .Controls(GetControlIndex("winChangeControls", "txtOptions")).Text = KeycodeChar(Options.Options)
-            
-            .Controls(GetControlIndex("winChangeControls", "txtGetItem")).Text = KeycodeChar(Options.PegarItem)
-            .Controls(GetControlIndex("winChangeControls", "txtChat")).Text = KeycodeChar(Options.Chat)
+            .Controls(GetControlIndex("winChangeControls", "txtRun")).text = KeycodeChar(Options.Correr)
+            .Controls(GetControlIndex("winChangeControls", "txtFight")).text = KeycodeChar(Options.Atacar)
+            .Controls(GetControlIndex("winChangeControls", "txtTargetEnemy")).text = KeycodeChar(Options.Target)
+
+            .Controls(GetControlIndex("winChangeControls", "txtCharacter")).text = KeycodeChar(Options.Personagem)
+            .Controls(GetControlIndex("winChangeControls", "txtBag")).text = KeycodeChar(Options.Bolsa)
+            .Controls(GetControlIndex("winChangeControls", "txtSpells")).text = KeycodeChar(Options.Magias)
+
+            .Controls(GetControlIndex("winChangeControls", "txtGuild")).text = KeycodeChar(Options.Guild)
+            .Controls(GetControlIndex("winChangeControls", "txtQuest")).text = KeycodeChar(Options.Quests)
+            .Controls(GetControlIndex("winChangeControls", "txtOptions")).text = KeycodeChar(Options.Options)
+
+            .Controls(GetControlIndex("winChangeControls", "txtGetItem")).text = KeycodeChar(Options.PegarItem)
+            .Controls(GetControlIndex("winChangeControls", "txtChat")).text = KeycodeChar(Options.Chat)
             For i = 1 To MAX_HOTBAR
-                .Controls(GetControlIndex("winChangeControls", "txtHotbar" & i)).Text = KeycodeChar(Options.Hotbar(i))
+                .Controls(GetControlIndex("winChangeControls", "txtHotbar" & i)).text = KeycodeChar(Options.Hotbar(i))
             Next i
-            .Controls(GetControlIndex("winChangeControls", "txtUp")).Text = KeycodeChar(Options.Up)
-            .Controls(GetControlIndex("winChangeControls", "txtDown")).Text = KeycodeChar(Options.Down)
-            .Controls(GetControlIndex("winChangeControls", "txtLeft")).Text = KeycodeChar(Options.Left)
-            .Controls(GetControlIndex("winChangeControls", "txtRight")).Text = KeycodeChar(Options.Right)
+            .Controls(GetControlIndex("winChangeControls", "txtUp")).text = KeycodeChar(Options.Up)
+            .Controls(GetControlIndex("winChangeControls", "txtDown")).text = KeycodeChar(Options.Down)
+            .Controls(GetControlIndex("winChangeControls", "txtLeft")).text = KeycodeChar(Options.Left)
+            .Controls(GetControlIndex("winChangeControls", "txtRight")).text = KeycodeChar(Options.Right)
             .Controls(GetControlIndex("winChangeControls", "chkSetas")).Value = Options.UsarSetas
         End If
     End With
@@ -294,7 +302,7 @@ Public Sub HandleKeyCodeControls(KeyCode As Integer, Shift As Integer)
     With Windows(GetWindowIndex("winChangeControls"))
         If .activeControl = 0 Then Exit Sub
 
-        .Controls(.activeControl).Text = KeycodeChar(KeyCode)
+        .Controls(.activeControl).text = KeycodeChar(KeyCode)
 
         Select Case .activeControl
         Case 28

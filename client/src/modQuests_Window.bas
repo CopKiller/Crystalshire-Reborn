@@ -76,16 +76,16 @@ Public Sub CreateWindow_Quest()
 End Sub
 
 Private Sub ShowRewardDesc()
-    Dim x As Integer, Y As Integer, Width As Integer, Height As Integer, i As Integer
+    Dim X As Integer, Y As Integer, Width As Integer, Height As Integer, i As Integer
     Dim itemNum As Long
     With Windows(GetWindowIndex("winQuest"))
         For i = 1 To MAX_QUESTS_ITEMS
             If .Controls(GetControlIndex("winQuest", "picReward" & i)).visible Then
-                x = .Window.Left + .Controls(GetControlIndex("winQuest", "picReward" & i)).Left
+                X = .Window.Left + .Controls(GetControlIndex("winQuest", "picReward" & i)).Left
                 Y = .Window.top + .Controls(GetControlIndex("winQuest", "picReward" & i)).top
                 Width = .Controls(GetControlIndex("winQuest", "picReward" & i)).Width
                 Height = .Controls(GetControlIndex("winQuest", "picReward" & i)).Height
-                If GlobalX >= x And GlobalX <= x + Width And GlobalY >= Y And GlobalY <= Y + Height Then
+                If GlobalX >= X And GlobalX <= X + Width And GlobalY >= Y And GlobalY <= Y + Height Then
                     itemNum = .Controls(GetControlIndex("winQuest", "picReward" & i)).Value
                     ShowItemDesc GlobalX, GlobalY, itemNum, False
                 End If
@@ -95,18 +95,18 @@ Private Sub ShowRewardDesc()
 End Sub
 
 Private Sub ShowRewardItem()
-    Dim x As Integer, Y As Integer, Width As Integer, Height As Integer, i As Integer
+    Dim X As Integer, Y As Integer, Width As Integer, Height As Integer, i As Integer
     Dim itemNum As Long
     With Windows(GetWindowIndex("winQuest"))
         For i = 1 To MAX_QUESTS_ITEMS
             If .Controls(GetControlIndex("winQuest", "picReward" & i)).visible Then
                 itemNum = .Controls(GetControlIndex("winQuest", "picReward" & i)).Value
                 If itemNum > 0 And itemNum <= Count_Item Then
-                    x = .Window.Left + .Controls(GetControlIndex("winQuest", "picReward" & i)).Left
+                    X = .Window.Left + .Controls(GetControlIndex("winQuest", "picReward" & i)).Left
                     Y = .Window.top + .Controls(GetControlIndex("winQuest", "picReward" & i)).top
                     Width = .Controls(GetControlIndex("winQuest", "picReward" & i)).Width
                     Height = .Controls(GetControlIndex("winQuest", "picReward" & i)).Height
-                    RenderTexture Tex_Item(Item(itemNum).Pic), x, Y, 0, 0, Width, Height, PIC_X, PIC_Y
+                    RenderTexture Tex_Item(Item(itemNum).Pic), X, Y, 0, 0, Width, Height, PIC_X, PIC_Y
                 End If
             End If
         Next i
@@ -114,19 +114,19 @@ Private Sub ShowRewardItem()
 End Sub
 
 Private Sub lblList_MouseMove()
-    Dim i As Byte, x As Long, Y As Long, Width As Long, Height As Long
+    Dim i As Byte, X As Long, Y As Long, Width As Long, Height As Long
     With Windows(GetWindowIndex("winQuest"))
 
         For i = 1 To MAX_QUESTS_WINDOW
 
-            x = .Window.Left + .Controls(GetControlIndex("winQuest", "lblList" & i)).Left
+            X = .Window.Left + .Controls(GetControlIndex("winQuest", "lblList" & i)).Left
             Y = .Window.top + .Controls(GetControlIndex("winQuest", "lblList" & i)).top
             Width = .Controls(GetControlIndex("winQuest", "lblList" & i)).Width
             Height = .Controls(GetControlIndex("winQuest", "lblList" & i)).Height
 
 
             If QuestSelect <> i Then
-                If GlobalX >= x And GlobalX <= x + Width And GlobalY >= Y And GlobalY <= Y + Height Then
+                If GlobalX >= X And GlobalX <= X + Width And GlobalY >= Y And GlobalY <= Y + Height Then
                     .Controls(GetControlIndex("winQuest", "lblList" & i)).textColour = QuestMouseMoveColour
                 Else
                     .Controls(GetControlIndex("winQuest", "lblList" & i)).textColour = QuestDefaultColour
@@ -138,17 +138,17 @@ Private Sub lblList_MouseMove()
 End Sub
 
 Private Sub lblList_MouseDown()
-    Dim i As Byte, x As Long, Y As Long, Width As Long, Height As Long
+    Dim i As Byte, X As Long, Y As Long, Width As Long, Height As Long
     With Windows(GetWindowIndex("winQuest"))
 
         For i = 1 To MAX_QUESTS_WINDOW
 
-            x = .Window.Left + .Controls(GetControlIndex("winQuest", "lblList" & i)).Left
+            X = .Window.Left + .Controls(GetControlIndex("winQuest", "lblList" & i)).Left
             Y = .Window.top + .Controls(GetControlIndex("winQuest", "lblList" & i)).top
             Width = .Controls(GetControlIndex("winQuest", "lblList" & i)).Width
             Height = .Controls(GetControlIndex("winQuest", "lblList" & i)).Height
 
-            If GlobalX >= x And GlobalX <= x + Width And GlobalY >= Y And GlobalY <= Y + Height Then
+            If GlobalX >= X And GlobalX <= X + Width And GlobalY >= Y And GlobalY <= Y + Height Then
                 If QuestSelect = i Then
                     .Controls(GetControlIndex("winQuest", "lblList" & i)).textColour = QuestDefaultColour
                     QuestSelect = 0
@@ -158,9 +158,9 @@ Private Sub lblList_MouseDown()
                     Exit For
                 End If
                 QuestSelect = i
-                If Player(MyIndex).PlayerQuest(FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & i)).Text)).TaskTimer.Timer > 0 Then
-                    QuestNameToFinish = "Quest: " & Trim$(Quest(FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & i)).Text)).Name)
-                    QuestTimeToFinish = "Tempo da Task: " & SecondsToHMS(CLng(Player(MyIndex).PlayerQuest(FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & i)).Text)).TaskTimer.Timer))
+                If Player(MyIndex).PlayerQuest(FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & i)).text)).TaskTimer.Timer > 0 Then
+                    QuestNameToFinish = "Quest: " & Trim$(Quest(FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & i)).text)).Name)
+                    QuestTimeToFinish = "Tempo da Task: " & SecondsToHMS(CLng(Player(MyIndex).PlayerQuest(FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & i)).text)).TaskTimer.Timer))
                 End If
                 LoadQuestLogBox QuestSelect
                 .Controls(GetControlIndex("winQuest", "lblList" & i)).textColour = QuestMouseDownColour
@@ -191,7 +191,7 @@ Public Sub RefreshQuestWindow()
         For n = 1 To MAX_QUESTS_WINDOW
 
             'clear
-            .Controls(GetControlIndex("winQuest", "lblList" & n)).Text = "Vazio"
+            .Controls(GetControlIndex("winQuest", "lblList" & n)).text = "Vazio"
             .Controls(GetControlIndex("winQuest", "lblList" & n)).textColour = QuestDefaultColour
             .Controls(GetControlIndex("winQuest", "lblList" & n)).visible = False
             .Controls(GetControlIndex("winQuest", "picList" & n)).visible = False
@@ -200,7 +200,7 @@ Public Sub RefreshQuestWindow()
             For i = 1 To MAX_QUESTS
                 If QuestInProgress(i) Then
                     If LastQuest < i Then
-                        .Controls(GetControlIndex("winQuest", "lblList" & n)).Text = Trim$(Quest(i).Name)
+                        .Controls(GetControlIndex("winQuest", "lblList" & n)).text = Trim$(Quest(i).Name)
                         .Controls(GetControlIndex("winQuest", "lblList" & n)).visible = True
                         .Controls(GetControlIndex("winQuest", "picList" & n)).visible = True
                         LastQuest = i
@@ -236,9 +236,9 @@ Private Sub ClearQuestLogBox()
     With Windows(GetWindowIndex("winQuest"))
 
         For i = 1 To 3
-            .Controls(GetControlIndex("winQuest", "lblQuestDescription" & i)).Text = ""
+            .Controls(GetControlIndex("winQuest", "lblQuestDescription" & i)).text = ""
         Next i
-        
+
         For i = 1 To MAX_QUESTS_ITEMS
             .Controls(GetControlIndex("winQuest", "picReward" & i)).visible = False
         Next i
@@ -255,20 +255,20 @@ Private Sub LoadQuestLogBox(ByVal QuestSelected As Byte)
 
     With Windows(GetWindowIndex("winQuest"))
 
-        QuestNum = FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & QuestSelected)).Text)
+        QuestNum = FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & QuestSelected)).text)
 
         If QuestNum = 0 Then Exit Sub
 
         'Descrição da quest
         QuestString = Trim$(Quest(QuestNum).Speech)
-        .Controls(GetControlIndex("winQuest", "lblQuestDescription1")).Text = QuestString
+        .Controls(GetControlIndex("winQuest", "lblQuestDescription1")).text = QuestString
 
         'Objetivo da Task
         If Player(MyIndex).PlayerQuest(QuestNum).ActualTask > 0 Then
             QuestString = GetQuestObjetiveCurrent(QuestNum) & GetQuestObjetives(QuestNum)
         End If
 
-        .Controls(GetControlIndex("winQuest", "lblQuestDescription2")).Text = QuestString
+        .Controls(GetControlIndex("winQuest", "lblQuestDescription2")).text = QuestString
 
         'Recompensa da quest
         QuestString = "Exp: " & Quest(QuestNum).RewardExp & vbNewLine & "Level(s): " & Quest(QuestNum).RewardLevel
@@ -278,14 +278,14 @@ Private Sub LoadQuestLogBox(ByVal QuestSelected As Byte)
                 .Controls(GetControlIndex("winQuest", "picReward" & i)).visible = True
             End If
         Next i
-        .Controls(GetControlIndex("winQuest", "lblQuestDescription3")).Text = QuestString
+        .Controls(GetControlIndex("winQuest", "lblQuestDescription3")).text = QuestString
 
     End With
 End Sub
 
 Private Function GetQuestObjetives(ByVal QuestNum As Integer) As String
     Dim i As Byte
-    Dim sString As String
+    Dim SString As String
 
     If Player(MyIndex).PlayerQuest(QuestNum).Status = QUEST_COMPLETED_BUT Then
         GetQuestObjetives = "Objetivos ja foram concluidos, voce pode iniciar a missão novamente!"
@@ -300,7 +300,7 @@ Private Function GetQuestObjetives(ByVal QuestNum As Integer) As String
 
             If Quest(QuestNum).Task(i).Order <> 0 Then
                 If i = (Player(MyIndex).PlayerQuest(QuestNum).ActualTask + 1) Then
-                    sString = "PROX.:" & Space(1)
+                    SString = "PROX.:" & Space(1)
                 End If
             End If
 
@@ -308,26 +308,26 @@ Private Function GetQuestObjetives(ByVal QuestNum As Integer) As String
             Case 0    'None
 
             Case QUEST_TYPE_GOSLAY
-                sString = sString & "Derrotar" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & Trim$(NPC(Quest(QuestNum).Task(i).NPC).Name) & "/"
+                SString = SString & "Derrotar" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & Trim$(NPC(Quest(QuestNum).Task(i).NPC).Name) & "/"
             Case QUEST_TYPE_GOGATHER
-                sString = sString & "Obter" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & Trim$(Item(Quest(QuestNum).Task(i).Item).Name) & "/"
+                SString = SString & "Obter" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & Trim$(Item(Quest(QuestNum).Task(i).Item).Name) & "/"
             Case QUEST_TYPE_GOTALK
-                sString = sString & "Falar com" & Space(1) & Trim$(NPC(Quest(QuestNum).Task(i).NPC).Name) & "/"
+                SString = SString & "Falar com" & Space(1) & Trim$(NPC(Quest(QuestNum).Task(i).NPC).Name) & "/"
             Case QUEST_TYPE_GOREACH
-                sString = sString & Quest(QuestNum).Task(i).TaskLog & "/"
+                SString = SString & Quest(QuestNum).Task(i).TaskLog & "/"
             Case QUEST_TYPE_GOGIVE
-                sString = sString & "Entregar" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & Trim$(Item(Quest(QuestNum).Task(i).Item).Name) & Space(1) & "Ao NPC" & Space(1) & Trim$(NPC(Quest(QuestNum).Task(i).NPC).Name) & "/"
+                SString = SString & "Entregar" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & Trim$(Item(Quest(QuestNum).Task(i).Item).Name) & Space(1) & "Ao NPC" & Space(1) & Trim$(NPC(Quest(QuestNum).Task(i).NPC).Name) & "/"
             Case QUEST_TYPE_GOKILL
-                sString = sString & "Derrotar" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & "Jogadores" & "/"
+                SString = SString & "Derrotar" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & "Jogadores" & "/"
             Case QUEST_TYPE_GOTRAIN
-                sString = sString & "Treinar" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & "Vezes na Resource" & Space(1) & Trim$(Resource(Quest(QuestNum).Task(i).Resource).Name) & "/"
+                SString = SString & "Treinar" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & "Vezes na Resource" & Space(1) & Trim$(Resource(Quest(QuestNum).Task(i).Resource).Name) & "/"
             Case QUEST_TYPE_GOGET
-                sString = sString & "Obter" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & "Item(s) do NPC" & Space(1) & Trim$(NPC(Quest(QuestNum).Task(i).NPC).Name) & "/"
+                SString = SString & "Obter" & Space(1) & Quest(QuestNum).Task(i).Amount & Space(1) & "Item(s) do NPC" & Space(1) & Trim$(NPC(Quest(QuestNum).Task(i).NPC).Name) & "/"
             End Select
         End If
     Next i
 
-    GetQuestObjetives = sString
+    GetQuestObjetives = SString
 
 End Function
 
@@ -370,13 +370,29 @@ Private Function GetQuestObjetiveCurrent(ByVal QuestNum As Integer) As String
 
 End Function
 
+Public Sub SelectLastQuest(ByVal QuestID As Integer)
+    Dim i As Integer
+    
+    With Windows(GetWindowIndex("winQuest"))
+    
+    For i = 1 To MAX_QUESTS_WINDOW
+        If QuestID = FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & i)).text) Then
+            QuestSelect = i
+            Exit Sub
+        End If
+    Next i
+    
+    End With
+    
+End Sub
+
 Public Sub CalculateQuestTimer()
     Dim i As Integer
 
     With Windows(GetWindowIndex("winQuest"))
 
         If QuestSelect > 0 Then
-            i = FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & QuestSelect)).Text)
+            i = FindQuestIndex(.Controls(GetControlIndex("winQuest", "lblList" & QuestSelect)).text)
             If i > 0 And i <= MAX_QUESTS Then
                 If LenB(Trim$(Quest(i).Name)) > 0 Then
                     If Player(MyIndex).PlayerQuest(i).Status = QUEST_STARTED Then

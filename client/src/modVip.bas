@@ -5,19 +5,19 @@ Option Explicit
 Public PPremium As String
 Public RPremium As String
 
-Public Sub HandlePlayerDPremium(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer
+Public Sub HandlePlayerDPremium(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+    Dim buffer As clsBuffer
     Dim a As String
     Dim B As Long, c As Long, i As Long
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes Data()
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
 
     ' Catch Data
-    i = Buffer.ReadLong
-    a = Buffer.ReadByte
-    B = Buffer.ReadLong
-    c = Buffer.ReadLong
+    i = buffer.ReadLong
+    a = buffer.ReadByte
+    B = buffer.ReadLong
+    c = buffer.ReadLong
 
     ' Changing global variables
     Player(i).Premium = a
@@ -31,8 +31,8 @@ Public Sub HandlePlayerDPremium(ByVal Index As Long, ByRef Data() As Byte, ByVal
             PPremium = "Nao"
             RPremium = "0 Dias"
         End If
-        Windows(GetWindowIndex("winCharacter")).Controls(GetControlIndex("winCharacter", "lblVip")).Text = "Vip: " & PPremium
-        Windows(GetWindowIndex("winCharacter")).Controls(GetControlIndex("winCharacter", "lblVipD")).Text = "Days: " & RPremium
+        Windows(GetWindowIndex("winCharacter")).Controls(GetControlIndex("winCharacter", "lblVip")).text = "Vip: " & PPremium
+        Windows(GetWindowIndex("winCharacter")).Controls(GetControlIndex("winCharacter", "lblVipD")).text = "Days: " & RPremium
     End If
 End Sub
 
@@ -51,32 +51,32 @@ Public Sub HandlePremiumEditor()
 End Sub
 
 Sub SendRequestEditPremium()
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CRequestEditPremium
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CRequestEditPremium
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 End Sub
 
 Sub SendChangePremium(ByVal Name As String, ByVal Start As String, ByVal Days As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CChangePremium
-    Buffer.WriteString Name
-    Buffer.WriteString Start
-    Buffer.WriteLong Days
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CChangePremium
+    buffer.WriteString Name
+    buffer.WriteString Start
+    buffer.WriteLong Days
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 End Sub
 
 Sub SendRemovePremium(ByVal Name As String)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CRemovePremium
-    Buffer.WriteString Name
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CRemovePremium
+    buffer.WriteString Name
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 End Sub

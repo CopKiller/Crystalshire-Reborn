@@ -445,5 +445,5 @@ Public Enum EventType
 End Enum
 
 'Public Enum ChangeControls
-    
+
 'End Enum

@@ -10,7 +10,7 @@ Public Conjunto(1 To MAX_CONJUNTOS) As ConjuntoRec
 Public UsingSet As Integer
 
 ' Type recs
-Private Type BonusRec ' 8 Bonus Totais
+Private Type BonusRec    ' 8 Bonus Totais
     'Atributos
     Add_Stat(1 To Stats.Stat_Count - 1) As Long
     Add_Stat_Percent(1 To Stats.Stat_Count - 1) As Byte
@@ -64,11 +64,11 @@ Private Sub ClearConjuntos()
 End Sub
 
 Private Sub SendRequestConjuntos()
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CRequestConjuntos
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteLong CRequestConjuntos
+    SendData buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
 Public Sub ConjuntoEditorOk()
@@ -88,26 +88,26 @@ Public Sub ConjuntoEditorOk()
 End Sub
 
 Public Sub SendRequestEditConjunto()
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CRequestEditConjunto
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteLong CRequestEditConjunto
+    SendData buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
 Private Sub SendSaveConjunto(ByVal Conjuntonum As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim ConjuntoSize As Long
     Dim ConjuntoData() As Byte
-    Set Buffer = New clsBuffer
+    Set buffer = New clsBuffer
     ConjuntoSize = LenB(Conjunto(Conjuntonum))
     ReDim ConjuntoData(ConjuntoSize - 1)
     CopyMemory ConjuntoData(0), ByVal VarPtr(Conjunto(Conjuntonum)), ConjuntoSize
-    Buffer.WriteLong CSaveConjunto
-    Buffer.WriteLong Conjuntonum
-    Buffer.WriteBytes ConjuntoData
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    buffer.WriteLong CSaveConjunto
+    buffer.WriteLong Conjuntonum
+    buffer.WriteBytes ConjuntoData
+    SendData buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
 ' /////////////////
@@ -120,7 +120,7 @@ Public Sub ConjuntoEditorInit()
     EditorIndex = frmEditor_Conjuntos.lstIndex.ListIndex + 1
 
     With Conjunto(EditorIndex)
-        frmEditor_Conjuntos.txtName.Text = Trim$(.Name)
+        frmEditor_Conjuntos.txtName.text = Trim$(.Name)
 
         ' Drop Items
         frmEditor_Conjuntos.cmbItems.Clear
@@ -187,38 +187,38 @@ End Sub
 
 Public Sub HandleUpdateConjunto(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim ConjuntoSize As Long
     Dim ConjuntoData() As Byte
-    Dim DecompData()   As Byte
-    
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
-    DecompData = Buffer.UnCompressData
-    Set Buffer = Nothing
-    
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes DecompData
-    
-    n = Buffer.ReadLong
+    Dim DecompData() As Byte
+
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
+    DecompData = buffer.UnCompressData
+    Set buffer = Nothing
+
+    Set buffer = New clsBuffer
+    buffer.WriteBytes DecompData
+
+    n = buffer.ReadLong
     ' Update the Conjunto
     ConjuntoSize = LenB(Conjunto(n))
     ReDim ConjuntoData(ConjuntoSize - 1)
-    ConjuntoData = Buffer.ReadBytes(ConjuntoSize)
+    ConjuntoData = buffer.ReadBytes(ConjuntoSize)
     CopyMemory ByVal VarPtr(Conjunto(n)), ByVal VarPtr(ConjuntoData(0)), ConjuntoSize
-    Set Buffer = Nothing
+    Set buffer = Nothing
 End Sub
 
 Public Sub HandleUpdateConjuntoWindow(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer
-    
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
+    Dim buffer As clsBuffer
 
-    UsingSet = Buffer.ReadInteger
-    
-    Set Buffer = Nothing
-    
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
+
+    UsingSet = buffer.ReadInteger
+
+    Set buffer = Nothing
+
     Call UpdateConjuntoWindow(UsingSet)
 End Sub
 
@@ -232,7 +232,7 @@ Public Sub UpdateConjuntoWindow(ByRef ConjNum As Integer)
         ' for Clear
         If ConjNum = NO Then
             For i = 1 To 8
-                .Controls(GetControlIndex("winCharacter", "lblBonus" & i)).Text = vbNullString
+                .Controls(GetControlIndex("winCharacter", "lblBonus" & i)).text = vbNullString
                 .Controls(GetControlIndex("winCharacter", "lblBonus" & i)).visible = False
             Next i
             Exit Sub
@@ -248,7 +248,7 @@ Public Sub UpdateConjuntoWindow(ByRef ConjNum As Integer)
                 Else
                     SString = ColourChar & GetColStr(Green) & GetAtributeName(i) & "+ " & ColourChar & GetColStr(White) & Conjunto(ConjNum).Bonus.Add_Stat(i)
                 End If
-                .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).Text = SString
+                .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).text = SString
                 z = z + 1
             End If
         Next i
@@ -262,7 +262,7 @@ Public Sub UpdateConjuntoWindow(ByRef ConjNum As Integer)
             Else
                 SString = ColourChar & GetColStr(Green) & "DMG+ " & ColourChar & GetColStr(White) & Conjunto(ConjNum).Bonus.Dano
             End If
-            .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).Text = SString
+            .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).text = SString
             z = z + 1
         End If
 
@@ -275,7 +275,7 @@ Public Sub UpdateConjuntoWindow(ByRef ConjNum As Integer)
             Else
                 SString = ColourChar & GetColStr(Green) & "DEF+ " & ColourChar & GetColStr(White) & Conjunto(ConjNum).Bonus.Defesa
             End If
-            .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).Text = SString
+            .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).text = SString
             z = z + 1
         End If
 
@@ -284,16 +284,16 @@ Public Sub UpdateConjuntoWindow(ByRef ConjNum As Integer)
             If .Controls(GetControlIndex("winCharacter", "chkEquipamentos")).Value = YES Then .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).visible = True
             SString = Replace$(SString, ColourChar, vbNullString)
             SString = ColourChar & GetColStr(Green) & "EXP+ " & ColourChar & GetColStr(White) & Conjunto(ConjNum).Bonus.EXP & "%"
-            .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).Text = SString
+            .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).text = SString
             z = z + 1
         End If
-        
+
         ' Drop
         If Conjunto(ConjNum).Bonus.Drop > 0 Then
             If .Controls(GetControlIndex("winCharacter", "chkEquipamentos")).Value = YES Then .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).visible = True
             SString = Replace$(SString, ColourChar, vbNullString)
             SString = ColourChar & GetColStr(Green) & "DROP+ " & ColourChar & GetColStr(White) & Conjunto(ConjNum).Bonus.Drop & "%"
-            .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).Text = SString
+            .Controls(GetControlIndex("winCharacter", "lblBonus" & z)).text = SString
             z = z + 1
         End If
     End With
@@ -301,16 +301,16 @@ End Sub
 
 Public Function GetAtributeName(ByVal Atribute As Stats) As String
     Select Case Atribute
-        Case Stats.strength
-            GetAtributeName = "STR"
-        Case Stats.Endurance
-            GetAtributeName = "END"
-        Case Stats.Agility
-            GetAtributeName = "AGI"
-        Case Stats.Intelligence
-            GetAtributeName = "INT"
-        Case Stats.Willpower
-            GetAtributeName = "WILL"
+    Case Stats.strength
+        GetAtributeName = "STR"
+    Case Stats.Endurance
+        GetAtributeName = "END"
+    Case Stats.Agility
+        GetAtributeName = "AGI"
+    Case Stats.Intelligence
+        GetAtributeName = "INT"
+    Case Stats.Willpower
+        GetAtributeName = "WILL"
     End Select
 End Function
 

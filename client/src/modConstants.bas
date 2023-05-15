@@ -60,7 +60,7 @@ Public Const TradeOffsetX As Long = 6
 Public Const TradeColumns As Long = 5
 ' API Declares
 Public Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal length As Long)
-Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
 Public Declare Function GetForegroundWindow Lib "user32" () As Long
 ' Animation
 Public Const AnimColumns As Long = 5
@@ -84,12 +84,15 @@ Public Const VK_S As Long = &H53
 Public Const VK_W As Long = &H57
 Public Const VK_SHIFT As Long = &H10
 Public Const VK_RETURN As Long = &HD
-Public Const VK_CONTROL As Long = &H11
 Public Const VK_TAB As Long = &H9
 Public Const VK_LEFT As Long = &H25
 Public Const VK_UP As Long = &H26
 Public Const VK_RIGHT As Long = &H27
 Public Const VK_DOWN As Long = &H28
+
+Public Const VK_LBUTTON As Long = &H1   ' Botão esquerdo do mouse
+Public Const VK_RBUTTON As Long = &H2   ' Botão direito do mouse
+Public Const VK_MBUTTON As Long = &H4   ' Botão do meio do mouse
 ' Menu states
 Public Const MENU_STATE_NEWACCOUNT As Byte = 0
 Public Const MENU_STATE_DELACCOUNT As Byte = 1
@@ -270,6 +273,7 @@ Public Const Path_Flags As String = "\data files\graphics\flags\"
 Public Const Path_Status As String = "\data files\graphics\status\"
 Public Const Path_Misc As String = "\data files\graphics\misc\"
 Public Const Path_Sun As String = "\data files\graphics\sun\"
+Public Const Path_Cursor As String = "\data files\graphics\cursor\"
 
 ' text color pointers
 Public Const Black As Byte = 0

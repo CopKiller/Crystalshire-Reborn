@@ -1155,13 +1155,13 @@ End Sub
 
 Private Sub Command1_Click()
     If Not txtSegs.enabled Then Exit Sub
-    txtSegs = Int(txtSegs) + Int(3600) ' 1 Hora tem 3600 segundos!
+    txtSegs = Int(txtSegs) + Int(3600)    ' 1 Hora tem 3600 segundos!
 End Sub
 
 Private Sub Command2_Click()
     If Not txtSegs.enabled Then Exit Sub
     If Int(txtSegs) >= Int(3600) Then
-        txtSegs = Int(txtSegs) - Int(3600) ' Retira 1 Hora tem 3600 segundos!
+        txtSegs = Int(txtSegs) - Int(3600)    ' Retira 1 Hora tem 3600 segundos!
     Else
         txtSegs = 0
     End If
@@ -1169,13 +1169,13 @@ End Sub
 
 Private Sub Command3_Click()
     If Not txtSegs.enabled Then Exit Sub
-    txtSegs = Int(txtSegs) + Int(60) ' 1 Minuto tem 60 segundos!
+    txtSegs = Int(txtSegs) + Int(60)    ' 1 Minuto tem 60 segundos!
 End Sub
 
 Private Sub Command4_Click()
     If Not txtSegs.enabled Then Exit Sub
     If Int(txtSegs) >= 60 Then
-        txtSegs = Int(txtSegs) - Int(60) ' 1 Minuto tem 60 segundos!
+        txtSegs = Int(txtSegs) - Int(60)    ' 1 Minuto tem 60 segundos!
     Else
         txtSegs = 0
     End If
@@ -1228,7 +1228,7 @@ End Sub
 
 Private Sub cmdDelete_Click()
     Dim tmpIndex As Long
-    
+
     ClearQuest EditorIndex
     tmpIndex = lstIndex.ListIndex
     lstIndex.RemoveItem EditorIndex - 1
@@ -1268,9 +1268,9 @@ End Sub
 
 Private Sub scrlTotalTasks_Change()
     Dim i As Long
-    
+
     lblSelected = "Selected Task: " & scrlTotalTasks.Value
-    
+
     LoadTask EditorIndex, scrlTotalTasks.Value
 End Sub
 
@@ -1280,27 +1280,27 @@ Private Sub optTask_Click(Index As Integer)
 End Sub
 
 Private Sub txtEXP_Change()
-    If Not IsNumeric(txtExp.Text) Then txtExp.Text = 0
-    If txtExp.Text > MAX_LONG Then txtExp.Text = 0
-    
-    Quest(EditorIndex).RewardExp = txtExp.Text
+    If Not IsNumeric(txtExp.text) Then txtExp.text = 0
+    If txtExp.text > MAX_LONG Then txtExp.text = 0
+
+    Quest(EditorIndex).RewardExp = txtExp.text
 End Sub
 
 Private Sub txtLevel_Change()
-    If Not IsNumeric(txtLevel.Text) Then txtLevel.Text = 0
-    If txtLevel.Text > MAX_LONG Then txtLevel.Text = 0
-    
-    Quest(EditorIndex).RewardLevel = txtLevel.Text
+    If Not IsNumeric(txtLevel.text) Then txtLevel.text = 0
+    If txtLevel.text > MAX_LONG Then txtLevel.text = 0
+
+    Quest(EditorIndex).RewardLevel = txtLevel.text
 End Sub
 
 Private Sub txtlItemRewValue_Change()
-    If Not IsNumeric(txtlItemRewValue.Text) Then txtlItemRewValue.Text = 0
-    If txtlItemRewValue.Text > MAX_LONG Then txtlItemRewValue.Text = 0
-    
+    If Not IsNumeric(txtlItemRewValue.text) Then txtlItemRewValue.text = 0
+    If txtlItemRewValue.text > MAX_LONG Then txtlItemRewValue.text = 0
+
     If scrlItemRew.Value > 0 Then
-        lblItemRew.caption = "Item: " & scrlItemRew.Value & "-" & Trim$(Item(scrlItemRew.Value).Name) & "(" & txtlItemRewValue.Text & ")"
+        lblItemRew.caption = "Item: " & scrlItemRew.Value & "-" & Trim$(Item(scrlItemRew.Value).Name) & "(" & txtlItemRewValue.text & ")"
     Else
-        lblItemRew.caption = "Item: " & scrlItemRew.Value & "(" & txtlItemRewValue.Text & ")"
+        lblItemRew.caption = "Item: " & scrlItemRew.Value & "(" & txtlItemRewValue.text & ")"
     End If
 End Sub
 
@@ -1315,14 +1315,14 @@ End Sub
 Private Sub txtName_Validate(Cancel As Boolean)
     Dim tmpIndex As Long
     tmpIndex = lstIndex.ListIndex
-    Quest(EditorIndex).Name = Trim$(txtName.Text)
+    Quest(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Quest(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
 End Sub
 
 Private Sub txtQuestLog_Change()
-    Quest(EditorIndex).QuestLog = Trim$(txtQuestLog.Text)
+    Quest(EditorIndex).QuestLog = Trim$(txtQuestLog.text)
 End Sub
 
 Private Sub txtSegs_Change()
@@ -1330,18 +1330,18 @@ Private Sub txtSegs_Change()
     If Not IsNumeric(txtSegs) Then
         txtSegs = 0
     End If
-    
+
     lblRealTime = "Tempo: " & SecondsToHMS(txtSegs)
 
     Quest(EditorIndex).Time = txtSegs
 End Sub
 
 Private Sub txtSpeech_Change()
-Quest(EditorIndex).Speech = Trim$(txtSpeech.Text)
+    Quest(EditorIndex).Speech = Trim$(txtSpeech.text)
 End Sub
 
 Private Sub txtTaskLog_Change()
-    Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskLog = Trim$(txtTaskLog.Text)
+    Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskLog = Trim$(txtTaskLog.text)
 End Sub
 
 Private Sub scrlReqLevel_Change()
@@ -1374,12 +1374,12 @@ End Sub
 
 Private Sub cmdReqItem_Click()
     Dim Index As Long
-    
-    Index = lstReqItem.ListIndex + 1 'the selected item
+
+    Index = lstReqItem.ListIndex + 1    'the selected item
     If Index = 0 Then Exit Sub
     If scrlReqItem.Value < 1 Or scrlReqItem.Value > MAX_ITEMS Then Exit Sub
     If Trim$(Item(scrlReqItem.Value).Name) = "" Then Exit Sub
-    
+
     Quest(EditorIndex).RequiredItem(Index).Item = scrlReqItem.Value
     Quest(EditorIndex).RequiredItem(Index).Value = scrlReqItemValue.Value
     UpdateQuestRequirementItems
@@ -1387,10 +1387,10 @@ End Sub
 
 Private Sub cmdReqItemRemove_Click()
     Dim Index As Long
-    
+
     Index = lstReqItem.ListIndex + 1
     If Index = 0 Then Exit Sub
-    
+
     Quest(EditorIndex).RequiredItem(Index).Item = 0
     Quest(EditorIndex).RequiredItem(Index).Value = 1
     UpdateQuestRequirementItems
@@ -1406,54 +1406,54 @@ End Sub
 
 Private Sub cmdReqClass_Click()
     Dim Index As Long
-    
-    Index = lstReqClass.ListIndex + 1 'the selected class
+
+    Index = lstReqClass.ListIndex + 1    'the selected class
     If Index = 0 Then Exit Sub
     If scrlReqClass.Value < 1 Or scrlReqClass.Value > Max_Classes Then Exit Sub
     If Trim$(Class(scrlReqClass.Value).Name) = "" Then Exit Sub
-    
+
     Quest(EditorIndex).RequiredClass(Index) = scrlReqClass.Value
     UpdateQuestClass
 End Sub
 
 Private Sub cmdReqClassRemove_Click()
     Dim Index As Long
-    
+
     Index = lstReqClass.ListIndex + 1
     If Index = 0 Then Exit Sub
-    
+
     Quest(EditorIndex).RequiredClass(Index) = 0
     UpdateQuestClass
 End Sub
 
 Private Sub scrlItemRew_Change()
     If scrlItemRew > 0 Then
-        lblItemRew.caption = "Item: " & scrlItemRew.Value & "-" & Trim$(Item(scrlItemRew.Value).Name) & "(" & txtlItemRewValue.Text & ")"
+        lblItemRew.caption = "Item: " & scrlItemRew.Value & "-" & Trim$(Item(scrlItemRew.Value).Name) & "(" & txtlItemRewValue.text & ")"
     Else
-        lblItemRew.caption = "Item: " & scrlItemRew.Value & "(" & txtlItemRewValue.Text & ")"
+        lblItemRew.caption = "Item: " & scrlItemRew.Value & "(" & txtlItemRewValue.text & ")"
     End If
 End Sub
 
 'Alatar v1.2
 Private Sub cmdItemRew_Click()
     Dim Index As Long
-    
-    Index = lstItemRew.ListIndex + 1 'the selected item
+
+    Index = lstItemRew.ListIndex + 1    'the selected item
     If Index = 0 Then Exit Sub
     If scrlItemRew.Value < 1 Or scrlItemRew.Value > MAX_ITEMS Then Exit Sub
     If Trim$(Item(scrlItemRew.Value).Name) = "" Then Exit Sub
-    
+
     Quest(EditorIndex).RewardItem(Index).Item = scrlItemRew.Value
-    Quest(EditorIndex).RewardItem(Index).Value = txtlItemRewValue.Text
+    Quest(EditorIndex).RewardItem(Index).Value = txtlItemRewValue.text
     UpdateQuestRewardItems
 End Sub
 
 Private Sub cmdItemRewRemove_Click()
     Dim Index As Long
-    
+
     Index = lstItemRew.ListIndex + 1
     If Index = 0 Then Exit Sub
-    
+
     Quest(EditorIndex).RewardItem(Index).Item = 0
     Quest(EditorIndex).RewardItem(Index).Value = 1
     UpdateQuestRewardItems
@@ -1471,12 +1471,12 @@ End Sub
 
 Private Sub cmdGiveItem_Click()
     Dim Index As Long
-    
-    Index = lstGiveItem.ListIndex + 1 'the selected item
+
+    Index = lstGiveItem.ListIndex + 1    'the selected item
     If Index = 0 Then Exit Sub
     If scrlGiveItem.Value < 1 Or scrlGiveItem.Value > MAX_ITEMS Then Exit Sub
     If Trim$(Item(scrlGiveItem.Value).Name) = "" Then Exit Sub
-    
+
     Quest(EditorIndex).GiveItem(Index).Item = scrlGiveItem.Value
     Quest(EditorIndex).GiveItem(Index).Value = scrlGiveItemValue.Value
     UpdateQuestGiveItems
@@ -1484,10 +1484,10 @@ End Sub
 
 Private Sub cmdGiveItemRemove_Click()
     Dim Index As Long
-    
+
     Index = lstGiveItem.ListIndex + 1
     If Index = 0 Then Exit Sub
-    
+
     Quest(EditorIndex).GiveItem(Index).Item = 0
     Quest(EditorIndex).GiveItem(Index).Value = 1
     UpdateQuestGiveItems
@@ -1503,12 +1503,12 @@ End Sub
 
 Private Sub cmdTakeItem_Click()
     Dim Index As Long
-    
-    Index = lstTakeItem.ListIndex + 1 'the selected item
+
+    Index = lstTakeItem.ListIndex + 1    'the selected item
     If Index = 0 Then Exit Sub
     If scrlTakeItem.Value < 1 Or scrlTakeItem.Value > MAX_ITEMS Then Exit Sub
     If Trim$(Item(scrlTakeItem.Value).Name) = "" Then Exit Sub
-    
+
     Quest(EditorIndex).TakeItem(Index).Item = scrlTakeItem.Value
     Quest(EditorIndex).TakeItem(Index).Value = scrlTakeItemValue.Value
     UpdateQuestTakeItems
@@ -1516,10 +1516,10 @@ End Sub
 
 Private Sub cmdTakeItemRemove_Click()
     Dim Index As Long
-    
+
     Index = lstTakeItem.ListIndex + 1
     If Index = 0 Then Exit Sub
-    
+
     Quest(EditorIndex).TakeItem(Index).Item = 0
     Quest(EditorIndex).TakeItem(Index).Value = 1
     UpdateQuestTakeItems
@@ -1576,28 +1576,28 @@ Private Sub optShowFrame_Click(Index As Integer)
     fraRequirements.visible = False
     fraRewards.visible = False
     fraTasks.visible = False
-    
+
     If optShowFrame(Index).Value = True Then
         Select Case Index
-            Case 0
-                fraGeneral.visible = True
-            Case 1
-                fraRequirements.visible = True
-            Case 2
-                fraRewards.visible = True
-            Case 3
-                fraTasks.visible = True
+        Case 0
+            fraGeneral.visible = True
+        Case 1
+            fraRequirements.visible = True
+        Case 2
+            fraRewards.visible = True
+        Case 3
+            fraTasks.visible = True
         End Select
     End If
 End Sub
 
 Private Sub txtTaskTeleport_Change()
     If Not IsNumeric(txtTaskTeleport) Then
-        txtTaskTeleport = Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.mapNum
+        txtTaskTeleport = Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.MapNum
         Exit Sub
     End If
-    
-    Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.mapNum = txtTaskTeleport
+
+    Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.MapNum = txtTaskTeleport
 End Sub
 
 Private Sub txtTaskTimer_Change()
@@ -1605,8 +1605,8 @@ Private Sub txtTaskTimer_Change()
         txtTaskTimer = Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.Timer
         Exit Sub
     End If
-    
-    Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.Timer = txtTaskTimer.Text
+
+    Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.Timer = txtTaskTimer.text
 End Sub
 
 Private Sub txtTaskX_Change()
@@ -1614,7 +1614,7 @@ Private Sub txtTaskX_Change()
         txtTaskX = Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.X
         Exit Sub
     End If
-    
+
     Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.X = txtTaskX
 End Sub
 
@@ -1623,6 +1623,6 @@ Private Sub txtTaskY_Change()
         txtTaskY = Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.Y
         Exit Sub
     End If
-    
+
     Quest(EditorIndex).Task(scrlTotalTasks.Value).TaskTimer.Y = txtTaskY
 End Sub

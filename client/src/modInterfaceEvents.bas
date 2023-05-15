@@ -1,10 +1,8 @@
 Attribute VB_Name = "modInterfaceEvents"
 Option Explicit
 Public Declare Sub GetCursorPos Lib "user32" (lpPoint As POINTAPI)
-Public Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, lpPoint As POINTAPI) As Long
+Public Declare Function ScreenToClient Lib "user32" (ByVal hwnd As Long, lpPoint As POINTAPI) As Long
 Public Declare Function EntCallBack Lib "user32.dll" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal Window As Long, ByRef Control As Long, ByVal forced As Long, ByVal lParam As Long) As Long
-Public Const VK_LBUTTON = &H1
-Public Const VK_RBUTTON = &H2
 Public lastMouseX As Long, lastMouseY As Long
 Attribute lastMouseY.VB_VarUserMemId = 1073741824
 Public currMouseX As Long, currMouseY As Long
@@ -22,19 +20,19 @@ Public GlobalCaptcha As Long
 Attribute GlobalCaptcha.VB_VarUserMemId = 1073741832
 
 
-Public Function MouseX(Optional ByVal hWnd As Long) As Long
+Public Function MouseX(Optional ByVal hwnd As Long) As Long
     Dim lpPoint As POINTAPI
     GetCursorPos lpPoint
 
-    If hWnd Then ScreenToClient hWnd, lpPoint
+    If hwnd Then ScreenToClient hwnd, lpPoint
     MouseX = lpPoint.X
 End Function
 
-Public Function MouseY(Optional ByVal hWnd As Long) As Long
+Public Function MouseY(Optional ByVal hwnd As Long) As Long
     Dim lpPoint As POINTAPI
     GetCursorPos lpPoint
 
-    If hWnd Then ScreenToClient hWnd, lpPoint
+    If hwnd Then ScreenToClient hwnd, lpPoint
     MouseY = lpPoint.Y
 End Function
 
@@ -47,8 +45,8 @@ Public Sub HandleMouseInput()
     ' set values
     lastMouseX = currMouseX
     lastMouseY = currMouseY
-    currMouseX = MouseX(frmMain.hWnd)
-    currMouseY = MouseY(frmMain.hWnd)
+    currMouseX = MouseX(frmMain.hwnd)
+    currMouseY = MouseY(frmMain.hwnd)
     GlobalX = currMouseX
     GlobalY = currMouseY
     lastMouseClick(VK_LBUTTON) = mouseClick(VK_LBUTTON)
@@ -57,7 +55,7 @@ Public Sub HandleMouseInput()
     mouseClick(VK_RBUTTON) = GetAsyncKeyState(VK_RBUTTON)
 
     ' Hover
-    entState = entStates.Hover
+    entState = entStates.hover
 
     ' MouseDown
     If (mouseClick(VK_LBUTTON) And lastMouseClick(VK_LBUTTON) = 0) Or (mouseClick(VK_RBUTTON) And lastMouseClick(VK_RBUTTON) = 0) Then
@@ -80,6 +78,7 @@ Public Sub HandleMouseInput()
                 Windows(i).Controls(X).state = Normal
             Next
         Next
+
         If InGame Then
             If entState = entStates.MouseDown Then
                 ' Handle events
@@ -147,6 +146,9 @@ Public Function HandleGuiMouse(entState As entStates) As Boolean
     ' if hiding gui
     If hideGUI = True Or InMapEditor Then Exit Function
 
+    'reset mouse icon first
+    Call ResetMouseIcon
+
     ' Find the container
     For i = 1 To WindowCount
         With Windows(i).Window
@@ -157,7 +159,7 @@ Public Function HandleGuiMouse(entState As entStates) As Boolean
                         ' set the combomenu
                         If .design(0) = DesignTypes.desComboMenuNorm Then
                             ' set the hover menu
-                            If entState = MouseMove Or entState = Hover Then
+                            If entState = MouseMove Or entState = hover Then
                                 ComboMenu_MouseMove i
                             ElseIf entState = MouseDown Then
                                 ComboMenu_MouseDown i
@@ -171,8 +173,8 @@ Public Function HandleGuiMouse(entState As entStates) As Boolean
                 If entState = entStates.MouseMove Then
                     If .canDrag Then
                         If .state = entStates.MouseDown Then
-                            .Left = Clamp(.Left + ((currMouseX - .Left) - .movedX), 0, ScreenWidth - .Width)
-                            .top = Clamp(.top + ((currMouseY - .top) - .movedY), 0, ScreenHeight - .Height)
+                            .Left = Clamp(.Left + ((currMouseX - .Left) - .movedX), 0, screenWidth - .Width)
+                            .top = Clamp(.top + ((currMouseY - .top) - .movedY), 0, screenHeight - .Height)
                         End If
                     End If
                 End If
@@ -217,20 +219,47 @@ Public Function HandleGuiMouse(entState As entStates) As Boolean
         If curControl Then
             HandleGuiMouse = True
             With Windows(curWindow).Controls(curControl)
+
                 If .state <> entStates.MouseDown Then
                     If entState <> entStates.MouseMove Then
                         .state = entState
                     Else
-                        .state = entStates.Hover
+                        .state = entStates.hover
                     End If
                 End If
+
+                Select Case .Type
+
+                Case EntityTypes.entTextBox
+                    If .state = entStates.hover Or .state = entStates.MouseDown Then
+                        If MouseIcon <> CustomCursores.text Then
+                            SetCursor text
+                        End If
+                    End If
+                Case EntityTypes.entButton
+                    If .state = entStates.hover Or .state = entStates.MouseDown Then
+                        If MouseIcon <> CustomCursores.Button Then
+                            SetCursor Button
+                        End If
+                    End If
+                End Select
+
                 If entState = entStates.MouseDown Then
+
                     If .canDrag Then
                         .movedX = clickedX - .Left
                         .movedY = clickedY - .top
                     End If
                     ' toggle boxes
                     Select Case .Type
+
+                    Case EntityTypes.entTextBox
+                        ' Clipboard
+                        If mouseClick(VK_RBUTTON) < 0 Then
+                            Clipboard curWindow, curControl
+                            Exit Function
+                        End If
+
                     Case EntityTypes.entCheckbox
                         ' grouped boxes
                         If .group > 0 Then
@@ -251,6 +280,7 @@ Public Function HandleGuiMouse(entState As entStates) As Boolean
                                 .Value = 0
                             End If
                         End If
+
                     Case EntityTypes.entCombobox
                         ShowComboMenu curWindow, curControl
                     End Select
@@ -267,7 +297,7 @@ Public Function HandleGuiMouse(entState As entStates) As Boolean
                     If entState <> entStates.MouseMove Then
                         .state = entState
                     Else
-                        .state = entStates.Hover
+                        .state = entStates.hover
                     End If
                 End If
                 If entState = entStates.MouseDown Then
@@ -286,6 +316,12 @@ Public Function HandleGuiMouse(entState As entStates) As Boolean
         End If
         ' call back
         If Callback <> 0 Then EntCallBack Callback, curWindow, curControl, 0, 0
+    End If
+    
+    If entState = MouseDown Then
+        If Windows(GetWindowIndex("winClipboard")).Window.visible Then
+            HideWindow GetWindowIndex("winClipboard")
+        End If
     End If
 
     ' Reset
@@ -343,11 +379,11 @@ End Sub
 Sub ClearRegisterTexts()
     Dim i As Long
     With Windows(GetWindowIndex("winRegister"))
-        .Controls(GetControlIndex("winRegister", "txtAccount")).Text = vbNullString
-        .Controls(GetControlIndex("winRegister", "txtPass")).Text = vbNullString
-        .Controls(GetControlIndex("winRegister", "txtPass2")).Text = vbNullString
-        .Controls(GetControlIndex("winRegister", "txtCode")).Text = vbNullString
-        .Controls(GetControlIndex("winRegister", "txtCaptcha")).Text = vbNullString
+        .Controls(GetControlIndex("winRegister", "txtAccount")).text = vbNullString
+        .Controls(GetControlIndex("winRegister", "txtPass")).text = vbNullString
+        .Controls(GetControlIndex("winRegister", "txtPass2")).text = vbNullString
+        .Controls(GetControlIndex("winRegister", "txtCode")).text = vbNullString
+        .Controls(GetControlIndex("winRegister", "txtCaptcha")).text = vbNullString
         For i = 0 To 6
             .Controls(GetControlIndex("winRegister", "picCaptcha")).image(i) = Tex_Captcha(GlobalCaptcha)
         Next
@@ -362,12 +398,12 @@ Public Sub btnSendRegister_Click()
     Dim user As String, Pass As String, pass2 As String, Code As String, BirthDay As String, Captcha As String
 
     With Windows(GetWindowIndex("winRegister"))
-        user = .Controls(GetControlIndex("winRegister", "txtAccount")).Text
-        Pass = .Controls(GetControlIndex("winRegister", "txtPass")).Text
-        pass2 = .Controls(GetControlIndex("winRegister", "txtPass2")).Text
-        Code = .Controls(GetControlIndex("winRegister", "txtCode")).Text
-        BirthDay = .Controls(GetControlIndex("winRegister", "txtBirthDay")).Text
-        Captcha = .Controls(GetControlIndex("winRegister", "txtCaptcha")).Text
+        user = .Controls(GetControlIndex("winRegister", "txtAccount")).text
+        Pass = .Controls(GetControlIndex("winRegister", "txtPass")).text
+        pass2 = .Controls(GetControlIndex("winRegister", "txtPass2")).text
+        Code = .Controls(GetControlIndex("winRegister", "txtCode")).text
+        BirthDay = .Controls(GetControlIndex("winRegister", "txtBirthDay")).text
+        Captcha = .Controls(GetControlIndex("winRegister", "txtCaptcha")).text
     End With
 
     If Trim$(Pass) <> Trim$(pass2) Then
@@ -394,7 +430,7 @@ Public Sub btnSendRegister_Click()
         DialogueAlert DialogueMsg.MsgEMAILINVALID
         Exit Sub
     End If
-    
+
     If ConvertBirthDayToLng(BirthDay) = NO Then
         DialogueAlert DialogueMsg.MsgINVALIDBIRTHDAY
         Exit Sub
@@ -438,7 +474,7 @@ Private Function ConvertBirthDayToLng(ByVal BirthDay As String) As Long
         tmpChar = "-"
     Else: Exit Function
     End If
-    
+
     ' All OK, Go Split the string, to convert to long!
     tmpString = Split(BirthDay, tmpChar)
 
@@ -482,8 +518,8 @@ Public Sub btnLogin_Click()
     Dim user As String, Pass As String
 
     With Windows(GetWindowIndex("winLogin"))
-        user = .Controls(GetControlIndex("winLogin", "txtUser")).Text
-        Pass = .Controls(GetControlIndex("winLogin", "txtPass")).Text
+        user = .Controls(GetControlIndex("winLogin", "txtUser")).text
+        Pass = .Controls(GetControlIndex("winLogin", "txtPass")).text
     End With
 
     If user = vbNullString Then
@@ -512,8 +548,8 @@ End Sub
 
 Public Sub ClearUserAndPass()
     With Windows(GetWindowIndex("winLogin"))
-        .Controls(GetControlIndex("winLogin", "txtUser")).Text = vbNullString
-        .Controls(GetControlIndex("winLogin", "txtPass")).Text = vbNullString
+        .Controls(GetControlIndex("winLogin", "txtUser")).text = vbNullString
+        .Controls(GetControlIndex("winLogin", "txtPass")).text = vbNullString
     End With
 End Sub
 
@@ -599,22 +635,22 @@ Public Sub Classes_DrawFace()
 End Sub
 
 Public Sub Classes_DrawText()
-    Dim image As Long, Text As String, xO As Long, yO As Long, textArray() As String, i As Long, Count As Long, Y As Long, X As Long
+    Dim image As Long, text As String, xO As Long, yO As Long, textArray() As String, i As Long, Count As Long, Y As Long, X As Long
 
     xO = Windows(GetWindowIndex("winClasses")).Window.Left
     yO = Windows(GetWindowIndex("winClasses")).Window.top
 
     Select Case newCharClass
     Case 1    ' Warrior
-        Text = "The way of a warrior has never been an easy one. Skilled use of a sword is not something learnt overnight. Being able to take a decent amount of hits is important for these characters and as such they weigh a lot of importance on endurance and strength."
+        text = "The way of a warrior has never been an easy one. Skilled use of a sword is not something learnt overnight. Being able to take a decent amount of hits is important for these characters and as such they weigh a lot of importance on endurance and strength."
     Case 2    ' Wizard
-        Text = "Wizards are often mistrusted characters who have mastered the practise of using their own spirit to create elemental entities. Generally seen as playful and almost childish because of the huge amounts of pleasure they take from setting things on fire."
+        text = "Wizards are often mistrusted characters who have mastered the practise of using their own spirit to create elemental entities. Generally seen as playful and almost childish because of the huge amounts of pleasure they take from setting things on fire."
     Case 3    ' Whisperer
-        Text = "The art of healing is one which comes with tremendous amounts of pressure and guilt. Constantly being put under high-pressure situations where their abilities could mean the difference between life and death leads many Whisperers to insanity."
+        text = "The art of healing is one which comes with tremendous amounts of pressure and guilt. Constantly being put under high-pressure situations where their abilities could mean the difference between life and death leads many Whisperers to insanity."
     End Select
 
     ' wrap text
-    WordWrap_Array Text, 200, textArray()
+    WordWrap_Array text, 200, textArray()
     ' render text
     Count = UBound(textArray)
     Y = yO + 60
@@ -626,21 +662,21 @@ Public Sub Classes_DrawText()
 End Sub
 
 Public Sub btnClasses_Left()
-    Dim Text As String
+    Dim text As String
     newCharClass = newCharClass - 1
     If newCharClass <= 0 Then
         newCharClass = Max_Classes
     End If
-    Windows(GetWindowIndex("winClasses")).Controls(GetControlIndex("winClasses", "lblClassName")).Text = Trim$(Class(newCharClass).Name)
+    Windows(GetWindowIndex("winClasses")).Controls(GetControlIndex("winClasses", "lblClassName")).text = Trim$(Class(newCharClass).Name)
 End Sub
 
 Public Sub btnClasses_Right()
-    Dim Text As String
+    Dim text As String
     newCharClass = newCharClass + 1
     If newCharClass > Max_Classes Then
         newCharClass = 1
     End If
-    Windows(GetWindowIndex("winClasses")).Controls(GetControlIndex("winClasses", "lblClassName")).Text = Trim$(Class(newCharClass).Name)
+    Windows(GetWindowIndex("winClasses")).Controls(GetControlIndex("winClasses", "lblClassName")).text = Trim$(Class(newCharClass).Name)
 End Sub
 
 Public Sub btnClasses_Accept()
@@ -720,7 +756,7 @@ Public Sub chkNewChar_Female()
 End Sub
 
 Public Sub btnNewChar_Cancel()
-    Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "txtName")).Text = vbNullString
+    Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "txtName")).text = vbNullString
     Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "chkMale")).Value = 1
     Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "chkFemale")).Value = 0
     newCharSprite = 1
@@ -732,7 +768,7 @@ End Sub
 Public Sub btnNewChar_Accept()
     Dim Name As String, i As Long, n As Long
 
-    Name = Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "txtName")).Text
+    Name = Windows(GetWindowIndex("winNewChar")).Controls(GetControlIndex("winNewChar", "txtName")).text
 
     ' Prevent hacking
     If Len(Trim$(Name)) < 3 Or Len(Trim$(Name)) > NAME_LENGTH Then
@@ -883,11 +919,11 @@ Public Sub Inventory_MouseDown()
         ' exit out if we're offering that item
         If InTrade > 0 Then
             For i = 1 To MAX_INV
-                If TradeYourOffer(i).num = invNum Then
+                If TradeYourOffer(i).Num = invNum Then
                     ' is currency?
-                    If Item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).num)).Stackable > 0 Then
+                    If Item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).Num)).Stackable > 0 Then
                         ' only exit out if we're offering all of it
-                        If TradeYourOffer(i).Value = GetPlayerInvItemValue(MyIndex, TradeYourOffer(i).num) Then
+                        If TradeYourOffer(i).Value = GetPlayerInvItemValue(MyIndex, TradeYourOffer(i).Num) Then
                             Exit Sub
                         End If
                     Else
@@ -957,11 +993,11 @@ Public Sub Inventory_MouseMove()
         ' exit out if we're offering that item
         If InTrade > 0 Then
             For i = 1 To MAX_INV
-                If TradeYourOffer(i).num = itemNum Then
+                If TradeYourOffer(i).Num = itemNum Then
                     ' is currency?
-                    If Item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).num)).Stackable > 0 Then
+                    If Item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).Num)).Stackable > 0 Then
                         ' only exit out if we're offering all of it
-                        If TradeYourOffer(i).Value = GetPlayerInvItemValue(MyIndex, TradeYourOffer(i).num) Then
+                        If TradeYourOffer(i).Value = GetPlayerInvItemValue(MyIndex, TradeYourOffer(i).Num) Then
                             Exit Sub
                         End If
                     Else
@@ -1019,7 +1055,7 @@ Public Sub Description_OnDraw()
     Y = 18
     Count = UBound(descText)
     For i = 1 To Count
-        RenderText font(Fonts.verdana_12), descText(i).Text, xO + 141 - (TextWidth(font(Fonts.verdana_12), descText(i).Text) \ 2), yO + Y, descText(i).Colour
+        RenderText font(Fonts.verdana_12), descText(i).text, xO + 141 - (TextWidth(font(Fonts.verdana_12), descText(i).text) \ 2), yO + Y, descText(i).Colour
         Y = Y + 12
     Next
 
@@ -1090,9 +1126,9 @@ Public Sub DragBox_Check()
             If DragBox.Origin = origin_Inventory Then
                 If DragBox.Type = Part_Item Then
                     If Windows(GetWindowIndex("winCharacter")).Controls(GetControlIndex("winCharacter", "chkEquipamentos")).Value = 1 Then
-                            If IsEqSlot(Windows(GetWindowIndex("winCharacter")).Window.Left, Windows(GetWindowIndex("winCharacter")).Window.top, DragBox.Slot) Then
-                                SendUseItem DragBox.Slot
-                            End If
+                        If IsEqSlot(Windows(GetWindowIndex("winCharacter")).Window.Left, Windows(GetWindowIndex("winCharacter")).Window.top, DragBox.Slot) Then
+                            SendUseItem DragBox.Slot
+                        End If
                     End If
                 End If
             End If
@@ -1160,7 +1196,7 @@ Public Sub DragBox_Check()
             If DragBox.Origin = origin_Bank Then
                 If DragBox.Type = Part_Item Then
 
-                    If Item(Bank.Item(DragBox.Slot).num).Stackable = 0 Then
+                    If Item(Bank.Item(DragBox.Slot).Num).Stackable = 0 Then
                         WithdrawItem DragBox.Slot, 1
                     Else
                         Dialogue "Retirar Item", "Insira a quantidade que deseja retirar", "", TypeWITHDRAWITEM, StyleINPUT, DragBox.Slot
@@ -1236,11 +1272,11 @@ Public Sub DragBox_Check()
         Select Case DragBox.Origin
         Case PartTypeOrigins.origin_Inventory
             If GetPlayerInvItemNum(MyIndex, DragBox.Slot) > 0 Then
-            If Item(GetPlayerInvItemNum(MyIndex, DragBox.Slot)).Stackable = 0 Then
-                SendDropItem DragBox.Slot, 1
-            Else
-                Dialogue "Derrubar Item", "Insira a quantidade que deseja derrubar", "", TypeDROPITEM, StyleINPUT, DragBox.Slot
-            End If
+                If Item(GetPlayerInvItemNum(MyIndex, DragBox.Slot)).Stackable = 0 Then
+                    SendDropItem DragBox.Slot, 1
+                Else
+                    Dialogue "Derrubar Item", "Insira a quantidade que deseja derrubar", "", TypeDROPITEM, StyleINPUT, DragBox.Slot
+                End If
             End If
         Case PartTypeOrigins.origin_Spells
             ' dialogue
@@ -1442,7 +1478,7 @@ Public Sub OnDraw_ChatSmall()
     If actChatHeight < 10 Then actChatHeight = 10
 
     xO = Windows(winIndex).Window.Left + 10
-    yO = ScreenHeight - 16 - actChatHeight - 8
+    yO = screenHeight - 16 - actChatHeight - 8
 
     ' draw the background
     RenderDesign DesignTypes.desWin_Shadow, xO, yO, actChatWidth, actChatHeight
@@ -1596,25 +1632,25 @@ Sub btnOptions_Confirm()
             End If
         End If
     End With
-    
+
     ' reconnect
     Value = Windows(GetWindowIndex("winOptions")).Controls(GetControlIndex("winOptions", "chkReconnect")).Value
     If Options.Reconnect <> Value Then
         Options.Reconnect = Value
     End If
-    
+
     ' item name
     Value = Windows(GetWindowIndex("winOptions")).Controls(GetControlIndex("winOptions", "chkItemName")).Value
     If Options.ItemName <> Value Then
         Options.ItemName = Value
     End If
-    
+
     ' item animation
     Value = Windows(GetWindowIndex("winOptions")).Controls(GetControlIndex("winOptions", "chkItemAnimation")).Value
     If Options.ItemAnimation <> Value Then
         Options.ItemAnimation = Value
     End If
-    
+
     ' Fps & Ping
     Value = Windows(GetWindowIndex("winOptions")).Controls(GetControlIndex("winOptions", "chkFPSConection")).Value
     If Options.FPSConection <> Value Then
@@ -1791,7 +1827,7 @@ End Sub
 Sub btnInvite_Party()
     Dim top As Integer
 
-    top = ScreenHeight - 80
+    top = screenHeight - 80
 
     HideWindow GetWindowIndex("winInvite_Party")
 
@@ -1810,15 +1846,15 @@ Sub btnInvite_Party()
         End If
     End If
 
-        Dialogue "Party Invitation", diaDataString & " has invited you to a party.", "Would you like to join?", TypePARTY, StyleYesNo
-    End Sub
+    Dialogue "Party Invitation", diaDataString & " has invited you to a party.", "Would you like to join?", TypePARTY, StyleYesNo
+End Sub
 
 Sub btnInvite_Trade()
-Dim top As Integer
+    Dim top As Integer
     HideWindow GetWindowIndex("winInvite_Trade")
-    
-    top = ScreenHeight - 80
-    
+
+    top = screenHeight - 80
+
     ' First
     If Windows(GetWindowIndex("winInvite_party")).Window.visible Then
         Windows(GetWindowIndex("winInvite_party")).Window.top = top
@@ -1833,16 +1869,16 @@ Dim top As Integer
             Windows(GetWindowIndex("winInvite_party")).Window.top = top
         End If
     End If
-    
+
     Dialogue "Trade Invitation", diaDataString & " has invited you to trade.", "Would you like to accept?", TypeTRADE, StyleYesNo
 End Sub
 
 Sub btnInvite_Guild()
-Dim top As Integer
+    Dim top As Integer
     HideWindow GetWindowIndex("winInvite_Guild")
-    
-    top = ScreenHeight - 80
-    
+
+    top = screenHeight - 80
+
     ' First
     If Windows(GetWindowIndex("winInvite_party")).Window.visible Then
         Windows(GetWindowIndex("winInvite_party")).Window.top = top
@@ -1880,8 +1916,8 @@ Sub TradeMouseDown_Your()
 
     ' make sure it exists
     If itemNum > 0 Then
-        If TradeYourOffer(itemNum).num = 0 Then Exit Sub
-        If GetPlayerInvItemNum(MyIndex, TradeYourOffer(itemNum).num) = 0 Then Exit Sub
+        If TradeYourOffer(itemNum).Num = 0 Then Exit Sub
+        If GetPlayerInvItemNum(MyIndex, TradeYourOffer(itemNum).Num) = 0 Then Exit Sub
 
         ' unoffer the item
         UntradeItem itemNum
@@ -1896,8 +1932,8 @@ Sub TradeMouseMove_Your()
 
     ' make sure it exists
     If itemNum > 0 Then
-        If TradeYourOffer(itemNum).num = 0 Then Exit Sub
-        If GetPlayerInvItemNum(MyIndex, TradeYourOffer(itemNum).num) = 0 Then Exit Sub
+        If TradeYourOffer(itemNum).Num = 0 Then Exit Sub
+        If GetPlayerInvItemNum(MyIndex, TradeYourOffer(itemNum).Num) = 0 Then Exit Sub
 
         ' calc position
         X = Windows(GetWindowIndex("winTrade")).Window.Left - Windows(GetWindowIndex("winDescription")).Window.Width
@@ -1908,7 +1944,7 @@ Sub TradeMouseMove_Your()
             X = Windows(GetWindowIndex("winTrade")).Window.Left + Windows(GetWindowIndex("winTrade")).Window.Width
         End If
         ' go go go
-        ShowItemDesc X, Y, GetPlayerInvItemNum(MyIndex, TradeYourOffer(itemNum).num), False
+        ShowItemDesc X, Y, GetPlayerInvItemNum(MyIndex, TradeYourOffer(itemNum).Num), False
     End If
 End Sub
 
@@ -1920,7 +1956,7 @@ Sub TradeMouseMove_Their()
 
     ' make sure it exists
     If itemNum > 0 Then
-        If TradeTheirOffer(itemNum).num = 0 Then Exit Sub
+        If TradeTheirOffer(itemNum).Num = 0 Then Exit Sub
 
         ' calc position
         X = Windows(GetWindowIndex("winTrade")).Window.Left - Windows(GetWindowIndex("winDescription")).Window.Width
@@ -1931,7 +1967,7 @@ Sub TradeMouseMove_Their()
             X = Windows(GetWindowIndex("winTrade")).Window.Left + Windows(GetWindowIndex("winTrade")).Window.Width
         End If
         ' go go go
-        ShowItemDesc X, Y, TradeTheirOffer(itemNum).num, False
+        ShowItemDesc X, Y, TradeTheirOffer(itemNum).Num, False
     End If
 End Sub
 
@@ -1945,8 +1981,8 @@ Public Sub SendTradeGold()
     With Windows(GetWindowIndex("winInventory"))
         If InTrade > 0 Then
             'If GetPlayerGold(MyIndex) > 0 Then
-                Dialogue "Select Amount", "Please choose how many to offer", "", TypeTRADEGOLD, StyleINPUT
-                Exit Sub
+            Dialogue "Select Amount", "Please choose how many to offer", "", TypeTRADEGOLD, StyleINPUT
+            Exit Sub
             'End If
         End If
     End With

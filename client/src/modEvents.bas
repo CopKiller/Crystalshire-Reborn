@@ -1,7 +1,7 @@
 Attribute VB_Name = "modEvents"
 Option Explicit
 
-Private Declare Function SendMessageByNum Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function SendMessageByNum Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Const LB_SETHORIZONTALEXTENT = &H194
 
 ' temporary event
@@ -9,13 +9,13 @@ Public cpEvent As EventRec
 
 Sub CopyEvent_Map(X As Long, Y As Long)
     Dim Count As Long, i As Long
-    Count = map.TileData.EventCount
+    Count = Map.TileData.EventCount
     If Count = 0 Then Exit Sub
 
     For i = 1 To Count
-        If map.TileData.Events(i).X = X And map.TileData.Events(i).Y = Y Then
+        If Map.TileData.Events(i).X = X And Map.TileData.Events(i).Y = Y Then
             ' copy it
-            CopyMemory ByVal VarPtr(cpEvent), ByVal VarPtr(map.TileData.Events(i)), LenB(map.TileData.Events(i))
+            CopyMemory ByVal VarPtr(cpEvent), ByVal VarPtr(Map.TileData.Events(i)), LenB(Map.TileData.Events(i))
             ' exit
             Exit Sub
         End If
@@ -24,11 +24,11 @@ End Sub
 
 Sub PasteEvent_Map(X As Long, Y As Long)
     Dim Count As Long, i As Long, eventNum As Long
-    Count = map.TileData.EventCount
+    Count = Map.TileData.EventCount
 
     If Count > 0 Then
         For i = 1 To Count
-            If map.TileData.Events(i).X = X And map.TileData.Events(i).Y = Y Then
+            If Map.TileData.Events(i).X = X And Map.TileData.Events(i).Y = Y Then
                 ' already an event - paste over it
                 eventNum = i
             End If
@@ -43,20 +43,20 @@ Sub PasteEvent_Map(X As Long, Y As Long)
     End If
 
     ' copy it
-    CopyMemory ByVal VarPtr(map.TileData.Events(eventNum)), ByVal VarPtr(cpEvent), LenB(cpEvent)
+    CopyMemory ByVal VarPtr(Map.TileData.Events(eventNum)), ByVal VarPtr(cpEvent), LenB(cpEvent)
 
     ' set position
-    map.TileData.Events(eventNum).X = X
-    map.TileData.Events(eventNum).Y = Y
+    Map.TileData.Events(eventNum).X = X
+    Map.TileData.Events(eventNum).Y = Y
 End Sub
 
 Sub AddEvent(X As Long, Y As Long, Optional ByVal cancelLoad As Boolean = False)
     Dim Count As Long, pageCount As Long, i As Long
-    Count = map.TileData.EventCount + 1
+    Count = Map.TileData.EventCount + 1
     ' make sure there's not already an event
     If Count - 1 > 0 Then
         For i = 1 To Count - 1
-            If map.TileData.Events(i).X = X And map.TileData.Events(i).Y = Y Then
+            If Map.TileData.Events(i).X = X And Map.TileData.Events(i).Y = Y Then
                 ' already an event - edit it
                 If Not cancelLoad Then EventEditorInit i
                 Exit Sub
@@ -64,15 +64,15 @@ Sub AddEvent(X As Long, Y As Long, Optional ByVal cancelLoad As Boolean = False)
         Next
     End If
     ' increment count
-    map.TileData.EventCount = Count
-    ReDim Preserve map.TileData.Events(1 To Count)
+    Map.TileData.EventCount = Count
+    ReDim Preserve Map.TileData.Events(1 To Count)
     ' set the new event
-    map.TileData.Events(Count).X = X
-    map.TileData.Events(Count).Y = Y
+    Map.TileData.Events(Count).X = X
+    Map.TileData.Events(Count).Y = Y
     ' give it a new page
-    pageCount = map.TileData.Events(Count).pageCount + 1
-    map.TileData.Events(Count).pageCount = pageCount
-    ReDim Preserve map.TileData.Events(Count).EventPage(1 To pageCount)
+    pageCount = Map.TileData.Events(Count).pageCount + 1
+    Map.TileData.Events(Count).pageCount = pageCount
+    ReDim Preserve Map.TileData.Events(Count).EventPage(1 To pageCount)
     ' load the editor
     If Not cancelLoad Then EventEditorInit Count
 End Sub
@@ -81,9 +81,9 @@ Sub DeleteEvent(X As Long, Y As Long)
     Dim Count As Long, i As Long, lowIndex As Long
     If Not InMapEditor Then Exit Sub
 
-    Count = map.TileData.EventCount
+    Count = Map.TileData.EventCount
     For i = 1 To Count
-        If map.TileData.Events(i).X = X And map.TileData.Events(i).Y = Y Then
+        If Map.TileData.Events(i).X = X And Map.TileData.Events(i).Y = Y Then
             ' delete it
             ClearEvent i
             lowIndex = i
@@ -101,22 +101,22 @@ Sub DeleteEvent(X As Long, Y As Long)
     ' delete the last index
     ClearEvent Count
     ' set the new count
-    map.TileData.EventCount = Count - 1
+    Map.TileData.EventCount = Count - 1
 End Sub
 
 Sub ClearEvent(eventNum As Long)
-    Call ZeroMemory(ByVal VarPtr(map.TileData.Events(eventNum)), LenB(map.TileData.Events(eventNum)))
+    Call ZeroMemory(ByVal VarPtr(Map.TileData.Events(eventNum)), LenB(Map.TileData.Events(eventNum)))
 End Sub
 
 Sub CopyEvent(original As Long, newone As Long)
-    CopyMemory ByVal VarPtr(map.TileData.Events(newone)), ByVal VarPtr(map.TileData.Events(original)), LenB(map.TileData.Events(original))
+    CopyMemory ByVal VarPtr(Map.TileData.Events(newone)), ByVal VarPtr(Map.TileData.Events(original)), LenB(Map.TileData.Events(original))
 End Sub
 
 Sub EventEditorInit(eventNum As Long)
     Dim i As Long
     EditorEvent = eventNum
     ' copy the event data to the temp event
-    CopyMemory ByVal VarPtr(tmpEvent), ByVal VarPtr(map.TileData.Events(eventNum)), LenB(map.TileData.Events(eventNum))
+    CopyMemory ByVal VarPtr(tmpEvent), ByVal VarPtr(Map.TileData.Events(eventNum)), LenB(Map.TileData.Events(eventNum))
     ' populate form
     With frmEditor_Events
         ' set the tabs
@@ -137,7 +137,7 @@ Sub EventEditorInit(eventNum As Long)
             .cmbPlayerVar.AddItem i
         Next
         ' name
-        .txtName.Text = tmpEvent.Name
+        .txtName.text = tmpEvent.Name
         ' enable delete button
         If tmpEvent.pageCount > 1 Then
             .cmdDeletePage.enabled = True
@@ -171,7 +171,7 @@ Sub AddCommand(theType As EventType)
         Case EventType.evAddText
             ' set the values
             .Commands(Count).Type = EventType.evAddText
-            .Commands(Count).Text = frmEditor_Events.txtAddText_Text.Text
+            .Commands(Count).text = frmEditor_Events.txtAddText_Text.text
             .Commands(Count).Colour = frmEditor_Events.scrlAddText_Colour.Value
             If frmEditor_Events.optAddText_Game.Value Then
                 .Commands(Count).channel = 0
@@ -182,14 +182,14 @@ Sub AddCommand(theType As EventType)
             End If
         Case EventType.evShowChatBubble
             .Commands(Count).Type = EventType.evShowChatBubble
-            .Commands(Count).Text = frmEditor_Events.txtChatBubble.Text
+            .Commands(Count).text = frmEditor_Events.txtChatBubble.text
             .Commands(Count).Colour = frmEditor_Events.scrlChatBubble.Value
             .Commands(Count).TargetType = frmEditor_Events.cmbChatBubbleType.ListIndex
             .Commands(Count).Target = frmEditor_Events.cmbChatBubble.ListIndex
         Case EventType.evPlayerVar
             .Commands(Count).Type = EventType.evPlayerVar
             .Commands(Count).Target = frmEditor_Events.cmbVariable.ListIndex
-            .Commands(Count).Colour = Val(frmEditor_Events.txtVariable.Text)
+            .Commands(Count).Colour = Val(frmEditor_Events.txtVariable.text)
         Case EventType.evWarpPlayer
             .Commands(Count).Type = EventType.evWarpPlayer
             .Commands(Count).X = frmEditor_Events.scrlWPX.Value
@@ -205,7 +205,7 @@ Sub EditCommand()
     With tmpEvent.EventPage(curPageNum).Commands(curCommand)
         Select Case .Type
         Case EventType.evAddText
-            .Text = frmEditor_Events.txtAddText_Text.Text
+            .text = frmEditor_Events.txtAddText_Text.text
             .Colour = frmEditor_Events.scrlAddText_Colour.Value
             If frmEditor_Events.optAddText_Game.Value Then
                 .channel = 0
@@ -215,13 +215,13 @@ Sub EditCommand()
                 .channel = 2
             End If
         Case EventType.evShowChatBubble
-            .Text = frmEditor_Events.txtChatBubble.Text
+            .text = frmEditor_Events.txtChatBubble.text
             .Colour = frmEditor_Events.scrlChatBubble.Value
             .TargetType = frmEditor_Events.cmbChatBubbleType.ListIndex
             .Target = frmEditor_Events.cmbChatBubble.ListIndex
         Case EventType.evPlayerVar
             .Target = frmEditor_Events.cmbVariable.ListIndex
-            .Colour = Val(frmEditor_Events.txtVariable.Text)
+            .Colour = Val(frmEditor_Events.txtVariable.text)
         Case EventType.evWarpPlayer
             .X = frmEditor_Events.scrlWPX.Value
             .Y = frmEditor_Events.scrlWPY.Value
@@ -242,9 +242,9 @@ Sub EventListCommands()
             With tmpEvent.EventPage(curPageNum).Commands(i)
                 Select Case .Type
                 Case EventType.evAddText
-                    ListCommandAdd "@>Add Text: " & .Text & " - Colour: " & GetColourString(.Colour) & " - Channel: " & .channel
+                    ListCommandAdd "@>Add Text: " & .text & " - Colour: " & GetColourString(.Colour) & " - Channel: " & .channel
                 Case EventType.evShowChatBubble
-                    ListCommandAdd "@>Show Chat Bubble: " & .Text & " - Colour: " & GetColourString(.Colour) & " - Target Type: " & .TargetType & " - Target: " & .Target
+                    ListCommandAdd "@>Show Chat Bubble: " & .text & " - Colour: " & GetColourString(.Colour) & " - Target Type: " & .TargetType & " - Target: " & .Target
                 Case EventType.evPlayerVar
                     ListCommandAdd "@>Change variable #" & .Target & " to " & .Colour
                 Case EventType.evWarpPlayer
@@ -268,7 +268,7 @@ Sub ListCommandAdd(s As String)
     If X < frmEditor_Events.TextWidth(s & "  ") Then
         X = frmEditor_Events.TextWidth(s & "  ")
         If frmEditor_Events.ScaleMode = vbTwips Then X = X / Screen.TwipsPerPixelX    ' if twips change to pixels
-        SendMessageByNum frmEditor_Events.lstCommands.hWnd, LB_SETHORIZONTALEXTENT, X, 0
+        SendMessageByNum frmEditor_Events.lstCommands.hwnd, LB_SETHORIZONTALEXTENT, X, 0
     End If
 End Sub
 
@@ -311,7 +311,7 @@ End Sub
 
 Sub EventEditorOK()
 ' copy the event data from the temp event
-    CopyMemory ByVal VarPtr(map.TileData.Events(EditorEvent)), ByVal VarPtr(tmpEvent), LenB(tmpEvent)
+    CopyMemory ByVal VarPtr(Map.TileData.Events(EditorEvent)), ByVal VarPtr(tmpEvent), LenB(tmpEvent)
     ' unload the form
     Unload frmEditor_Events
 End Sub

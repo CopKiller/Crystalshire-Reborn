@@ -55,14 +55,14 @@ Private Type OptionsRec
     Right As Byte
     UsarSetas As Byte
     Target As Byte
-    
+
     ItemName As Byte
     ItemAnimation As Byte
-    
+
     Reconnect As Byte
-    
+
     FPSConection As Byte
-    
+
     ' Non Saved in Vars
     ' Temporario pro auto reconnect !
     TmpLogin As String
@@ -77,10 +77,10 @@ Public Type PartyRec
 End Type
 
 Public Type PlayerInvRec
-    num As Long
+    Num As Long
     Value As Long
     bound As Byte
-    Frame As Byte ' Client Side Only
+    Frame As Byte    ' Client Side Only
 End Type
 
 Public Type PlayerSpellRec
@@ -95,9 +95,9 @@ End Type
 Public Type PlayerQuestRec
     Status As Byte
     ActualTask As Byte
-    CurrentCount As Long 'Used to handle the Amount property
-    data As String * 19 ' Salva o now que tem 19 dígitos, pra usar como comparação na hora de iniciar novamente a quest
-    
+    CurrentCount As Long    'Used to handle the Amount property
+    data As String * 19    ' Salva o now que tem 19 dígitos, pra usar como comparação na hora de iniciar novamente a quest
+
     TaskTimer As TaskTimerRec
 End Type
 
@@ -142,25 +142,25 @@ Private Type PlayerRec
     Guild_ID As Integer
     Guild_Icon As Byte
     Premium As Byte
-    
+
     ' Quest
     PlayerQuest(1 To MAX_QUESTS) As PlayerQuestRec
-    
+
     ' Balao animado
     StatusFrame As Long
     StatusNum(1 To (status_count - 1)) As StatusRec
-    
+
     'Stun
     StunTimer As Currency
     StunDuration As Long
-    
+
     ' Golds
     Gold As Long
 End Type
 
 Private Type EventCommandRec
 Type As Byte
-    Text As String
+    text As String
     Colour As Long
     channel As Byte
     TargetType As Byte
@@ -229,22 +229,22 @@ Private Type MapDataRec
     BossNpc As Long
 
     Panorama As Byte
-    
+
     Weather As Byte
     WeatherIntensity As Byte
-    
+
     Fog As Byte
     FogSpeed As Byte
     FogOpacity As Byte
-    
+
     Red As Byte
     Green As Byte
     Blue As Byte
     Alpha As Byte
     Size As Byte
-    
+
     Sun As Byte
-    
+
     DayNight As Byte
 
     NPC(1 To MAX_MAP_NPCS) As Long
@@ -332,11 +332,11 @@ Type As Byte
     Stackable As Byte
     GiveSpellNum As Integer
     BlockChance As Byte
-    
+
     'Percent Atributes
     Stat_Percent(1 To Stats.Stat_Count - 1) As Byte
     Data2_Percent As Byte
-    
+
     AtributeBase As Byte
     DropDead As Byte
     DropDeadChance As Byte
@@ -344,7 +344,7 @@ End Type
 
 Private Type MapItemRec
     playerName As String
-    num As Long
+    Num As Long
     Value As Long
     Frame As Byte
     X As Byte
@@ -388,7 +388,7 @@ Public Type NpcRec
 End Type
 
 Private Type MapNpcRec
-    num As Long
+    Num As Long
     Target As Long
     TargetType As Byte
     Vital(1 To Vitals.Vital_Count - 1) As Long
@@ -587,7 +587,7 @@ Public Type ChatBubbleRec
 End Type
 
 Public Type TextColourRec
-    Text As String
+    text As String
     Colour As Long
 End Type
 

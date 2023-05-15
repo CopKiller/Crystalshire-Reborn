@@ -32,22 +32,22 @@ Public Quest(1 To MAX_QUESTS) As QuestRec
 'Alatar v1.2
 Private Type QuestRequiredItemRec
     Item As Long
-    Value As Long
+    value As Long
 End Type
 
 Private Type QuestGiveItemRec
     Item As Long
-    Value As Long
+    value As Long
 End Type
 
 Private Type QuestTakeItemRec
     Item As Long
-    Value As Long
+    value As Long
 End Type
 
 Private Type QuestRewardItemRec
     Item As Long
-    Value As Long
+    value As Long
 End Type
 '/Alatar v1.2
 
@@ -59,7 +59,7 @@ Public Type TaskTimerRec
     Teleport As Byte          ' Teleport cannot end task in time.
     MapNum As Integer         ' Map Number to teleport /\
     ResetType As Byte         ' 0=Resetar Task ; 1=Resetar Quest.
-    x As Byte
+    X As Byte
     Y As Byte
     
     Msg As String * TASK_DEFEAT_LENGTH
@@ -116,15 +116,15 @@ End Enum
 ' //////////////
 
 Sub SaveQuests()
-    Dim i As Long
-    For i = 1 To MAX_QUESTS
-        Call SaveQuest(i)
+    Dim I As Long
+    For I = 1 To MAX_QUESTS
+        Call SaveQuest(I)
     Next
 End Sub
 
 Sub SaveQuest(ByVal QuestNum As Long)
     Dim FileName As String
-    Dim F As Long, i As Long
+    Dim F As Long, I As Long
     FileName = App.Path & "\data\quests\quest" & QuestNum & ".dat"
     F = FreeFile
     Open FileName For Binary As #F
@@ -133,26 +133,26 @@ Sub SaveQuest(ByVal QuestNum As Long)
     Put #F, , Quest(QuestNum).Repeat
     Put #F, , Quest(QuestNum).QuestLog
     Put #F, , Quest(QuestNum).Speech
-    For i = 1 To MAX_QUESTS_ITEMS
-        Put #F, , Quest(QuestNum).GiveItem(i)
+    For I = 1 To MAX_QUESTS_ITEMS
+        Put #F, , Quest(QuestNum).GiveItem(I)
     Next
-    For i = 1 To MAX_QUESTS_ITEMS
-        Put #F, , Quest(QuestNum).TakeItem(i)
+    For I = 1 To MAX_QUESTS_ITEMS
+        Put #F, , Quest(QuestNum).TakeItem(I)
     Next
     Put #F, , Quest(QuestNum).RequiredLevel
     Put #F, , Quest(QuestNum).RequiredQuest
-    For i = 1 To 5
-        Put #F, , Quest(QuestNum).RequiredClass(i)
+    For I = 1 To 5
+        Put #F, , Quest(QuestNum).RequiredClass(I)
     Next
-    For i = 1 To MAX_QUESTS_ITEMS
-        Put #F, , Quest(QuestNum).RequiredItem(i)
+    For I = 1 To MAX_QUESTS_ITEMS
+        Put #F, , Quest(QuestNum).RequiredItem(I)
     Next
     Put #F, , Quest(QuestNum).RewardExp
-    For i = 1 To MAX_QUESTS_ITEMS
-        Put #F, , Quest(QuestNum).RewardItem(i)
+    For I = 1 To MAX_QUESTS_ITEMS
+        Put #F, , Quest(QuestNum).RewardItem(I)
     Next
-    For i = 1 To MAX_TASKS
-        Put #F, , Quest(QuestNum).Task(i)
+    For I = 1 To MAX_TASKS
+        Put #F, , Quest(QuestNum).Task(I)
     Next
     '/Alatar v1.2
     Close #F
@@ -160,45 +160,45 @@ End Sub
 
 Sub LoadQuests()
     Dim FileName As String
-    Dim i As Integer
+    Dim I As Integer
     Dim F As Long, n As Long
     Dim sLen As Long
 
     Call CheckQuests
 
-    For i = 1 To MAX_QUESTS
+    For I = 1 To MAX_QUESTS
         ' Clear
-        Call ClearQuest(i)
+        Call ClearQuest(I)
         'Load
-        FileName = App.Path & "\data\quests\quest" & i & ".dat"
+        FileName = App.Path & "\data\quests\quest" & I & ".dat"
         F = FreeFile
         Open FileName For Binary As #F
 
         'Alatar v1.2
-        Get #F, , Quest(i).Name
-        Get #F, , Quest(i).Repeat
-        Get #F, , Quest(i).QuestLog
-        Get #F, , Quest(i).Speech
+        Get #F, , Quest(I).Name
+        Get #F, , Quest(I).Repeat
+        Get #F, , Quest(I).QuestLog
+        Get #F, , Quest(I).Speech
         For n = 1 To MAX_QUESTS_ITEMS
-            Get #F, , Quest(i).GiveItem(n)
+            Get #F, , Quest(I).GiveItem(n)
         Next
         For n = 1 To MAX_QUESTS_ITEMS
-            Get #F, , Quest(i).TakeItem(n)
+            Get #F, , Quest(I).TakeItem(n)
         Next
-        Get #F, , Quest(i).RequiredLevel
-        Get #F, , Quest(i).RequiredQuest
+        Get #F, , Quest(I).RequiredLevel
+        Get #F, , Quest(I).RequiredQuest
         For n = 1 To 5
-            Get #F, , Quest(i).RequiredClass(n)
+            Get #F, , Quest(I).RequiredClass(n)
         Next
         For n = 1 To MAX_QUESTS_ITEMS
-            Get #F, , Quest(i).RequiredItem(n)
+            Get #F, , Quest(I).RequiredItem(n)
         Next
-        Get #F, , Quest(i).RewardExp
+        Get #F, , Quest(I).RewardExp
         For n = 1 To MAX_QUESTS_ITEMS
-            Get #F, , Quest(i).RewardItem(n)
+            Get #F, , Quest(I).RewardItem(n)
         Next
         For n = 1 To MAX_TASKS
-            Get #F, , Quest(i).Task(n)
+            Get #F, , Quest(I).Task(n)
         Next
         '/Alatar v1.2
         Close #F
@@ -206,10 +206,10 @@ Sub LoadQuests()
 End Sub
 
 Sub CheckQuests()
-    Dim i As Long
-    For i = 1 To MAX_QUESTS
-        If Not FileExist("\Data\quests\quest" & i & ".dat") Then
-            Call SaveQuest(i)
+    Dim I As Long
+    For I = 1 To MAX_QUESTS
+        If Not FileExist("\Data\quests\quest" & I & ".dat") Then
+            Call SaveQuest(I)
         End If
     Next
 End Sub
@@ -221,10 +221,10 @@ Sub ClearQuest(ByVal Index As Long)
 End Sub
 
 Sub ClearQuests()
-    Dim i As Long
+    Dim I As Long
 
-    For i = 1 To MAX_QUESTS
-        Call ClearQuest(i)
+    For I = 1 To MAX_QUESTS
+        Call ClearQuest(I)
     Next
 End Sub
 
@@ -233,33 +233,35 @@ End Sub
 ' ////////////////////
 
 Sub SendQuests(ByVal Index As Long)
-    Dim i As Long
+    Dim I As Long
 
-    For i = 1 To MAX_QUESTS
-        If LenB(Trim$(Quest(i).Name)) > 0 Then
-            Call SendUpdateQuestTo(Index, i)
+    For I = 1 To MAX_QUESTS
+        If LenB(Trim$(Quest(I).Name)) > 0 Then
+            Call SendUpdateQuestTo(Index, I)
         End If
     Next
 End Sub
 
-Public Sub SendPlayerQuests(ByVal Index As Long)
-    Dim i As Long
+Public Sub SendPlayerQuests(ByVal Index As Long, Optional ByVal QuestSelectLst As Integer = 0)
+    Dim I As Long
     Dim Buffer As clsBuffer
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPlayerQuest
+    
+    Buffer.WriteInteger QuestSelectLst
 
-    For i = 1 To MAX_QUESTS
+    For I = 1 To MAX_QUESTS
 
-        If Player(Index).PlayerQuest(i).Status > 0 Then
-            Buffer.WriteLong i
-            Buffer.WriteLong Player(Index).PlayerQuest(i).Status
-            Buffer.WriteLong Player(Index).PlayerQuest(i).ActualTask
-            Buffer.WriteLong Player(Index).PlayerQuest(i).CurrentCount
+        If Player(Index).PlayerQuest(I).Status > 0 Then
+            Buffer.WriteLong I
+            Buffer.WriteLong Player(Index).PlayerQuest(I).Status
+            Buffer.WriteLong Player(Index).PlayerQuest(I).ActualTask
+            Buffer.WriteLong Player(Index).PlayerQuest(I).CurrentCount
 
 
-            Buffer.WriteByte Player(Index).PlayerQuest(i).TaskTimer.Active
-            Buffer.WriteLong Player(Index).PlayerQuest(i).TaskTimer.Timer
+            Buffer.WriteByte Player(Index).PlayerQuest(I).TaskTimer.Active
+            Buffer.WriteLong Player(Index).PlayerQuest(I).TaskTimer.Timer
         End If
     Next
 
@@ -269,11 +271,13 @@ Public Sub SendPlayerQuests(ByVal Index As Long)
 
 End Sub
 
-Private Sub SendPlayerQuest(ByVal Index As Long, ByVal QuestNum As Long)
+Private Sub SendPlayerQuest(ByVal Index As Long, ByVal QuestNum As Long, Optional ByVal QuestSelectLst As Integer = 0)
     Dim Buffer As clsBuffer
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPlayerQuest
+    
+    Buffer.WriteInteger QuestSelectLst
 
     Buffer.WriteLong QuestNum
     Buffer.WriteLong Player(Index).PlayerQuest(QuestNum).Status
@@ -308,13 +312,13 @@ Private Sub SendQuestCancel(ByVal Index As Long, ByVal QuestNum As Long)
 End Sub
 
 'sends a message to the client that is shown on the screen
-Public Sub QuestMessage(ByVal Index As Long, ByVal QuestNum As Long, ByVal message As String, Optional ByVal saycolour As Long)
+Public Sub QuestMessage(ByVal Index As Long, ByVal QuestNum As Long, ByVal Message As String, Optional ByVal saycolour As Long)
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
 
     Buffer.WriteLong SQuestMessage
     Buffer.WriteLong QuestNum
-    Buffer.WriteString Trim$(message)
+    Buffer.WriteString Trim$(Message)
     Buffer.WriteLong saycolour
     Buffer.WriteString "[Quest] "
     SendDataTo Index, Buffer.ToArray()
@@ -327,7 +331,7 @@ End Sub
 ' ///////////////
 
 Public Function CanStartQuest(ByVal Index As Long, ByVal QuestNum As Long) As Boolean
-    Dim i As Long, n As Long
+    Dim I As Long, n As Long
     CanStartQuest = False
     If QuestNum < 1 Or QuestNum > MAX_QUESTS Then Exit Function
 
@@ -396,11 +400,11 @@ Public Function CanStartQuest(ByVal Index As Long, ByVal QuestNum As Long) As Bo
         If Quest(QuestNum).RequiredLevel <= Player(Index).Level Then
 
             'Check if item is needed
-            For i = 1 To MAX_QUESTS_ITEMS
-                If Quest(QuestNum).RequiredItem(i).Item > 0 Then
+            For I = 1 To MAX_QUESTS_ITEMS
+                If Quest(QuestNum).RequiredItem(I).Item > 0 Then
                     'if we don't have it at all then
-                    If HasItem(Index, Quest(QuestNum).RequiredItem(i).Item) = 0 Then
-                        PlayerMsg Index, "You need " & Trim$(Item(Quest(QuestNum).RequiredItem(i).Item).Name) & " to take this quest!", BrightRed
+                    If HasItem(Index, Quest(QuestNum).RequiredItem(I).Item) = 0 Then
+                        PlayerMsg Index, "You need " & Trim$(Item(Quest(QuestNum).RequiredItem(I).Item).Name) & " to take this quest!", BrightRed
                         Exit Function
                     End If
                 End If
@@ -451,24 +455,24 @@ End Function
 
 'Gets the quest reference num (id) from the quest name (it shall be unique)
 Public Function GetQuestNum(ByVal QuestName As String) As Long
-    Dim i As Long
+    Dim I As Long
     GetQuestNum = 0
 
-    For i = 1 To MAX_QUESTS
-        If Trim$(Quest(i).Name) = Trim$(QuestName) Then
-            GetQuestNum = i
+    For I = 1 To MAX_QUESTS
+        If Trim$(Quest(I).Name) = Trim$(QuestName) Then
+            GetQuestNum = I
             Exit For
         End If
     Next
 End Function
 
 Public Function GetItemNum(ByVal ItemName As String) As Long
-    Dim i As Long
+    Dim I As Long
     GetItemNum = 0
 
-    For i = 1 To MAX_ITEMS
-        If Trim$(Item(i).Name) = Trim$(ItemName) Then
-            GetItemNum = i
+    For I = 1 To MAX_ITEMS
+        If Trim$(Item(I).Name) = Trim$(ItemName) Then
+            GetItemNum = I
             Exit For
         End If
     Next
@@ -479,19 +483,19 @@ End Function
 ' /////////////////////
 
 Public Sub CheckTasks(ByVal Index As Long, ByVal TaskType As Long, ByVal TargetIndex As Long)
-    Dim i As Long
+    Dim I As Long
 
-    For i = 1 To MAX_QUESTS
-        If QuestInProgress(Index, i) Then
-            If TaskType = Quest(i).Task(Player(Index).PlayerQuest(i).ActualTask).Order Then
-                Call CheckTask(Index, i, TaskType, TargetIndex)
+    For I = 1 To MAX_QUESTS
+        If QuestInProgress(Index, I) Then
+            If TaskType = Quest(I).Task(Player(Index).PlayerQuest(I).ActualTask).Order Then
+                Call CheckTask(Index, I, TaskType, TargetIndex)
             End If
         End If
     Next
 End Sub
 
 Public Sub CheckTask(ByVal Index As Long, ByVal QuestNum As Long, ByVal TaskType As Long, ByVal TargetIndex As Long)
-    Dim ActualTask As Long, i As Long
+    Dim ActualTask As Long, I As Long
     ActualTask = Player(Index).PlayerQuest(QuestNum).ActualTask
 
     Select Case TaskType
@@ -528,10 +532,10 @@ Public Sub CheckTask(ByVal Index As Long, ByVal QuestNum As Long, ByVal TaskType
             Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
 
             'Check inventory for the items
-            For i = 1 To MAX_INV
-                If GetPlayerInvItemNum(Index, i) = TargetIndex Then
-                    If Item(i).Stackable > 0 Then
-                        Player(Index).PlayerQuest(QuestNum).CurrentCount = GetPlayerInvItemValue(Index, i)
+            For I = 1 To MAX_INV
+                If GetPlayerInvItemNum(Index, I) = TargetIndex Then
+                    If Item(I).Stackable > 0 Then
+                        Player(Index).PlayerQuest(QuestNum).CurrentCount = GetPlayerInvItemValue(Index, I)
                     Else
                         'If is the correct item add it to the count
                         Player(Index).PlayerQuest(QuestNum).CurrentCount = Player(Index).PlayerQuest(QuestNum).CurrentCount + 1
@@ -590,11 +594,11 @@ Public Sub CheckTask(ByVal Index As Long, ByVal QuestNum As Long, ByVal TaskType
 
             Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
 
-            For i = 1 To MAX_INV
-                If GetPlayerInvItemNum(Index, i) = Quest(QuestNum).Task(ActualTask).Item Then
-                    If Item(i).Stackable > 0 Then
-                        If GetPlayerInvItemValue(Index, i) >= Quest(QuestNum).Task(ActualTask).Amount Then
-                            Player(Index).PlayerQuest(QuestNum).CurrentCount = GetPlayerInvItemValue(Index, i)
+            For I = 1 To MAX_INV
+                If GetPlayerInvItemNum(Index, I) = Quest(QuestNum).Task(ActualTask).Item Then
+                    If Item(I).Stackable > 0 Then
+                        If GetPlayerInvItemValue(Index, I) >= Quest(QuestNum).Task(ActualTask).Amount Then
+                            Player(Index).PlayerQuest(QuestNum).CurrentCount = GetPlayerInvItemValue(Index, I)
                         End If
                     Else
                         'If is the correct item add it to the count
@@ -609,7 +613,7 @@ Public Sub CheckTask(ByVal Index As Long, ByVal QuestNum As Long, ByVal TaskType
                     TakeInvItem Index, Quest(QuestNum).Task(ActualTask).Item, Quest(QuestNum).Task(ActualTask).Amount
                 Else
                     'If it's not a currency then remove all the items
-                    For i = 1 To Quest(QuestNum).Task(ActualTask).Amount
+                    For I = 1 To Quest(QuestNum).Task(ActualTask).Amount
                         TakeInvItem Index, Quest(QuestNum).Task(ActualTask).Item, 1
                     Next
                 End If
@@ -689,7 +693,7 @@ Public Sub CheckTask(ByVal Index As Long, ByVal QuestNum As Long, ByVal TaskType
 End Sub
 
 Public Sub EndQuest(ByVal Index As Long, ByVal QuestNum As Long)
-    Dim i As Long, n As Long
+    Dim I As Long, n As Long
 
     ' Reseta os dados da data pra ser somente usado onde necessitar!
     Player(Index).PlayerQuest(QuestNum).Data = vbNullString
@@ -720,14 +724,14 @@ Public Sub EndQuest(ByVal Index As Long, ByVal QuestNum As Long)
     End If
 
     'remove items on the end
-    For i = 1 To MAX_QUESTS_ITEMS
-        If Quest(QuestNum).TakeItem(i).Item > 0 Then
-            If HasItem(Index, Quest(QuestNum).TakeItem(i).Item) > 0 Then
-                If Item(Quest(QuestNum).TakeItem(i).Item).Stackable > 0 Then
-                    TakeInvItem Index, Quest(QuestNum).TakeItem(i).Item, Quest(QuestNum).TakeItem(i).Value
+    For I = 1 To MAX_QUESTS_ITEMS
+        If Quest(QuestNum).TakeItem(I).Item > 0 Then
+            If HasItem(Index, Quest(QuestNum).TakeItem(I).Item) > 0 Then
+                If Item(Quest(QuestNum).TakeItem(I).Item).Stackable > 0 Then
+                    TakeInvItem Index, Quest(QuestNum).TakeItem(I).Item, Quest(QuestNum).TakeItem(I).value
                 Else
-                    For n = 1 To Quest(QuestNum).TakeItem(i).Value
-                        TakeInvItem Index, Quest(QuestNum).TakeItem(i).Item, 1
+                    For n = 1 To Quest(QuestNum).TakeItem(I).value
+                        TakeInvItem Index, Quest(QuestNum).TakeItem(I).Item, 1
                     Next
                 End If
             End If
@@ -735,24 +739,24 @@ Public Sub EndQuest(ByVal Index As Long, ByVal QuestNum As Long)
     Next
 
     'give rewards
-    For i = 1 To MAX_QUESTS_ITEMS
-        If Quest(QuestNum).RewardItem(i).Item <> 0 Then
+    For I = 1 To MAX_QUESTS_ITEMS
+        If Quest(QuestNum).RewardItem(I).Item <> 0 Then
             'check if we have space
-            If FindOpenInvSlot(Index, Quest(QuestNum).RewardItem(i).Item) = 0 Then
+            If FindOpenInvSlot(Index, Quest(QuestNum).RewardItem(I).Item) = 0 Then
                 PlayerMsg Index, "You have no inventory space.", BrightRed
                 Exit For
             Else
                 'if so, check if it's a currency stack the item in one slot
-                If Item(Quest(QuestNum).RewardItem(i).Item).Stackable > 0 Then
-                    GiveInvItem Index, Quest(QuestNum).RewardItem(i).Item, Quest(QuestNum).RewardItem(i).Value, 0
+                If Item(Quest(QuestNum).RewardItem(I).Item).Stackable > 0 Then
+                    GiveInvItem Index, Quest(QuestNum).RewardItem(I).Item, Quest(QuestNum).RewardItem(I).value, 0
                 Else
                     'if not, create a new loop and store the item in a new slot if is possible
-                    For n = 1 To Quest(QuestNum).RewardItem(i).Value
-                        If FindOpenInvSlot(Index, Quest(QuestNum).RewardItem(i).Item) = 0 Then
+                    For n = 1 To Quest(QuestNum).RewardItem(I).value
+                        If FindOpenInvSlot(Index, Quest(QuestNum).RewardItem(I).Item) = 0 Then
                             PlayerMsg Index, "You have no inventory space.", BrightRed
                             Exit For
                         Else
-                            GiveInvItem Index, Quest(QuestNum).RewardItem(i).Item, 1, 0
+                            GiveInvItem Index, Quest(QuestNum).RewardItem(I).Item, 1, 0
                         End If
                     Next
                 End If
@@ -832,7 +836,7 @@ End Sub
 
 Sub HandlePlayerCancelQuest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-    Dim QuestNum As Long, i As Long, n As Long
+    Dim QuestNum As Long, I As Long, n As Long
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -844,14 +848,14 @@ Sub HandlePlayerCancelQuest(ByVal Index As Long, ByRef Data() As Byte, ByVal Sta
     Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
 
     PlayerMsg Index, Trim$(Quest(QuestNum).Name) & " has been canceled!", BrightGreen
-    For i = 1 To MAX_QUESTS_ITEMS
-        If Quest(QuestNum).GiveItem(i).Item > 0 Then
-            If HasItem(Index, Quest(QuestNum).GiveItem(i).Item) > 0 Then
-                If Item(Quest(QuestNum).GiveItem(i).Item).Stackable > 0 Then
-                    TakeInvItem Index, Quest(QuestNum).GiveItem(i).Item, Quest(QuestNum).GiveItem(i).Value
+    For I = 1 To MAX_QUESTS_ITEMS
+        If Quest(QuestNum).GiveItem(I).Item > 0 Then
+            If HasItem(Index, Quest(QuestNum).GiveItem(I).Item) > 0 Then
+                If Item(Quest(QuestNum).GiveItem(I).Item).Stackable > 0 Then
+                    TakeInvItem Index, Quest(QuestNum).GiveItem(I).Item, Quest(QuestNum).GiveItem(I).value
                 Else
-                    For n = 1 To Quest(QuestNum).GiveItem(i).Value
-                        TakeInvItem Index, Quest(QuestNum).GiveItem(i).Item, 1
+                    For n = 1 To Quest(QuestNum).GiveItem(I).value
+                        TakeInvItem Index, Quest(QuestNum).GiveItem(I).Item, 1
                     Next
                 End If
             End If
@@ -869,30 +873,30 @@ Sub HandleQuestLogUpdate(ByVal Index As Long, ByRef Data() As Byte, ByVal StartA
 End Sub
 
 Public Sub StartQuest(ByVal Index As Long, ByVal QuestNum As Long, ByVal Order As Byte)
-    Dim i As Long, n As Long
+    Dim I As Long, n As Long
     Dim RemoveStartItems As Boolean
 
     If Order = 1 Then    'Iniciar
         RemoveStartItems = False
-        For i = 1 To MAX_QUESTS_ITEMS
+        For I = 1 To MAX_QUESTS_ITEMS
 
-            If Quest(QuestNum).RewardItem(i).Item > 0 Then
-                If FindOpenInvSlot(Index, Quest(QuestNum).RewardItem(i).Item) = 0 Then
+            If Quest(QuestNum).RewardItem(I).Item > 0 Then
+                If FindOpenInvSlot(Index, Quest(QuestNum).RewardItem(I).Item) = 0 Then
                     QuestMessage Index, QuestNum, "Você não tem espaço na mochila, drope algo para pegar a quest.", Red
                     Exit For
                 End If
             End If
 
-            If Quest(QuestNum).GiveItem(i).Item > 0 Then
-                If FindOpenInvSlot(Index, Quest(QuestNum).GiveItem(i).Item) = 0 Then
+            If Quest(QuestNum).GiveItem(I).Item > 0 Then
+                If FindOpenInvSlot(Index, Quest(QuestNum).GiveItem(I).Item) = 0 Then
                     QuestMessage Index, QuestNum, "Você não tem espaço na mochila, drope algo para pegar a quest.", Red
                     RemoveStartItems = True
                     Exit For
                 Else
-                    If Item(Quest(QuestNum).GiveItem(i).Item).Stackable > 0 Then
-                        GiveInvItem Index, Quest(QuestNum).GiveItem(i).Item, Quest(QuestNum).GiveItem(i).Value, 0
+                    If Item(Quest(QuestNum).GiveItem(I).Item).Stackable > 0 Then
+                        GiveInvItem Index, Quest(QuestNum).GiveItem(I).Item, Quest(QuestNum).GiveItem(I).value, 0
                     Else
-                        GiveInvItem Index, Quest(QuestNum).GiveItem(i).Item, 1, 0
+                        GiveInvItem Index, Quest(QuestNum).GiveItem(I).Item, 1, 0
                     End If
                 End If
             End If
@@ -920,14 +924,14 @@ Public Sub StartQuest(ByVal Index As Long, ByVal QuestNum As Long, ByVal Order A
     End If
 
     If RemoveStartItems = True Then
-        For i = 1 To MAX_QUESTS_ITEMS
-            If Quest(QuestNum).GiveItem(i).Item > 0 Then
-                If HasItem(Index, Quest(QuestNum).GiveItem(i).Item) > 0 Then
-                    If Item(Quest(QuestNum).GiveItem(i).Item).Stackable > 0 Then
-                        TakeInvItem Index, Quest(QuestNum).GiveItem(i).Item, Quest(QuestNum).GiveItem(i).Value
+        For I = 1 To MAX_QUESTS_ITEMS
+            If Quest(QuestNum).GiveItem(I).Item > 0 Then
+                If HasItem(Index, Quest(QuestNum).GiveItem(I).Item) > 0 Then
+                    If Item(Quest(QuestNum).GiveItem(I).Item).Stackable > 0 Then
+                        TakeInvItem Index, Quest(QuestNum).GiveItem(I).Item, Quest(QuestNum).GiveItem(I).value
                     Else
-                        For n = 1 To Quest(QuestNum).GiveItem(i).Value
-                            TakeInvItem Index, Quest(QuestNum).GiveItem(i).Item, 1
+                        For n = 1 To Quest(QuestNum).GiveItem(I).value
+                            TakeInvItem Index, Quest(QuestNum).GiveItem(I).Item, 1
                         Next
                     End If
                 End If
@@ -936,7 +940,7 @@ Public Sub StartQuest(ByVal Index As Long, ByVal QuestNum As Long, ByVal Order A
     End If
 
     SavePlayer Index
-    SendPlayerQuest Index, QuestNum
+    SendPlayerQuest Index, QuestNum, QuestNum
 End Sub
 
 Public Sub ResetPlayerTaskTimer(ByVal Index As Long, ByVal QuestNum As Integer)
@@ -946,7 +950,7 @@ Public Sub ResetPlayerTaskTimer(ByVal Index As Long, ByVal QuestNum As Integer)
     Player(Index).PlayerQuest(QuestNum).TaskTimer.Teleport = 0
     Player(Index).PlayerQuest(QuestNum).TaskTimer.Timer = 0
     Player(Index).PlayerQuest(QuestNum).TaskTimer.TimerType = 0
-    Player(Index).PlayerQuest(QuestNum).TaskTimer.x = 0
+    Player(Index).PlayerQuest(QuestNum).TaskTimer.X = 0
     Player(Index).PlayerQuest(QuestNum).TaskTimer.Y = 0
 End Sub
 
@@ -955,7 +959,7 @@ Public Sub SetPlayerTaskTimer(ByVal Index As Long, ByVal QuestNum As Integer)
         .Active = Quest(QuestNum).Task(Player(Index).PlayerQuest(QuestNum).ActualTask).TaskTimer.Active
         .Teleport = Quest(QuestNum).Task(Player(Index).PlayerQuest(QuestNum).ActualTask).TaskTimer.Teleport
         .MapNum = Quest(QuestNum).Task(Player(Index).PlayerQuest(QuestNum).ActualTask).TaskTimer.MapNum
-        .x = Quest(QuestNum).Task(Player(Index).PlayerQuest(QuestNum).ActualTask).TaskTimer.x
+        .X = Quest(QuestNum).Task(Player(Index).PlayerQuest(QuestNum).ActualTask).TaskTimer.X
         .Y = Quest(QuestNum).Task(Player(Index).PlayerQuest(QuestNum).ActualTask).TaskTimer.Y
         .ResetType = Quest(QuestNum).Task(Player(Index).PlayerQuest(QuestNum).ActualTask).TaskTimer.ResetType
 
@@ -976,12 +980,12 @@ Public Sub SetPlayerTaskTimer(ByVal Index As Long, ByVal QuestNum As Integer)
 End Sub
 
 Public Sub CheckPlayerTaskTimer(ByVal Index As Long)
-    Dim i As Integer
+    Dim I As Integer
 
     If IsPlaying(Index) Then
-        For i = 1 To MAX_QUESTS
-            If LenB(Trim$(Quest(i).Name)) > 0 Then
-                With Player(Index).PlayerQuest(i).TaskTimer
+        For I = 1 To MAX_QUESTS
+            If LenB(Trim$(Quest(I).Name)) > 0 Then
+                With Player(Index).PlayerQuest(I).TaskTimer
                     If .Active = YES Then
                         If .Timer > 0 Then
                             .Timer = .Timer - 1
@@ -990,7 +994,7 @@ Public Sub CheckPlayerTaskTimer(ByVal Index As Long)
                         If .Timer <= 0 Then
                             If .Teleport = YES Then
                                 If .MapNum > 0 And .MapNum <= MAX_MAPS Then
-                                    Call PlayerWarp(Index, .MapNum, .x, .Y)
+                                    Call PlayerWarp(Index, .MapNum, .X, .Y)
                                 Else
                                     Call PlayerWarp(Index, Class(GetPlayerClass(Index)).START_MAP, Class(GetPlayerClass(Index)).START_X, Class(GetPlayerClass(Index)).START_Y)
                                 End If
@@ -998,40 +1002,40 @@ Public Sub CheckPlayerTaskTimer(ByVal Index As Long)
 
                             ' 0=Resetar Task ; 1=Resetar Quest.
                             If .ResetType = 0 Then
-                                Player(Index).PlayerQuest(i).CurrentCount = 0    ' Retornar a zero a contagem do objetivo da task.
-                                .Timer = Quest(i).Task(Player(Index).PlayerQuest(i).ActualTask).TaskTimer.Timer    ' Resetar o tempo que o jogador vai refazê-lá.
+                                Player(Index).PlayerQuest(I).CurrentCount = 0    ' Retornar a zero a contagem do objetivo da task.
+                                .Timer = Quest(I).Task(Player(Index).PlayerQuest(I).ActualTask).TaskTimer.Timer    ' Resetar o tempo que o jogador vai refazê-lá.
                             ElseIf .ResetType = 1 Then
-                                Call ResetPlayerTaskTimer(Index, i)    ' Resetar todo os dados da task das variaveis do jogador!
-                                Call StartQuest(Index, i, 2)    ' Cancelar a quest toda!
+                                Call ResetPlayerTaskTimer(Index, I)    ' Resetar todo os dados da task das variaveis do jogador!
+                                Call StartQuest(Index, I, 2)    ' Cancelar a quest toda!
                             End If
 
                             ' enviar a mensagem do editor de task
-                            If Trim$(Quest(i).Task(Player(Index).PlayerQuest(i).ActualTask).TaskTimer.Msg) <> vbNullString Then
-                                Call SendMessageTo(Index, Trim$(Quest(i).Name), Trim$(Quest(i).Task(Player(Index).PlayerQuest(i).ActualTask).TaskTimer.Msg))
+                            If Trim$(Quest(I).Task(Player(Index).PlayerQuest(I).ActualTask).TaskTimer.Msg) <> vbNullString Then
+                                Call SendMessageTo(Index, Trim$(Quest(I).Name), Trim$(Quest(I).Task(Player(Index).PlayerQuest(I).ActualTask).TaskTimer.Msg))
                             End If
 
-                            Call SendPlayerQuest(Index, i)
+                            Call SendPlayerQuest(Index, I)
                         End If
                     Else
                         If .Teleport = YES Then
                             If .MapNum > 0 And .MapNum <= MAX_MAPS Then
-                                Call PlayerWarp(Index, .MapNum, .x, .Y)
+                                Call PlayerWarp(Index, .MapNum, .X, .Y)
                             Else
                                 Call PlayerWarp(Index, Class(GetPlayerClass(Index)).START_MAP, Class(GetPlayerClass(Index)).START_X, Class(GetPlayerClass(Index)).START_Y)
                             End If
                             
-                            Call ResetPlayerTaskTimer(Index, i)
+                            Call ResetPlayerTaskTimer(Index, I)
                         End If
                     End If
                 End With
             End If
-        Next i
+        Next I
     End If
 
 End Sub
 
 Function SecondsToHMS(ByRef Segundos As Long) As String
-    Dim HR As Long, ms As Long, SS As Long, MM As Long
+    Dim HR As Long, ms As Long, Ss As Long, MM As Long
     Dim Total As Long, Count As Long
 
     If Segundos = 0 Then
@@ -1041,7 +1045,7 @@ Function SecondsToHMS(ByRef Segundos As Long) As String
 
     HR = (Segundos \ 3600)
     MM = (Segundos \ 60)
-    SS = Segundos
+    Ss = Segundos
     'ms = (Segundos * 10)
 
     ' Pega o total de segundos pra trabalharmos melhor na variavel!
@@ -1095,10 +1099,10 @@ Function SecondsToHMS(ByRef Segundos As Long) As String
             SecondsToHMS = SecondsToHMS & Count & "s "
             Count = 0
         End If
-    ElseIf SS > 0 Then
+    ElseIf Ss > 0 Then
         ' Joga na função esse segundo.
-        SecondsToHMS = SS & "s "
-        Total = Total - SS
+        SecondsToHMS = Ss & "s "
+        Total = Total - Ss
     End If
 End Function
 

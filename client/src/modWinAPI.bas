@@ -4,7 +4,7 @@ Option Explicit
 ' API Declares
 Public myHWnd As Long
 Public Declare Function GetActiveWindow Lib "user32" () As Long
-Public Declare Function BringWindowToTop Lib "user32" (ByVal hWnd As Long) As Long
+Public Declare Function BringWindowToTop Lib "user32" (ByVal hwnd As Long) As Long
 Private Declare Function GetVersionEx Lib "kernel32" Alias "GetVersionExA" _
                                       (lpVersionInformation As OSVERSIONINFO) As Long
 
@@ -38,10 +38,10 @@ Private Const VER_PLATFORM_WIN32_WINDOWS = 1
 Private Const VER_PLATFORM_WIN32_NT = 2
 
 Public Sub InitTime()
-    
-    ' Set the high-resolution timer
+
+' Set the high-resolution timer
     timeBeginPeriod 1
-    
+
     ' Get the initial time, time starting from this point will be calculated relative to this value
     GetSystemTime GetSystemTimeOffset
 
@@ -49,9 +49,9 @@ End Sub
 
 Public Function getTime() As Currency
 
-    ' The roll over still happens but the advantage is that you don't have to restart your pc, just restart the server
-    ' This is getTimeCount starts counting from when your PC has started, but this method starts counting from when the server has started
-    
+' The roll over still happens but the advantage is that you don't have to restart your pc, just restart the server
+' This is getTimeCount starts counting from when your PC has started, but this method starts counting from when the server has started
+
     Dim CurrentTime As Currency
 
     ' Grab the current time (we have to pass a variable ByRef instead of a function return like the other timers)

@@ -4,10 +4,10 @@ Begin VB.Form frmMain
    BackColor       =   &H00FFFFFF&
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Crystalshire"
-   ClientHeight    =   9945
+   ClientHeight    =   2595
    ClientLeft      =   45
    ClientTop       =   375
-   ClientWidth     =   13815
+   ClientWidth     =   2670
    BeginProperty Font 
       Name            =   "Verdana"
       Size            =   8.25
@@ -21,11 +21,10 @@ Begin VB.Form frmMain
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   MinButton       =   0   'False
-   ScaleHeight     =   663
+   MousePointer    =   99  'Custom
+   ScaleHeight     =   173
    ScaleMode       =   3  'Pixel
-   ScaleWidth      =   921
-   StartUpPosition =   2  'CenterScreen
+   ScaleWidth      =   178
    Visible         =   0   'False
    Begin VB.CommandButton Command1 
       Caption         =   "Command1"
@@ -70,12 +69,12 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub Command1_Click()
-    ShowWindow GetWindowIndex("winLottery"), True
+    ShowWindow GetWindowIndex("winClipboard"), True
 End Sub
 
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
-    ' Janela de troca de controles!
+' Janela de troca de controles!
     If Windows(GetWindowIndex("winChangeControls")).Window.visible Then
         HandleKeyCodeControls KeyCode, Shift
         Exit Sub

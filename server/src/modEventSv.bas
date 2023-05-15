@@ -20,13 +20,14 @@ Public Enum SEventPackets
     SeLotteryData = 1
     SeReqLotteryInfo
     SeItemsPendentes
+    SeDiscordMsg
     
     SEMSG_COUNT
 End Enum
 
 ' Utilidade
 Public Enum EventOptions
-    Save = 0
+    Saves = 0
     Clear
 End Enum
 

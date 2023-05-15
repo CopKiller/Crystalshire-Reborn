@@ -19,13 +19,15 @@ namespace Event_Server.Data
         public string LastBetWinner { get; set; }
         public List<(byte, string, int)> Apostas { get; set; }
 
+        private string ArchiveName = @"/lotteryData.json";
+
         public Lottery() { }
         public void Save(Lottery lottery)
         {
             // Cria o diretório se não existir
-            if (!Directory.Exists("~/Lottery".MyDir()))
+            if (!Directory.Exists(Constants.DirLottery.MyDir()))
             {
-                Directory.CreateDirectory("~/Lottery".MyDir());
+                Directory.CreateDirectory(Constants.DirLottery.MyDir());
             }
 
             // Adiciona o conversor de tuplas
@@ -36,11 +38,11 @@ namespace Event_Server.Data
             };
 
             string json = JsonSerializer.Serialize(lottery, options);
-            File.WriteAllText(@"~/Lottery/lotteryData.json".MyDir(), json);
+            File.WriteAllText(Constants.DirLottery.MyDir() + ArchiveName, json);
         }
         public Lottery Load()
         {
-            string filePath = @"~/Lottery/lotteryData.json".MyDir();
+            string filePath = Constants.DirLottery.MyDir() + ArchiveName;
             if (!File.Exists(filePath)) return null;
 
             var options = new JsonSerializerOptions

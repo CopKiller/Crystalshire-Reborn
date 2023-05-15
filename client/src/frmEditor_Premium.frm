@@ -76,50 +76,50 @@ Option Explicit
 
 Private Sub cmdExit_Click()
 
-Me.visible = False
+    Me.visible = False
 
 End Sub
 
 Private Sub cmdPremium_Click()
-    'Check Access
+'Check Access
     If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then
         Exit Sub
     End If
-    
+
     'Check for blanks fields
-    If txtPlayer.Text = vbNullString Or txtSPremium.Text = vbNullString Or txtDPremium.Text = vbNullString Then
+    If txtPlayer.text = vbNullString Or txtSPremium.text = vbNullString Or txtDPremium.text = vbNullString Then
         MsgBox ("There are blank fields, please fill out.")
         Exit Sub
     End If
-    
-    If Not IsNumeric(txtDPremium.Text) Then
+
+    If Not IsNumeric(txtDPremium.text) Then
         MsgBox "Dias inválidos, digite um número!"
         Exit Sub
     End If
-    
+
     'If all right, go for the Premium
-    If Val(txtDPremium.Text) > 999 Then
+    If Val(txtDPremium.text) > 999 Then
         MsgBox "Excedeu limite de dias."
         Exit Sub
     End If
-    
-    Call SendChangePremium(txtPlayer.Text, txtSPremium.Text, txtDPremium.Text)
+
+    Call SendChangePremium(txtPlayer.text, txtSPremium.text, txtDPremium.text)
 End Sub
 
 Private Sub cmdRPremium_Click()
 
-    'Check Access
+'Check Access
     If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then
         Exit Sub
     End If
-    
+
     'Check for blanks fields
-    If txtPlayer.Text = vbNullString Then
+    If txtPlayer.text = vbNullString Then
         MsgBox ("The name of the player is required for this operation.")
         Exit Sub
     End If
-    
+
     'If all is right, remove the Premium
-    Call SendRemovePremium(txtPlayer.Text)
+    Call SendRemovePremium(txtPlayer.text)
 End Sub
 

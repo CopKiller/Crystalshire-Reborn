@@ -57,6 +57,7 @@ Public chatOpt(1 To 4) As String
 ' gui
 Public hideGUI As Boolean
 Public chatShowLine As String * 1
+'Public chatLineIndex As Integer
 ' map editor boxes
 Public shpSelectedTop As Long
 Public shpSelectedLeft As Long

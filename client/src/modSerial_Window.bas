@@ -42,18 +42,18 @@ End Sub
 
 Public Sub CloseWindowSerial()
 
-If Windows(GetWindowIndex("winSerial")).Window.visible = False Then
-    ShowWindow GetWindowIndex("winSerial")
-Else
-    HideWindow GetWindowIndex("winSerial")
-End If
+    If Windows(GetWindowIndex("winSerial")).Window.visible = False Then
+        ShowWindow GetWindowIndex("winSerial")
+    Else
+        HideWindow GetWindowIndex("winSerial")
+    End If
 
 End Sub
 
 'Public Function ValidateSerialFormat(ByVal Str As String, _
-                                     ByVal Separador As String, _
-                                     ByVal QuantNucleos As Byte, _
-                                     ByVal QntChrInNucleo) As Boolean
+ ByVal Separador As String, _
+ ByVal QuantNucleos As Byte, _
+ ByVal QntChrInNucleo) As Boolean
 'Dim Format() As String
 'Dim i As Byte
 'ValidateSerialFormat = False
@@ -69,25 +69,25 @@ End Sub
 'End Function
 
 Private Sub SendSerial()
-Dim Buffer As clsBuffer
-Dim SerialNumber As String
+    Dim buffer As clsBuffer
+    Dim SerialNumber As String
 
-With Windows(GetWindowIndex("winSerial"))
+    With Windows(GetWindowIndex("winSerial"))
 
-SerialNumber = .Controls(GetControlIndex("winSerial", "txtSerial")).Text
+        SerialNumber = .Controls(GetControlIndex("winSerial", "txtSerial")).text
 
-If Len(SerialNumber) > MAX_SERIAL_LENGTH Then
-    DialogueAlert DialogueMsg.MsgSERIALINCORRECT
-    Exit Sub
-End If
+        If Len(SerialNumber) > MAX_SERIAL_LENGTH Then
+            DialogueAlert DialogueMsg.MsgSERIALINCORRECT
+            Exit Sub
+        End If
 
-End With
+    End With
 
-Set Buffer = New clsBuffer
-Buffer.WriteLong CSendSerial
-Buffer.WriteString SerialNumber
-SendData Buffer.ToArray()
+    Set buffer = New clsBuffer
+    buffer.WriteLong CSendSerial
+    buffer.WriteString SerialNumber
+    SendData buffer.ToArray()
 
-Set Buffer = Nothing
+    Set buffer = Nothing
 
 End Sub

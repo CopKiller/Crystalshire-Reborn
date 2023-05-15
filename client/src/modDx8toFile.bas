@@ -82,7 +82,7 @@ Public Sub SaveDirectX8SurfToMemory(data() As Byte, Surf As Direct3DSurface8, Op
     Set image = New cGDIpImage
 
     Call renderer.AttachTokenClass(GDIToken)
-    i = renderer.CreateHGraphicsFromHWND(frmMain.hWnd)    ' afaik the hWnd can be the hWnd of any form in the project
+    i = renderer.CreateHGraphicsFromHWND(frmMain.hwnd)    ' afaik the hWnd can be the hWnd of any form in the project
 
     If image.LoadPicture_FromNothing(SurfDesc.Width, SurfDesc.Height, i, GDIToken) Then
         ' Set up the values for locking the image
@@ -154,8 +154,8 @@ Public Sub ScreenShotMap(ByVal Ground As Boolean, ByVal Fringe As Boolean, ByVal
         NamePaste = "Ground"
         ' render lower tiles
         If Count_Tileset > 0 Then
-            For X = 0 To map.MapData.MaxX
-                For Y = 0 To map.MapData.MaxY
+            For X = 0 To Map.MapData.MaxX
+                For Y = 0 To Map.MapData.MaxY
                     Call DrawMapTile(X, Y)
                 Next
             Next
@@ -181,8 +181,8 @@ Public Sub ScreenShotMap(ByVal Ground As Boolean, ByVal Fringe As Boolean, ByVal
     If Fringe = True Then
         NamePaste = "Fringe"
         If Count_Tileset > 0 Then
-            For X = 0 To map.MapData.MaxX
-                For Y = 0 To map.MapData.MaxY
+            For X = 0 To Map.MapData.MaxX
+                For Y = 0 To Map.MapData.MaxY
                     Call DrawMapFringeTile(X, Y)
                 Next
             Next

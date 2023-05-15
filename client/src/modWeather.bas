@@ -18,6 +18,7 @@ Public WeatherParticle(1 To MAX_WEATHER_PARTICLES) As WeatherParticleRec
 Public WeatherImpact(1 To MAX_WEATHER_PARTICLES) As WeatherGroundRec
 
 Private Type WeatherGroundRec
+Type As Byte
     Impact As Boolean
     tmr As Currency
     step As Byte
@@ -26,7 +27,7 @@ Private Type WeatherGroundRec
 End Type
 
 Private Type WeatherParticleRec
-    Type As Long
+Type As Long
     X As Long
     Y As Long
     RangeX As Long
@@ -43,11 +44,11 @@ Public Sub ProcessWeather()
             'Add a new particle
             For i = 1 To MAX_WEATHER_PARTICLES
                 If WeatherParticle(i).InUse = False Then
-                        WeatherParticle(i).InUse = True
-                        WeatherParticle(i).Type = Map.MapData.Weather
-                        WeatherParticle(i).Velocity = Rand(5, 20)
-                        WeatherParticle(i).X = Rand(0, Map.MapData.MaxX * 32)   '(TileView.Left * 32) + Rand(32, frmMain.ScaleWidth)
-                        WeatherParticle(i).Y = TileView.top * 32
+                    WeatherParticle(i).InUse = True
+                    WeatherParticle(i).Type = Map.MapData.Weather
+                    WeatherParticle(i).Velocity = Rand(5, 20)
+                    WeatherParticle(i).X = Rand(0, Map.MapData.MaxX * 32)   '(TileView.Left * 32) + Rand(32, frmMain.ScaleWidth)
+                    WeatherParticle(i).Y = TileView.top * 32
                     Exit For
                 End If
             Next
@@ -67,14 +68,15 @@ Public Sub ProcessWeather()
         If WeatherParticle(i).InUse Then
             If (WeatherParticle(i).Y / 32) > Map.MapData.MaxY Then
                 WeatherParticle(i).InUse = False
-                        WeatherImpact(i).Impact = True
-                        WeatherImpact(i).X = WeatherParticle(i).X
-                        WeatherImpact(i).Y = WeatherParticle(i).Y
-            ElseIf Map.MapData.Weather = WEATHER_TYPE_STORM Or Map.MapData.Weather = WEATHER_TYPE_RAIN Then
+                WeatherImpact(i).Impact = True
+                WeatherImpact(i).X = WeatherParticle(i).X
+                WeatherImpact(i).Y = WeatherParticle(i).Y
+            ElseIf Map.MapData.Weather = WEATHER_TYPE_STORM Or Map.MapData.Weather = WEATHER_TYPE_RAIN Or Map.MapData.Weather = WEATHER_TYPE_HAIL Or Map.MapData.Weather = WEATHER_TYPE_SNOW Then
                 If IsValidMapPoint(WeatherParticle(i).X / 32, WeatherParticle(i).Y / 32) Then
                     If Rand(1, 400 - Map.MapData.WeatherIntensity) <= 10 Then
                         WeatherParticle(i).InUse = False
                         WeatherImpact(i).Impact = True
+                        WeatherImpact(i).Type = Map.MapData.Weather
                         WeatherImpact(i).X = WeatherParticle(i).X
                         WeatherImpact(i).Y = WeatherParticle(i).Y
                     End If
@@ -88,7 +90,7 @@ Public Sub ProcessWeather()
             End If
             WeatherParticle(i).Y = WeatherParticle(i).Y + WeatherParticle(i).Velocity
         End If
-        
+
         ' Animação ao tocar o chao
         With WeatherImpact(i)
             If .Impact Then
@@ -135,6 +137,24 @@ Public Sub DrawWeather()
 End Sub
 
 Public Sub DrawWeather_Impact(ByVal WeatherID As Byte)
-' Animação ao tocar o chao
-    RenderTexture Tex_Weather, ConvertMapX(WeatherImpact(WeatherID).X), ConvertMapY(WeatherImpact(WeatherID).Y), WeatherImpact(WeatherID).step * 32, 32, 32, 32, 32, 32, -1
+    Dim YAnimSrc As Byte
+    ' Animação ao tocar o chao
+
+
+    If WeatherImpact(WeatherID).Type = WEATHER_TYPE_RAIN Or WeatherImpact(WeatherID).Type = WEATHER_TYPE_HAIL Or WeatherImpact(WeatherID).Type = WEATHER_TYPE_STORM Then
+        YAnimSrc = 32
+    ElseIf WeatherImpact(WeatherID).Type = WEATHER_TYPE_SNOW Then
+        YAnimSrc = 64
+    End If
+
+
+    RenderTexture Tex_Weather, ConvertMapX(WeatherImpact(WeatherID).X), ConvertMapY(WeatherImpact(WeatherID).Y), WeatherImpact(WeatherID).step * 32, YAnimSrc, 32, 32, 32, 32, -1
 End Sub
+
+
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 Attribute VB_Name = "modItemsPendentes"
 Option Explicit
 
-Private Enum Operacao
+Public Enum Operacao
     None = 0
     Save
     Delete

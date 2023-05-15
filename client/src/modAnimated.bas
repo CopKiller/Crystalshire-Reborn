@@ -59,3 +59,22 @@ Public Sub RenderTexture_Animated(Texture As Long, ByVal X As Long, ByVal Y As L
 
     RenderTexture Texture, X, Y, sX, sY, w, h, sW, sH, Colour, offset, degrees, Shadow
 End Sub
+
+Public Function VerifyWindowsIsInCur() As Boolean
+    Dim i As Integer
+    For i = 1 To WindowCount
+        With Windows(i)
+            '.Window.state = entStates.Normal
+            If .Window.visible Then
+                If Not .Window.clickThrough Then
+                    If GlobalX >= .Window.Left And GlobalX <= .Window.Left + .Window.Width Then
+                        If GlobalY >= .Window.top And GlobalY <= .Window.top + .Window.Height Then
+                            VerifyWindowsIsInCur = True
+                            Exit Function
+                        End If
+                    End If
+                End If
+            End If
+        End With
+    Next i
+End Function

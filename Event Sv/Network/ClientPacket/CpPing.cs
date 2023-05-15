@@ -9,12 +9,7 @@ namespace Event_Server.Network.ClientPacket
 {
     public sealed class CpPing : IRecvPacket  {
         public void Process(byte[] buffer, IConnection connection) {
-            var msg = new ByteBuffer(buffer);
-
-            var ping = msg.ReadInt32();
-            
-
-            new SpLotteryData().Send(connection);
+            // Não recebe o ping de volta, apenas pra não atrapalhar a contagem de cada classe.
         }
     }
 }

@@ -41,7 +41,7 @@ Private Declare Function GdipGetPropertyItem _
                           Lib "gdiplus" (ByVal image As Long, _
                                          ByVal propId As Long, _
                                          ByVal propSize As Long, _
-                                         ByRef Buffer As Any) As Long
+                                         ByRef buffer As Any) As Long
 
 Private Declare Function GdipGetPropertyItemSize _
                           Lib "gdiplus" (ByVal image As Long, _

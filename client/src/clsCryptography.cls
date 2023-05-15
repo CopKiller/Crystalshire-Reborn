@@ -11,7 +11,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Private Function Crypto(ByVal Text As String, ByVal KeyPair As Long, ByVal KeyOdd As Long) As String
+Private Function Crypto(ByVal text As String, ByVal KeyPair As Long, ByVal KeyOdd As Long) As String
     Dim intCont, nCar, cCar
 
     On Error GoTo errLabel
@@ -28,12 +28,12 @@ Private Function Crypto(ByVal Text As String, ByVal KeyPair As Long, ByVal KeyOd
 
     cCar = ""
 
-    For intCont = 1 To Len(Text)
+    For intCont = 1 To Len(text)
 
         If intCont / 2 = Int(intCont / 2) Then
-            nCar = Asc(Mid(Text, intCont, 1)) Xor KeyPair
+            nCar = Asc(Mid(text, intCont, 1)) Xor KeyPair
         Else
-            nCar = Asc(Mid(Text, intCont, 1)) Xor KeyOdd
+            nCar = Asc(Mid(text, intCont, 1)) Xor KeyOdd
         End If
 
         cCar = cCar + Chr(nCar)
@@ -46,11 +46,11 @@ errLabel:
     Crypto = vbNullString
 End Function
 
-Public Function GetArray(ByVal Text As String, ByVal KeyPair As Long, ByVal KeyOdd As Long) As Long()
+Public Function GetArray(ByVal text As String, ByVal KeyPair As Long, ByVal KeyOdd As Long) As Long()
     Dim i As Long, Values() As Long, Lenght As Long
     Dim result As String
 
-    result = Crypto(Text, KeyPair, KeyOdd)
+    result = Crypto(text, KeyPair, KeyOdd)
     Lenght = Len(result)
 
     ReDim Values(1 To Lenght) As Long
@@ -84,46 +84,46 @@ Private Function Rand(ByVal Low As Long, ByVal High As Long) As Long
     Rand = Int((High - Low + 1) * Rnd) + Low
 End Function
 
-Public Sub WriteText(ByRef Text As String, ByRef Buffer As clsBuffer)
+Public Sub WriteText(ByRef text As String, ByRef buffer As clsBuffer)
     Dim arr() As Long, Lenght As Long, i As Long
     Dim KeyPair As Long, KeyOdd As Long
 
     KeyPair = Rand(1, 255)
     KeyOdd = Rand(1, 255)
 
-    arr = GetArray(Text, KeyPair, KeyOdd)
+    arr = GetArray(text, KeyPair, KeyOdd)
     Lenght = UBound(arr)
 
-    Buffer.WriteLong Lenght
-    Buffer.WriteLong KeyPair
+    buffer.WriteLong Lenght
+    buffer.WriteLong KeyPair
 
     For i = 1 To Lenght
-        Buffer.WriteLong arr(i)
+        buffer.WriteLong arr(i)
     Next
 
-    Buffer.WriteLong KeyOdd
+    buffer.WriteLong KeyOdd
 End Sub
 
-Public Function ReadText(ByRef Buffer As clsBuffer) As String
+Public Function ReadText(ByRef buffer As clsBuffer) As String
     Dim arr() As Long, Lenght As Long, i As Long
     Dim KeyPair As Long, KeyOdd As Long
 
-    Lenght = Buffer.ReadLong
+    Lenght = buffer.ReadLong
 
     If Lenght <= 0 Or Lenght >= MAX_LONG Then
         ReadText = vbNullString
         Exit Function
     End If
 
-    KeyPair = Buffer.ReadLong
+    KeyPair = buffer.ReadLong
 
     ReDim arr(1 To Lenght) As Long
 
     For i = 1 To Lenght
-        arr(i) = Buffer.ReadLong
+        arr(i) = buffer.ReadLong
     Next
 
-    KeyOdd = Buffer.ReadLong
+    KeyOdd = buffer.ReadLong
 
     ReadText = GetString(arr, KeyPair, KeyOdd)
 End Function

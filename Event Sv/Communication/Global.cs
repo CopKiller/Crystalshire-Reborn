@@ -1,14 +1,16 @@
-﻿using Event_Server.Util;
+﻿using Event_Server.Server;
+using Event_Server.Util;
 using System;
 
 namespace Event_Server.Communication
 {
-    public class Global
+    public static class Global
     {
-        public int Environment;
+        public static int Environment;
         public static Log PlayerLogs { get; set; }
         public static Log SystemLogs { get; set; }
         public static Log DebugLogs { get; set; }
+        public static DiscordBot DiscordBot { get; set; }
 
         public static void WriteLog(LogType type, string text, LogColor color)
         {

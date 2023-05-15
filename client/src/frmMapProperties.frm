@@ -589,15 +589,15 @@ Private Sub cmdOk_Click()
     Dim Y As Long, Y2 As Long
     Dim tempArr() As TileRec
 
-    If Not IsNumeric(txtMaxX.Text) Then txtMaxX.Text = Map.MapData.MaxX
-    If Val(txtMaxX.Text) < 1 Then txtMaxX.Text = 1
-    If Val(txtMaxX.Text) > MAX_BYTE Then txtMaxX.Text = MAX_BYTE
-    If Not IsNumeric(txtMaxY.Text) Then txtMaxY.Text = Map.MapData.MaxY
-    If Val(txtMaxY.Text) < 1 Then txtMaxY.Text = 1
-    If Val(txtMaxY.Text) > MAX_BYTE Then txtMaxY.Text = MAX_BYTE
+    If Not IsNumeric(txtMaxX.text) Then txtMaxX.text = Map.MapData.MaxX
+    If Val(txtMaxX.text) < 1 Then txtMaxX.text = 1
+    If Val(txtMaxX.text) > MAX_BYTE Then txtMaxX.text = MAX_BYTE
+    If Not IsNumeric(txtMaxY.text) Then txtMaxY.text = Map.MapData.MaxY
+    If Val(txtMaxY.text) < 1 Then txtMaxY.text = 1
+    If Val(txtMaxY.text) > MAX_BYTE Then txtMaxY.text = MAX_BYTE
 
     With Map.MapData
-        .Name = Trim$(txtName.Text)
+        .Name = Trim$(txtName.text)
 
         If lstMusic.ListIndex >= 0 Then
             .Music = lstMusic.list(lstMusic.ListIndex)
@@ -605,40 +605,40 @@ Private Sub cmdOk_Click()
             .Music = vbNullString
         End If
 
-        .Up = Val(txtUp.Text)
-        .Down = Val(txtDown.Text)
-        .Left = Val(txtLeft.Text)
-        .Right = Val(txtRight.Text)
+        .Up = Val(txtUp.text)
+        .Down = Val(txtDown.text)
+        .Left = Val(txtLeft.text)
+        .Right = Val(txtRight.text)
         .Moral = cmbMoral.ListIndex
-        .BootMap = Val(txtBootMap.Text)
-        .BootX = Val(txtBootX.Text)
-        .BootY = Val(txtBootY.Text)
+        .BootMap = Val(txtBootMap.text)
+        .BootX = Val(txtBootX.text)
+        .BootY = Val(txtBootY.text)
         .BossNpc = scrlBoss.Value
         .Panorama = scrlPanorama.Value
-        
+
         .Weather = CmbWeather.ListIndex
         .WeatherIntensity = scrlWeatherIntensity.Value
-        
+
         .Fog = ScrlFog.Value
         .FogSpeed = ScrlFogSpeed.Value
         .FogOpacity = scrlFogOpacity.Value
-        
+
         .Red = scrlR.Value
         .Green = scrlG.Value
         .Blue = scrlB.Value
         .Alpha = scrlA.Value
-        
+
         .Sun = scrlSun.Value
-        
+
         .DayNight = cmbDayNight.ListIndex
-        
+
         ' set the data before changing it
         tempArr = Map.TileData.Tile
         X2 = Map.MapData.MaxX
         Y2 = Map.MapData.MaxY
         ' change the data
-        .MaxX = Val(txtMaxX.Text)
-        .MaxY = Val(txtMaxY.Text)
+        .MaxX = Val(txtMaxX.text)
+        .MaxY = Val(txtMaxY.text)
 
         If X2 > .MaxX Then X2 = .MaxX
         If Y2 > .MaxY Then Y2 = .MaxY

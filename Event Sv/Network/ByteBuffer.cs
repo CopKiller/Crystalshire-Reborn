@@ -115,6 +115,10 @@ namespace Event_Server.Network
 
         public int ReadInt32(bool peek = true)
         {
+            if (readpos >= buffer.Count)
+            {
+                return 0;
+            }
             var value = BitConverter.ToInt32(buffer.ToArray(), readpos);
 
             if (peek)

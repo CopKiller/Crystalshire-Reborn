@@ -338,17 +338,17 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub cmdABan_Click()
-    If Len(Trim$(txtAName.Text)) < 1 Then
+    If Len(Trim$(txtAName.text)) < 1 Then
         Exit Sub
     End If
 
-    SendBan Trim$(txtAName.Text)
+    SendBan Trim$(txtAName.text)
 End Sub
 
 Private Sub cmdAKick_Click()
-    If Len(Trim$(txtAName.Text)) < 1 Then Exit Sub
+    If Len(Trim$(txtAName.text)) < 1 Then Exit Sub
 
-    SendKick Trim$(txtAName.Text)
+    SendKick Trim$(txtAName.text)
 End Sub
 
 Private Sub CmdAnimation_Click()
@@ -357,7 +357,7 @@ Private Sub CmdAnimation_Click()
 End Sub
 
 Private Sub cmdAPremium_Click()
-    ' Check Access
+' Check Access
     If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then
         Exit Sub
     End If
@@ -366,25 +366,25 @@ End Sub
 
 Private Sub cmdASpawn_Click()
 
-    If Len(txtAmount.Text) = 0 Then Exit Sub
-    If txtAmount.Text = 0 Then Exit Sub
+    If Len(txtAmount.text) = 0 Then Exit Sub
+    If txtAmount.text = 0 Then Exit Sub
 
     If scrlAItem.Value > 0 Then
-        SendSpawnItem scrlAItem.Value, Trim$(txtAmount.Text)
+        SendSpawnItem scrlAItem.Value, Trim$(txtAmount.text)
     End If
 End Sub
 
 Private Sub cmdASprite_Click()
 
-    If Len(Trim$(txtASprite.Text)) < 1 Then
+    If Len(Trim$(txtASprite.text)) < 1 Then
         Exit Sub
     End If
 
-    If Not IsNumeric(Trim$(txtASprite.Text)) Then
+    If Not IsNumeric(Trim$(txtASprite.text)) Then
         Exit Sub
     End If
 
-    SendSetSprite CLng(Trim$(txtASprite.Text))
+    SendSetSprite CLng(Trim$(txtASprite.text))
 
     Exit Sub
 End Sub
@@ -401,15 +401,15 @@ Private Sub cmdAWarp_Click()
         Exit Sub
     End If
 
-    If Len(Trim$(txtAMap.Text)) < 1 Then
+    If Len(Trim$(txtAMap.text)) < 1 Then
         Exit Sub
     End If
 
-    If Not IsNumeric(Trim$(txtAMap.Text)) Then
+    If Not IsNumeric(Trim$(txtAMap.text)) Then
         Exit Sub
     End If
 
-    n = CLng(Trim$(txtAMap.Text))
+    n = CLng(Trim$(txtAMap.text))
 
     ' Check to make sure its a valid map #
     If n > 0 And n <= MAX_MAPS Then
@@ -423,23 +423,23 @@ Private Sub cmdAWarp_Click()
 End Sub
 
 Private Sub cmdAWarp2Me_Click()
-    If Len(Trim$(txtAName.Text)) < 1 Then
+    If Len(Trim$(txtAName.text)) < 1 Then
         Exit Sub
     End If
 
-    WarpToMe Trim$(txtAName.Text)
+    WarpToMe Trim$(txtAName.text)
 End Sub
 
 Private Sub cmdAWarpMe2_Click()
-    If Len(Trim$(txtAName.Text)) < 1 Then
+    If Len(Trim$(txtAName.text)) < 1 Then
         Exit Sub
     End If
 
-    If IsNumeric(Trim$(txtAName.Text)) Then
+    If IsNumeric(Trim$(txtAName.text)) Then
         Exit Sub
     End If
 
-    WarpMeTo Trim$(txtAName.Text)
+    WarpMeTo Trim$(txtAName.text)
 End Sub
 
 Private Sub CmdConv_Click()
@@ -468,7 +468,7 @@ End Sub
 
 Private Sub CmdQuest_Click()
     If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then Exit Sub
-     SendRequestEditQuest
+    SendRequestEditQuest
 End Sub
 
 Private Sub CmdResource_Click()
@@ -501,7 +501,7 @@ Private Sub Command3_Click()
 End Sub
 
 Private Sub Command4_Click()
-    ' Check Access
+' Check Access
     If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then
         Exit Sub
     End If

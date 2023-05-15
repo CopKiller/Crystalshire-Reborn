@@ -3,11 +3,11 @@ Option Explicit
 
 Public Sub CreateWindow_EnemyBars()
 ' Create window
-    CreateWindow "winEnemyBars", "", zOrder_Win, (ScreenWidth - 252), 78, 252, 158, 0, , , , , , DesignTypes.desWin_Party, DesignTypes.desWin_Party, DesignTypes.desWin_Party, , , , , , , , , False
-    
+    CreateWindow "winEnemyBars", "", zOrder_Win, (screenWidth - 252), 78, 252, 158, 0, , , , , , DesignTypes.desWin_Party, DesignTypes.desWin_Party, DesignTypes.desWin_Party, , , , , , , , , False
+
     ' Set the index for spawning controls
     zOrder_Con = 1
-    
+
     ' Close Button
     CreateButton WindowCount, "btnClose", Windows(WindowCount).Window.Width - 30, 15, 13, 13, , , , , , , Tex_GUI(8), Tex_GUI(9), Tex_GUI(10), , , , , , GetAddress(AddressOf Close_EnemyBar)
     ' Name labels
@@ -46,7 +46,7 @@ Sub UpdateEnemyInterface()
     With Windows(GetWindowIndex("winEnemyBars"))
 
         ' clear controls first
-        .Controls(GetControlIndex("winEnemyBars", "lblName")).Text = vbNullString
+        .Controls(GetControlIndex("winEnemyBars", "lblName")).text = vbNullString
         .Controls(GetControlIndex("winEnemyBars", "picEmptyBar_HP")).visible = False
         .Controls(GetControlIndex("winEnemyBars", "picEmptyBar_SP")).visible = False
         .Controls(GetControlIndex("winEnemyBars", "picBar_HP")).visible = False
@@ -54,7 +54,7 @@ Sub UpdateEnemyInterface()
         .Controls(GetControlIndex("winEnemyBars", "picShadow")).visible = False
         .Controls(GetControlIndex("winEnemyBars", "picChar")).visible = False
         .Controls(GetControlIndex("winEnemyBars", "picChar")).Value = 0
-        Windows(GetWindowIndex("winEnemyBars")).Window.origLeft = (ScreenWidth - 252)
+        Windows(GetWindowIndex("winEnemyBars")).Window.origLeft = (screenWidth - 252)
 
         ' labels
         pIndex = myTarget
@@ -66,7 +66,7 @@ Sub UpdateEnemyInterface()
                 If IsPlaying(pIndex) Then
                     ' name and level
                     .Controls(GetControlIndex("winEnemyBars", "lblName")).visible = True
-                    .Controls(GetControlIndex("winEnemyBars", "lblName")).Text = Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex)
+                    .Controls(GetControlIndex("winEnemyBars", "lblName")).text = Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex)
                     ' picture
                     .Controls(GetControlIndex("winEnemyBars", "picShadow")).visible = True
                     .Controls(GetControlIndex("winEnemyBars", "picChar")).visible = True
@@ -84,15 +84,15 @@ Sub UpdateEnemyInterface()
             ElseIf myTargetType = TARGET_TYPE_NPC Then
                 ' name and level
                 .Controls(GetControlIndex("winEnemyBars", "lblName")).visible = True
-                .Controls(GetControlIndex("winEnemyBars", "lblName")).Text = Trim$(NPC(MapNpc(pIndex).num).Name) & " - " & NPC(MapNpc(pIndex).num).Level
+                .Controls(GetControlIndex("winEnemyBars", "lblName")).text = Trim$(NPC(MapNpc(pIndex).Num).Name) & " - " & NPC(MapNpc(pIndex).Num).Level
                 ' picture
                 .Controls(GetControlIndex("winEnemyBars", "picShadow")).visible = True
                 .Controls(GetControlIndex("winEnemyBars", "picChar")).visible = True
                 ' store the player's index as a value for later use
                 .Controls(GetControlIndex("winEnemyBars", "picChar")).Value = pIndex
-                .Controls(GetControlIndex("winEnemyBars", "picChar")).image(0) = Tex_Char(NPC(MapNpc(pIndex).num).Sprite)
-                .Controls(GetControlIndex("winEnemyBars", "picChar")).image(1) = Tex_Char(NPC(MapNpc(pIndex).num).Sprite)
-                .Controls(GetControlIndex("winEnemyBars", "picChar")).image(2) = Tex_Char(NPC(MapNpc(pIndex).num).Sprite)
+                .Controls(GetControlIndex("winEnemyBars", "picChar")).image(0) = Tex_Char(NPC(MapNpc(pIndex).Num).Sprite)
+                .Controls(GetControlIndex("winEnemyBars", "picChar")).image(1) = Tex_Char(NPC(MapNpc(pIndex).Num).Sprite)
+                .Controls(GetControlIndex("winEnemyBars", "picChar")).image(2) = Tex_Char(NPC(MapNpc(pIndex).Num).Sprite)
                 ' bars
                 .Controls(GetControlIndex("winEnemyBars", "picEmptyBar_HP")).visible = True
                 .Controls(GetControlIndex("winEnemyBars", "picEmptyBar_SP")).visible = True
@@ -130,8 +130,8 @@ Sub UpdateEnemyBars()
                 If myTargetType = TARGET_TYPE_PLAYER Then
                     If IsPlaying(pIndex) Then
                         ' get playername and level atualization
-                        If .Controls(GetControlIndex("winEnemyBars", "lblName")).Text <> Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex) Then
-                            .Controls(GetControlIndex("winEnemyBars", "lblName")).Text = Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex)
+                        If .Controls(GetControlIndex("winEnemyBars", "lblName")).text <> Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex) Then
+                            .Controls(GetControlIndex("winEnemyBars", "lblName")).text = Trim$(GetPlayerName(pIndex)) & " - " & GetPlayerLevel(pIndex)
                         End If
                         ' get their health
                         If GetPlayerVital(pIndex, HP) > 0 And GetPlayerMaxVital(pIndex, HP) > 0 Then
@@ -151,8 +151,8 @@ Sub UpdateEnemyBars()
                 ElseIf myTargetType = TARGET_TYPE_NPC Then
                     ' get playername and level atualization
 
-                    If .Controls(GetControlIndex("winEnemyBars", "lblName")).Text <> Trim$(NPC(MapNpc(pIndex).num).Name) & " - " & NPC(MapNpc(pIndex).num).Level Then
-                        .Controls(GetControlIndex("winEnemyBars", "lblName")).Text = Trim$(NPC(MapNpc(pIndex).num).Name) & " - " & NPC(MapNpc(pIndex).num).Level
+                    If .Controls(GetControlIndex("winEnemyBars", "lblName")).text <> Trim$(NPC(MapNpc(pIndex).Num).Name) & " - " & NPC(MapNpc(pIndex).Num).Level Then
+                        .Controls(GetControlIndex("winEnemyBars", "lblName")).text = Trim$(NPC(MapNpc(pIndex).Num).Name) & " - " & NPC(MapNpc(pIndex).Num).Level
                     End If
 
                     ' get their health
@@ -171,7 +171,7 @@ Sub UpdateEnemyBars()
                     End If
 
                     If MapNpc(pIndex).Dead = YES Then
-                        .Controls(GetControlIndex("winEnemyBars", "lblName")).Text = .Controls(GetControlIndex("winEnemyBars", "lblName")).Text & " (Dead)"
+                        .Controls(GetControlIndex("winEnemyBars", "lblName")).text = .Controls(GetControlIndex("winEnemyBars", "lblName")).text & " (Dead)"
                         .Controls(GetControlIndex("winEnemyBars", "lblName")).textColour = BrightRed
                     Else
                         .Controls(GetControlIndex("winEnemyBars", "lblName")).textColour = White

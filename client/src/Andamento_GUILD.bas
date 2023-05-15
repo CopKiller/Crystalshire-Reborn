@@ -49,70 +49,70 @@ End Type
 ' // TCP //
 
 Public Sub GuildAccept_MouseDown()
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CGuildInviteResposta
-    Buffer.WriteByte 1
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CGuildInviteResposta
+    buffer.WriteByte 1
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 
     'GUIWindow(GUI_GUILDINVITE).visible = False
 End Sub
 Public Sub GuildDecline_MouseDown()
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CGuildInviteResposta
-    Buffer.WriteByte 0
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CGuildInviteResposta
+    buffer.WriteByte 0
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 
     'GUIWindow(GUI_GUILDINVITE).visible = False
 End Sub
 Public Sub SendCriarGuild(ByVal Nome As String)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CCriarGuild
-    Buffer.WriteString Nome
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CCriarGuild
+    buffer.WriteString Nome
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 End Sub
 
 Public Sub SendGuildInvite(ByVal Nome As String)
-    Dim Buffer As clsBuffer
-    
+    Dim buffer As clsBuffer
+
     ' Proteção
     If Player(MyIndex).Guild_ID = 0 Then
         Exit Sub
     End If
-    
+
     If GuildMembers(Player(MyIndex).Guild_ID).Membro(Player(MyIndex).Guild_MembroID).Admin = False Then
         AddText "Apenas admins da guild podem fazer isso!", BrightRed
         HideWindow GetWindowIndex("winGuildMenu")
         Exit Sub
     End If
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CGuildInvite
-    Buffer.WriteString Nome
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CGuildInvite
+    buffer.WriteString Nome
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 End Sub
 
 Public Sub SendGuildKick(ByVal Index As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CGuildKick
-    Buffer.WriteLong Index
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CGuildKick
+    buffer.WriteLong Index
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 End Sub
 
 Public Sub SendGuildDestroy()
-Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' Proteção
     If GuildMembers(Player(MyIndex).Guild_ID).Membro(Player(MyIndex).Guild_MembroID).Dono = False Then
@@ -121,33 +121,33 @@ Dim Buffer As clsBuffer
         Exit Sub
     End If
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CGuildDestroy
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CGuildDestroy
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 End Sub
 
 Public Sub SendLeaveGuild()
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     If Player(MyIndex).Guild_ID > 0 Then
         If MsgBox("Tem certeza que deseja sair da guild?", vbYesNo) = vbYes Then
-            Set Buffer = New clsBuffer
-            Buffer.WriteLong CLeaveGuild
-            SendData Buffer.ToArray()
-            Buffer.Flush: Set Buffer = Nothing
+            Set buffer = New clsBuffer
+            buffer.WriteLong CLeaveGuild
+            SendData buffer.ToArray()
+            buffer.Flush: Set buffer = Nothing
         End If
     End If
 End Sub
 
 Public Sub SendGuildPromote(ByVal Promover As Byte, ByVal MemberID As Byte)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CGuildPromote
-    Buffer.WriteByte Promover
-    Buffer.WriteByte MemberID
-    SendData Buffer.ToArray()
-    Buffer.Flush: Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CGuildPromote
+    buffer.WriteByte Promover
+    buffer.WriteByte MemberID
+    SendData buffer.ToArray()
+    buffer.Flush: Set buffer = Nothing
 End Sub
 ' // FIM TCP //

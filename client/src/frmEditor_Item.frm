@@ -1312,8 +1312,8 @@ Private Sub scrlBlockChance_Change()
 End Sub
 
 Private Sub scrlChance_Change()
-lblChance.caption = scrlChance.Value & " %"
-Item(EditorIndex).DropDeadChance = scrlChance.Value
+    lblChance.caption = scrlChance.Value & " %"
+    Item(EditorIndex).DropDeadChance = scrlChance.Value
 End Sub
 
 Private Sub scrlFoodHeal_Change()
@@ -1387,29 +1387,29 @@ Private Sub scrlSpeed_Change()
 
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblSpeed.caption = "Speed: " & scrlSpeed.Value / 1000 & " sec"
-    Item(EditorIndex).speed = scrlSpeed.Value
+    Item(EditorIndex).Speed = scrlSpeed.Value
 End Sub
 
 Private Sub txtDamage_Change()
 
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
 
-    If Not Len(txtDamage.Text) > 0 Then
-        txtDamage.Text = 0
+    If Not Len(txtDamage.text) > 0 Then
+        txtDamage.text = 0
         Exit Sub
     End If
 
-    If Not IsNumeric(txtDamage.Text) Then
-        txtDamage.Text = 0
+    If Not IsNumeric(txtDamage.text) Then
+        txtDamage.text = 0
         Exit Sub
     End If
 
-    If Val(txtDamage.Text) > MAX_LONG Or Val(txtDamage.Text) < 0 Then
-        txtDamage.Text = 0
+    If Val(txtDamage.text) > MAX_LONG Or Val(txtDamage.text) < 0 Then
+        txtDamage.text = 0
         Exit Sub
     End If
 
-    Item(EditorIndex).Data2 = txtDamage.Text
+    Item(EditorIndex).Data2 = txtDamage.text
 
 End Sub
 
@@ -1417,44 +1417,44 @@ Private Sub txtPrice_Change()
 
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
 
-    If Not Len(txtPrice.Text) > 0 Then
-        txtPrice.Text = 0
+    If Not Len(txtPrice.text) > 0 Then
+        txtPrice.text = 0
         Exit Sub
     End If
 
-    If Not IsNumeric(txtPrice.Text) Then
-        txtPrice.Text = 0
+    If Not IsNumeric(txtPrice.text) Then
+        txtPrice.text = 0
         Exit Sub
     End If
 
-    If Val(txtPrice.Text) > MAX_LONG Or Val(txtPrice.Text) < 0 Then
-        txtPrice.Text = 0
+    If Val(txtPrice.text) > MAX_LONG Or Val(txtPrice.text) < 0 Then
+        txtPrice.text = 0
         Exit Sub
     End If
 
-    Item(EditorIndex).Price = txtPrice.Text
+    Item(EditorIndex).price = txtPrice.text
 End Sub
 
 Private Sub txtStatBonus_Change(Index As Integer)
 
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
 
-    If Not Len(txtStatBonus(Index).Text) > 0 Then
-        txtStatBonus(Index).Text = 0
+    If Not Len(txtStatBonus(Index).text) > 0 Then
+        txtStatBonus(Index).text = 0
         Exit Sub
     End If
 
-    If Not IsNumeric(txtStatBonus(Index).Text) Then
-        txtStatBonus(Index).Text = 0
+    If Not IsNumeric(txtStatBonus(Index).text) Then
+        txtStatBonus(Index).text = 0
         Exit Sub
     End If
 
-    If Val(txtStatBonus(Index).Text) > MAX_LONG Or Val(txtStatBonus(Index).Text) < 0 Then
-        txtStatBonus(Index).Text = 0
+    If Val(txtStatBonus(Index).text) > MAX_LONG Or Val(txtStatBonus(Index).text) < 0 Then
+        txtStatBonus(Index).text = 0
         Exit Sub
     End If
 
-    Item(EditorIndex).Add_Stat(Index) = txtStatBonus(Index).Text
+    Item(EditorIndex).Add_Stat(Index) = txtStatBonus(Index).text
 End Sub
 
 Private Sub scrlSpell_Change()
@@ -1478,7 +1478,7 @@ End Sub
 Private Sub txtDesc_Change()
 
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
-    Item(EditorIndex).Desc = txtDesc.Text
+    Item(EditorIndex).Desc = txtDesc.text
 End Sub
 
 Public Sub txtName_Validate(Cancel As Boolean)
@@ -1486,7 +1486,7 @@ Public Sub txtName_Validate(Cancel As Boolean)
 
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Item(EditorIndex).Name = Trim$(txtName.Text)
+    Item(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Item(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
@@ -1494,20 +1494,20 @@ End Sub
 
 Private Sub txtStatReq_Change(Index As Integer)
 
-    If Not Len(txtStatReq(Index).Text) > 0 Then
-        txtStatReq(Index).Text = 0
+    If Not Len(txtStatReq(Index).text) > 0 Then
+        txtStatReq(Index).text = 0
         Exit Sub
     End If
 
-    If Not IsNumeric(txtStatReq(Index).Text) Then
-        txtStatReq(Index).Text = 0
+    If Not IsNumeric(txtStatReq(Index).text) Then
+        txtStatReq(Index).text = 0
         Exit Sub
     End If
 
-    If Val(txtStatReq(Index).Text) > MAX_LONG Or Val(txtStatReq(Index).Text) < 0 Then
-        txtStatReq(Index).Text = 0
+    If Val(txtStatReq(Index).text) > MAX_LONG Or Val(txtStatReq(Index).text) < 0 Then
+        txtStatReq(Index).text = 0
         Exit Sub
     End If
 
-    Item(EditorIndex).Stat_Req(Index) = txtStatReq(Index).Text
+    Item(EditorIndex).Stat_Req(Index) = txtStatReq(Index).text
 End Sub

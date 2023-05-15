@@ -256,7 +256,7 @@ End Sub
 Private Function FindMoneyID() As Integer
     Dim i As Long
     FindMoneyID = 0
-    
+
     For i = 1 To MAX_ITEMS
         If Trim$(Item(i).Name) <> vbNullString Then
             If Item(i).Type = ITEM_TYPE_CURRENCY Then
@@ -319,9 +319,9 @@ Private Sub cmdUpdate_Click()
 
     With Shop(EditorIndex).TradeItem(Index)
         .Item = cmbItem.ListIndex
-        .ItemValue = Val(txtItemValue.Text)
+        .ItemValue = Val(txtItemValue.text)
         .CostItem = cmbCostItem.ListIndex
-        .CostValue = Val(txtCostValue.Text)
+        .CostValue = Val(txtCostValue.text)
     End With
 
     UpdateShopTrade tmpPos
@@ -367,7 +367,7 @@ Private Sub txtName_Validate(Cancel As Boolean)
 
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Shop(EditorIndex).Name = Trim$(txtName.Text)
+    Shop(EditorIndex).Name = Trim$(txtName.text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Shop(EditorIndex).Name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex

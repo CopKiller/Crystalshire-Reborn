@@ -2,11 +2,11 @@ Attribute VB_Name = "modWindow_Character"
 Option Explicit
 
 Public Sub CreateWindow_Character()
-Dim i As Byte, X As Long, Y As Long
-Dim Coluns_MaxLines As Byte
-Dim Coluns_MaxBonus As Byte
+    Dim i As Byte, X As Long, Y As Long
+    Dim Coluns_MaxLines As Byte
+    Dim Coluns_MaxBonus As Byte
 
-' Create window
+    ' Create window
     CreateWindow "winCharacter", "Character Status", zOrder_Win, 0, 0, 170, 382, Tex_Item(62), False, Fonts.rockwellDec_15, , 2, 6, DesignTypes.desWin_Empty, DesignTypes.desWin_Empty, DesignTypes.desWin_Empty
     ' Centralise it
     CentraliseWindow WindowCount
@@ -40,7 +40,7 @@ Dim Coluns_MaxBonus As Byte
     ' Bonus Set
     CreatePictureBox WindowCount, "picTextBackground", 18, 273, 138, 9, False, , , , , , , DesignTypes.desBlackOval, DesignTypes.desBlackOval, DesignTypes.desBlackOval
     CreateLabel WindowCount, "lblSet", 18, 270, 138, , "Bonus de Conjunto", rockwellDec_15, , Alignment.alignCentre, False
-    
+
     ' INIT Bonus Window
     X = 18
     Y = 270
@@ -52,7 +52,7 @@ Dim Coluns_MaxBonus As Byte
         If i = Coluns_MaxLines Then Y = 284: X = 90
         CreateLabel WindowCount, "lblBonus" & i, X, Y, 138, , "Bonus" & i, rockwellDec_15, , Alignment.alignLeft, False
     Next i
-    
+
     ' RENDER ATRIBUTES WINDOW 28 TO MAX .CONTROLSCOUNT
     ' White boxes
     CreatePictureBox WindowCount, "picWhiteBox", 13, 54, 148, 19, , , , , , , , DesignTypes.desTextWhite, DesignTypes.desTextWhite, DesignTypes.desTextWhite
@@ -243,7 +243,7 @@ Public Sub chkCharacters_Atributos()
         For i = 6 To 27
             .Controls(i).visible = False
         Next i
-        
+
         ' Show Controls > Count 17 (Atributos)
         For i = 28 To .ControlCount
             .Controls(i).visible = True
@@ -274,10 +274,10 @@ Public Sub chkCharacters_Equipamentos()
         For i = 6 To 19
             .Controls(i).visible = True
         Next i
-        
+
         ' Atualizar a janela do conjunto
         UpdateConjuntoWindow UsingSet
-        
+
         .Controls(GetControlIndex("winCharacter", "chkAtributos")).Value = 0
         .Controls(GetControlIndex("winCharacter", "chkEquipamentos")).Value = 1
     End With

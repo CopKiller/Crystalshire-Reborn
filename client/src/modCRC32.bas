@@ -82,7 +82,7 @@ End Sub
 
 Public Sub GetItemCRC32(itemNum As Long)
     Dim data() As Byte, filename As String, f As Long
-    
+
     ' item data
     filename = App.path & ITEM_PATH & "item" & itemNum & ".dat"
     If FileExist(filename) Then
@@ -99,7 +99,7 @@ End Sub
 
 Public Sub GetNpcCRC32(NpcNum As Long)
     Dim data() As Byte, filename As String, f As Long
-    
+
     ' item data
     filename = App.path & NPC_PATH & "npc" & NpcNum & ".dat"
     If FileExist(filename) Then
@@ -115,57 +115,57 @@ Public Sub GetNpcCRC32(NpcNum As Long)
 End Sub
 
 Public Sub HandleItemsCRC(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim i As Integer, ItemCRC As Long, itemNum As Integer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
 
     For i = 1 To MAX_ITEMS
-        itemNum = Buffer.ReadInteger
+        itemNum = buffer.ReadInteger
 
         If itemNum > 0 Then
-            ItemCRC = Buffer.ReadLong
-            
+            ItemCRC = buffer.ReadLong
+
             If ItemCRC32(i).ItemDataCRC <> ItemCRC Then
                 Call SendRequestItems
-                Set Buffer = Nothing
+                Set buffer = Nothing
                 Exit Sub
             End If
         End If
     Next i
 
 
-    Set Buffer = Nothing
+    Set buffer = Nothing
 End Sub
 
 Public Sub HandleNpcsCRC(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim i As Integer, NpcCRC As Long, NpcNum As Integer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
 
     For i = 1 To MAX_NPCS
-        NpcNum = Buffer.ReadInteger
+        NpcNum = buffer.ReadInteger
 
         If NpcNum > 0 Then
-            NpcCRC = Buffer.ReadLong
-            
+            NpcCRC = buffer.ReadLong
+
             If NpcCRC32(NpcNum).NpcDataCRC <> NpcCRC Then
                 Call SendRequestNPCS
-                Set Buffer = Nothing
+                Set buffer = Nothing
                 Exit Sub
             Else
-                
+
             End If
         End If
     Next i
-    
-    
 
 
-    Set Buffer = Nothing
+
+
+    Set buffer = Nothing
 End Sub
 
 Sub CheckItems()
@@ -183,12 +183,12 @@ Sub SaveItem(ByVal itemNum As Long)
     Dim filename As String
     Dim f As Long
     filename = App.path & "\data files\items\item" & itemNum & ".dat"
-    
+
     ' if it exists then kill the dat
     If FileExist(filename) Then
         Kill filename
     End If
-    
+
     f = FreeFile
     Open filename For Binary As #f
     Put #f, , Item(itemNum)
@@ -214,7 +214,7 @@ Public Sub LoadItem(ByVal itemNum As Long)
     Open filename For Binary As #f
     Get #f, , Item(itemNum)
     Close #f
-    
+
     GetItemCRC32 itemNum
 End Sub
 
@@ -233,12 +233,12 @@ Sub SaveNpc(ByVal NpcNum As Long)
     Dim filename As String
     Dim f As Long
     filename = App.path & "\data files\npcs\npc" & NpcNum & ".dat"
-    
+
     ' if it exists then kill the dat
     If FileExist(filename) Then
         Kill filename
     End If
-    
+
     f = FreeFile
     Open filename For Binary As #f
     Put #f, , NPC(NpcNum)
@@ -266,5 +266,5 @@ Public Sub LoadNpc(ByVal NpcNum As Long)
     Close #f
 
     GetNpcCRC32 NpcNum
-    
+
 End Sub

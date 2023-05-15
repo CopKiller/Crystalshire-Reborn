@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "Mswinsck.ocx"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "Tabctl32.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL32.OCX"
 Begin VB.Form frmServer 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Loading..."
@@ -132,7 +132,6 @@ Begin VB.Form frmServer
       _Version        =   393216
       Style           =   1
       Tabs            =   5
-      Tab             =   2
       TabsPerRow      =   5
       TabHeight       =   503
       Enabled         =   0   'False
@@ -147,10 +146,13 @@ Begin VB.Form frmServer
       EndProperty
       TabCaption(0)   =   "Console"
       TabPicture(0)   =   "frmServer.frx":1708A
-      Tab(0).ControlEnabled=   0   'False
+      Tab(0).ControlEnabled=   -1  'True
       Tab(0).Control(0)=   "txtText"
+      Tab(0).Control(0).Enabled=   0   'False
       Tab(0).Control(1)=   "txtChat"
+      Tab(0).Control(1).Enabled=   0   'False
       Tab(0).Control(2)=   "chkMsgWindow"
+      Tab(0).Control(2).Enabled=   0   'False
       Tab(0).ControlCount=   3
       TabCaption(1)   =   "Players"
       TabPicture(1)   =   "frmServer.frx":170A6
@@ -159,15 +161,11 @@ Begin VB.Form frmServer
       Tab(1).ControlCount=   1
       TabCaption(2)   =   "Control "
       TabPicture(2)   =   "frmServer.frx":170C2
-      Tab(2).ControlEnabled=   -1  'True
-      Tab(2).Control(0)=   "fraDatabase"
-      Tab(2).Control(0).Enabled=   0   'False
-      Tab(2).Control(1)=   "fraServer"
-      Tab(2).Control(1).Enabled=   0   'False
-      Tab(2).Control(2)=   "chkServerLog"
-      Tab(2).Control(2).Enabled=   0   'False
-      Tab(2).Control(3)=   "cmdShutDown"
-      Tab(2).Control(3).Enabled=   0   'False
+      Tab(2).ControlEnabled=   0   'False
+      Tab(2).Control(0)=   "cmdShutDown"
+      Tab(2).Control(1)=   "chkServerLog"
+      Tab(2).Control(2)=   "fraServer"
+      Tab(2).Control(3)=   "fraDatabase"
       Tab(2).ControlCount=   4
       TabCaption(3)   =   "Login"
       TabPicture(3)   =   "frmServer.frx":170DE
@@ -209,7 +207,7 @@ Begin VB.Form frmServer
       Begin VB.CheckBox chkMsgWindow 
          Caption         =   "Msg Window"
          Height          =   375
-         Left            =   -69360
+         Left            =   5640
          TabIndex        =   30
          Top             =   2640
          Width           =   975
@@ -217,7 +215,7 @@ Begin VB.Form frmServer
       Begin VB.CommandButton cmdShutDown 
          Caption         =   "ShutD. 30 Seg"
          Height          =   255
-         Left            =   4080
+         Left            =   -70920
          TabIndex        =   15
          Top             =   0
          Width           =   1455
@@ -225,7 +223,7 @@ Begin VB.Form frmServer
       Begin VB.CheckBox chkServerLog 
          Caption         =   "Logs"
          Height          =   255
-         Left            =   5640
+         Left            =   -69360
          TabIndex        =   14
          Top             =   0
          Value           =   1  'Checked
@@ -234,7 +232,7 @@ Begin VB.Form frmServer
       Begin VB.Frame fraServer 
          Caption         =   "Server"
          Height          =   2895
-         Left            =   3120
+         Left            =   -71880
          TabIndex        =   1
          Top             =   360
          Width           =   3135
@@ -364,7 +362,7 @@ Begin VB.Form frmServer
       Begin VB.Frame fraDatabase 
          Caption         =   "Reload"
          Height          =   2895
-         Left            =   120
+         Left            =   -74880
          TabIndex        =   5
          Top             =   360
          Width           =   2895
@@ -475,14 +473,14 @@ Begin VB.Form frmServer
       End
       Begin VB.TextBox txtChat 
          Height          =   375
-         Left            =   -74880
+         Left            =   120
          TabIndex        =   3
          Top             =   2730
          Width           =   5415
       End
       Begin VB.TextBox txtText 
          Height          =   2175
-         Left            =   -74880
+         Left            =   120
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   2
@@ -571,7 +569,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub chkEventSv_Click()
-    Options.EVENTSV = chkEventSv.Value
+    Options.EVENTSV = chkEventSv.value
     SaveOptions
 
     If Options.EVENTSV = NO Then
@@ -586,23 +584,23 @@ Private Sub cmdCheckIn_Click()
 End Sub
 
 Private Sub cmdReloadQuests_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadQuests
     Call TextAdd("All Quests reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendQuests i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendQuests I
         End If
     Next
 End Sub
 
 Private Sub cmdReloadSeriais_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadSerials
     Call TextAdd("All Serials reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            Call SendSerial(i)
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            Call SendSerial(I)
         End If
     Next
 End Sub
@@ -612,12 +610,12 @@ Private Sub cmdConfigs_Click()
 End Sub
 
 Private Sub cmdConjuntos_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadConjuntos
     Call TextAdd("All Conjuntos reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendConjuntos i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendConjuntos I
         End If
     Next
 End Sub
@@ -755,97 +753,97 @@ End Sub
 Private Sub chkServerLog_Click()
 
 ' if its not 0, then its true
-    If Not chkServerLog.Value Then
+    If Not chkServerLog.value Then
         ServerLog = True
     End If
 
 End Sub
 
 Private Sub cmdReloadClasses_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadClasses
     Call Auth_ClassesData
     Call TextAdd("All classes reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendClasses i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendClasses I
         End If
     Next
 End Sub
 
 Private Sub cmdReloadItems_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadItems
     Call TextAdd("All items reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendItems i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendItems I
         End If
     Next
 End Sub
 
 Private Sub cmdReloadMaps_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadMaps
     Call TextAdd("All maps reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            PlayerWarp i, GetPlayerMap(i), GetPlayerX(i), GetPlayerY(i)
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            PlayerWarp I, GetPlayerMap(I), GetPlayerX(I), GetPlayerY(I)
         End If
     Next
 End Sub
 
 Private Sub cmdReloadNPCs_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadNpcs
     Call TextAdd("All npcs reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendNpcs i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendNpcs I
         End If
     Next
 End Sub
 
 Private Sub cmdReloadShops_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadShops
     Call TextAdd("All shops reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendShops i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendShops I
         End If
     Next
 End Sub
 
 Private Sub cmdReloadSpells_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadSpells
     Call TextAdd("All spells reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendSpells i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendSpells I
         End If
     Next
 End Sub
 
 Private Sub cmdReloadResources_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadResources
     Call TextAdd("All Resources reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendResources i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendResources I
         End If
     Next
 End Sub
 
 Private Sub cmdReloadAnimations_Click()
-    Dim i As Long
+    Dim I As Long
     Call LoadAnimations
     Call TextAdd("All Animations reloaded.")
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            SendAnimations i
+    For I = 1 To Player_HighIndex
+        If IsPlaying(I) Then
+            SendAnimations I
         End If
     Next
 End Sub
@@ -926,8 +924,10 @@ Private Sub txtChat_KeyPress(KeyAscii As Integer)
 
     If KeyAscii = vbKeyReturn Then
         If LenB(Trim$(txtChat.Text)) > 0 Then
-        
-            If chkMsgWindow.Value = NO Then
+            
+'            Call SendDiscordMsg("SERVIDOR", txtChat.Text)
+            
+            If chkMsgWindow.value = NO Then
                 Call GlobalMsg(txtChat.Text, BrightRed)
             Else
                 Call SendMessageToAll("Mensagem do Servidor", txtChat.Text)
@@ -943,27 +943,27 @@ Private Sub txtChat_KeyPress(KeyAscii As Integer)
 End Sub
 
 Sub UsersOnline_Start()
-    Dim i As Long
+    Dim I As Long
 
-    For i = 1 To MAX_PLAYERS
-        frmServer.lvwInfo.ListItems.Add (i)
+    For I = 1 To MAX_PLAYERS
+        frmServer.lvwInfo.ListItems.Add (I)
 
-        If i < 10 Then
-            frmServer.lvwInfo.ListItems(i).Text = "00" & i
-        ElseIf i < 100 Then
-            frmServer.lvwInfo.ListItems(i).Text = "0" & i
+        If I < 10 Then
+            frmServer.lvwInfo.ListItems(I).Text = "00" & I
+        ElseIf I < 100 Then
+            frmServer.lvwInfo.ListItems(I).Text = "0" & I
         Else
-            frmServer.lvwInfo.ListItems(i).Text = i
+            frmServer.lvwInfo.ListItems(I).Text = I
         End If
 
-        frmServer.lvwInfo.ListItems(i).SubItems(1) = vbNullString
-        frmServer.lvwInfo.ListItems(i).SubItems(2) = vbNullString
-        frmServer.lvwInfo.ListItems(i).SubItems(3) = vbNullString
+        frmServer.lvwInfo.ListItems(I).SubItems(1) = vbNullString
+        frmServer.lvwInfo.ListItems(I).SubItems(2) = vbNullString
+        frmServer.lvwInfo.ListItems(I).SubItems(3) = vbNullString
     Next
 
 End Sub
 
-Private Sub lvwInfo_MouseDown(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub lvwInfo_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     If Button = vbRightButton Then
         PopupMenu mnuKick
@@ -1033,9 +1033,9 @@ Sub mnuRemoveAdmin_click()
 
 End Sub
 
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     Dim lmsg As Long
-    lmsg = x / Screen.TwipsPerPixelX
+    lmsg = X / Screen.TwipsPerPixelX
 
     Select Case lmsg
     Case WM_LBUTTONDBLCLK

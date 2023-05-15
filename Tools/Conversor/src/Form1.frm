@@ -109,17 +109,17 @@ End Sub
 Private Sub Command1_Click()
 
     'MsgBox dirAppPath.Path & "\"
-    Dim i As Long, data() As Byte
+    Dim I As Long, data() As Byte
     
     Call SetStatus("Cryptografando...", Yellow)
-    ConvertPNGToBinary GlobalDir, i, data
+    ConvertPNGToBinary GlobalDir, I, data
 End Sub
 
 Private Sub Command2_Click()
-    Dim i As Long, data() As Byte
+    Dim I As Long, data() As Byte
     
     Call SetStatus("Descryptografando...", Yellow)
-    ConvertBinaryToPNG GlobalDir, i, data
+    ConvertBinaryToPNG GlobalDir, I, data
 
 End Sub
 

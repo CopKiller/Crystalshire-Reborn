@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL32.OCX"
 Begin VB.Form frmEditor_Events 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Event Editor"
@@ -1335,8 +1335,8 @@ Private Sub cmbChatBubbleType_Click()
         Case TARGET_TYPE_NPC
             cmbChatBubble.AddItem "None"
             For i = 1 To MAX_MAP_NPCS
-                If MapNpc(i).num > 0 Then
-                    cmbChatBubble.AddItem i & ": " & Trim$(Npc(MapNpc(i).num).Name)
+                If MapNpc(i).Num > 0 Then
+                    cmbChatBubble.AddItem i & ": " & Trim$(NPC(MapNpc(i).Num).Name)
                 Else
                     cmbChatBubble.AddItem i & ": Empty"
                 End If
@@ -1344,8 +1344,8 @@ Private Sub cmbChatBubbleType_Click()
             cmbChatBubble.enabled = True
         Case TARGET_TYPE_EVENT
             cmbChatBubble.AddItem "None"
-            For i = 1 To map.TileData.EventCount
-                cmbChatBubble.AddItem i & ": " & map.TileData.Events(i).Name
+            For i = 1 To Map.TileData.EventCount
+                cmbChatBubble.AddItem i & ": " & Map.TileData.Events(i).Name
             Next
             cmbChatBubble.enabled = True
         End Select
@@ -1422,7 +1422,7 @@ End Sub
 
 Private Sub cmdAddText_Click()
 ' reset form
-    txtAddText_Text.Text = vbNullString
+    txtAddText_Text.text = vbNullString
     scrlAddText_Colour.Value = 0
     optAddText_Game.Value = True
     ' show
@@ -1454,7 +1454,7 @@ End Sub
 
 Private Sub cmdChatBubble_Click()
 ' reset form
-    txtChatBubble.Text = vbNullString
+    txtChatBubble.text = vbNullString
     scrlChatBubble.Value = 0
     cmbChatBubbleType.ListIndex = 0
     cmbChatBubble.Clear
@@ -1552,7 +1552,7 @@ Private Sub cmdEditCommand_Click()
         Select Case .Type
         Case EventType.evAddText
             ' reset form
-            txtAddText_Text.Text = .Text
+            txtAddText_Text.text = .text
             scrlAddText_Colour.Value = .Colour
             Select Case .channel
             Case 0
@@ -1566,7 +1566,7 @@ Private Sub cmdEditCommand_Click()
             fraDialogue.visible = True
             fraAddText.visible = True
         Case EventType.evShowChatBubble
-            txtChatBubble.Text = .Text
+            txtChatBubble.text = .text
             scrlChatBubble.Value = .Colour
             cmbChatBubbleType.ListIndex = .TargetType
             cmbChatBubble.Clear
@@ -1579,16 +1579,16 @@ Private Sub cmdEditCommand_Click()
             Case TARGET_TYPE_NPC
                 cmbChatBubble.AddItem "None"
                 For i = 1 To MAX_MAP_NPCS
-                    If MapNpc(i).num > 0 Then
-                        cmbChatBubble.AddItem i & ": " & Trim$(Npc(MapNpc(i).num).Name)
+                    If MapNpc(i).Num > 0 Then
+                        cmbChatBubble.AddItem i & ": " & Trim$(NPC(MapNpc(i).Num).Name)
                     Else
                         cmbChatBubble.AddItem i & ": Empty"
                     End If
                 Next
             Case TARGET_TYPE_EVENT
                 cmbChatBubble.AddItem "None"
-                For i = 1 To map.TileData.EventCount
-                    cmbChatBubble.AddItem i & ": " & map.TileData.Events(i).Name
+                For i = 1 To Map.TileData.EventCount
+                    cmbChatBubble.AddItem i & ": " & Map.TileData.Events(i).Name
                 Next
             End Select
             If .Target > 0 And .Target <= cmbChatBubble.ListCount Then
@@ -1606,7 +1606,7 @@ Private Sub cmdEditCommand_Click()
             For i = 1 To MAX_BYTE
                 cmbVariable.AddItem i
             Next
-            txtVariable.Text = .Colour
+            txtVariable.text = .Colour
             cmbVariable.ListIndex = .Target
             ' show
             fraDialogue.visible = True
@@ -1666,7 +1666,7 @@ Private Sub cmdPlayerVar_Click()
     For i = 1 To MAX_BYTE
         cmbVariable.AddItem i
     Next
-    txtVariable.Text = vbNullString
+    txtVariable.text = vbNullString
     cmbVariable.ListIndex = 0
     ' show
     fraDialogue.visible = True
@@ -1779,9 +1779,9 @@ Private Sub tabPages_Click()
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
-    tmpEvent.Name = Trim$(txtName.Text)
+    tmpEvent.Name = Trim$(txtName.text)
 End Sub
 
 Private Sub txtPlayerVariable_Validate(Cancel As Boolean)
-    tmpEvent.EventPage(curPageNum).PlayerVariable = Val(Trim$(txtPlayerVariable.Text))
+    tmpEvent.EventPage(curPageNum).PlayerVariable = Val(Trim$(txtPlayerVariable.text))
 End Sub

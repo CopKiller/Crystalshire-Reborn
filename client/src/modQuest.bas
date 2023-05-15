@@ -60,9 +60,9 @@ Public Type TaskTimerRec
     Teleport As Byte          ' Teleport cannot end task in time.
     MapNum As Integer         ' Map Number to teleport /\
     ResetType As Byte         ' 0=Resetar Task ; 1=Resetar Quest.
-    x As Byte
+    X As Byte
     Y As Byte
-    
+
     Msg As String * TASK_DEFEAT_LENGTH
 End Type
 
@@ -75,7 +75,7 @@ Public Type TaskRec
     Amount As Long
     TaskLog As String * 150
     QuestEnd As Boolean
-    
+
     ' Task Timer
     TaskTimer As TaskTimerRec
 End Type
@@ -118,12 +118,12 @@ Public Sub QuestEditorInit()
     With frmEditor_Quest
         'Alatar v1.2
         .txtName = Trim$(Quest(EditorIndex).Name)
-        
+
         .optRepeat(Quest(EditorIndex).Repeat).Value = True
         .txtSegs = Quest(EditorIndex).Time
-        
+
         .txtQuestLog = Trim$(Quest(EditorIndex).QuestLog)
-        .txtSpeech.Text = Trim$(Quest(EditorIndex).Speech)
+        .txtSpeech.text = Trim$(Quest(EditorIndex).Speech)
 
         .scrlReqLevel.Value = Quest(EditorIndex).RequiredLevel
         .scrlReqQuest.Value = Quest(EditorIndex).RequiredQuest
@@ -131,8 +131,8 @@ Public Sub QuestEditorInit()
             .scrlReqClass.Value = Quest(EditorIndex).RequiredClass(i)
         Next
 
-        .txtExp.Text = Quest(EditorIndex).RewardExp
-        .txtLevel.Text = Quest(EditorIndex).RewardLevel
+        .txtExp.text = Quest(EditorIndex).RewardExp
+        .txtLevel.text = Quest(EditorIndex).RewardLevel
 
         'Update the lists
         UpdateQuestGiveItems
@@ -284,71 +284,71 @@ End Sub
 ' ////////////////////
 
 Public Sub SendRequestEditQuest()
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CRequestEditQuest
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CRequestEditQuest
+    SendData buffer.ToArray()
+    Set buffer = Nothing
 
 End Sub
 
 Public Sub SendSaveQuest(ByVal QuestNum As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim QuestSize As Long
     Dim QuestData() As Byte
 
-    Set Buffer = New clsBuffer
+    Set buffer = New clsBuffer
     QuestSize = LenB(Quest(QuestNum))
     ReDim QuestData(QuestSize - 1)
     CopyMemory QuestData(0), ByVal VarPtr(Quest(QuestNum)), QuestSize
-    Buffer.WriteLong CSaveQuest
-    Buffer.WriteLong QuestNum
-    Buffer.WriteBytes QuestData
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    buffer.WriteLong CSaveQuest
+    buffer.WriteLong QuestNum
+    buffer.WriteBytes QuestData
+    SendData buffer.ToArray()
+    Set buffer = Nothing
 
 End Sub
 
 Sub SendRequestQuests()
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CRequestQuests
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CRequestQuests
+    SendData buffer.ToArray()
+    Set buffer = Nothing
 
 End Sub
 
 Public Sub UpdateQuestLog()
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CQuestLogUpdate
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CQuestLogUpdate
+    SendData buffer.ToArray()
+    Set buffer = Nothing
 
 End Sub
 
 Public Sub PlayerCancelQuest()
-Dim QuestName As String
-    
+    Dim QuestName As String
+
     With Windows(GetWindowIndex("winQuest"))
-    
-    If QuestSelect = 0 Then Exit Sub
-    
-    If Not .Controls(GetControlIndex("winQuest", "lblList" & QuestSelect)).visible Then Exit Sub
-    
-    QuestName = .Controls(GetControlIndex("winQuest", "lblList" & QuestSelect)).Text
 
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
+        If QuestSelect = 0 Then Exit Sub
 
-    Buffer.WriteLong CPlayerHandleQuest
-    Buffer.WriteLong FindQuestIndex(QuestName)
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
-    
+        If Not .Controls(GetControlIndex("winQuest", "lblList" & QuestSelect)).visible Then Exit Sub
+
+        QuestName = .Controls(GetControlIndex("winQuest", "lblList" & QuestSelect)).text
+
+        Dim buffer As clsBuffer
+        Set buffer = New clsBuffer
+
+        buffer.WriteLong CPlayerHandleQuest
+        buffer.WriteLong FindQuestIndex(QuestName)
+        SendData buffer.ToArray()
+        Set buffer = Nothing
+
     End With
 End Sub
 
@@ -388,7 +388,7 @@ Public Sub LoadTask(ByVal QuestNum As Long, ByVal TaskNum As Long)
         'Load the task type
         .optTask(TaskToLoad.Order).Value = True
         'Load textboxes
-        .txtTaskLog.Text = "" & Trim$(TaskToLoad.TaskLog)
+        .txtTaskLog.text = "" & Trim$(TaskToLoad.TaskLog)
         'Set scrolls to 0 and disable them so they can be enabled when needed
         .scrlNPC.Value = 0
         .scrlItem.Value = 0
@@ -400,19 +400,19 @@ Public Sub LoadTask(ByVal QuestNum As Long, ByVal TaskNum As Long)
         .scrlMap.enabled = False
         .scrlResource.enabled = False
         .scrlAmount.enabled = False
-        
+
         ' Quest Timer
         .chkTaskTimer.Value = TaskToLoad.TaskTimer.Active
         .optTaskTimer(TaskToLoad.TaskTimer.TimerType).Value = True
-        .txtTaskTimer.Text = CLng(TaskToLoad.TaskTimer.Timer)
+        .txtTaskTimer.text = CLng(TaskToLoad.TaskTimer.Timer)
         .chkTaskTeleport = TaskToLoad.TaskTimer.Teleport
-        .txtTaskTeleport.Text = CInt(TaskToLoad.TaskTimer.Teleport)
+        .txtTaskTeleport.text = CInt(TaskToLoad.TaskTimer.Teleport)
         .optReset(TaskToLoad.TaskTimer.ResetType).Value = True
         .txtTaskTeleport = CInt(TaskToLoad.TaskTimer.MapNum)
-        .txtTaskX.Text = CByte(TaskToLoad.TaskTimer.x)
-        .txtTaskY.Text = CByte(TaskToLoad.TaskTimer.Y)
-        .txtMsg.Text = Trim$(CStr(TaskToLoad.TaskTimer.Msg))
-        
+        .txtTaskX.text = CByte(TaskToLoad.TaskTimer.X)
+        .txtTaskY.text = CByte(TaskToLoad.TaskTimer.Y)
+        .txtMsg.text = Trim$(CStr(TaskToLoad.TaskTimer.Msg))
+
         If TaskToLoad.QuestEnd = True Then
             .chkEnd.Value = 1
         Else

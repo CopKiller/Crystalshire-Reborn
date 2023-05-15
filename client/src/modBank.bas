@@ -51,7 +51,7 @@ Sub Bank_MouseMove()
 
         ' go go go
         If Bank.Item(itemNum).bound > 0 Then: SoulBound = True
-        ShowItemDesc X, Y, Bank.Item(itemNum).num, SoulBound
+        ShowItemDesc X, Y, Bank.Item(itemNum).Num, SoulBound
     End If
 End Sub
 
@@ -67,7 +67,7 @@ Sub Bank_MouseDown()
         ' drag it
         With DragBox
             .Type = Part_Item
-            .Value = Bank.Item(BankSlot).num
+            .Value = Bank.Item(BankSlot).Num
             .Origin = origin_Bank
             .Slot = BankSlot
         End With
@@ -95,7 +95,7 @@ Public Function IsBankItem(startX As Long, startY As Long) As Long
     Dim i As Long
     For i = 1 To MAX_BANK
 
-        If Bank.Item(i).num > 0 Then
+        If Bank.Item(i).Num > 0 Then
 
             With tempRec
                 .top = startY + BankTop + ((BankOffsetY + 32) * ((i - 1) \ BankColumns))
@@ -148,7 +148,7 @@ Sub DrawBank()
 
     ' actually draw the icons
     For i = 1 To MAX_BANK
-        itemNum = Bank.Item(i).num
+        itemNum = Bank.Item(i).Num
 
         If itemNum > 0 And itemNum <= MAX_ITEMS Then
             ' not dragging?
@@ -191,17 +191,17 @@ Sub DrawBank()
 End Sub
 
 Public Sub HandleBank(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim i As Long
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
 
     For i = 1 To MAX_BANK
-        Bank.Item(i).num = Buffer.ReadInteger
-        Bank.Item(i).Value = Buffer.ReadLong
+        Bank.Item(i).Num = buffer.ReadInteger
+        Bank.Item(i).Value = buffer.ReadLong
     Next
 
-    Buffer.Flush: Set Buffer = Nothing
+    buffer.Flush: Set buffer = Nothing
 
     InBank = True
 
@@ -210,62 +210,62 @@ End Sub
 
 Sub HandlePlayerBankUpdate(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
 
-    n = Buffer.ReadByte
+    n = buffer.ReadByte
 
-    Bank.Item(n).num = Buffer.ReadInteger
-    Bank.Item(n).Value = Buffer.ReadLong
-    Bank.Item(n).bound = Buffer.ReadByte
+    Bank.Item(n).Num = buffer.ReadInteger
+    Bank.Item(n).Value = buffer.ReadLong
+    Bank.Item(n).bound = buffer.ReadByte
 
-    Buffer.Flush
-    Set Buffer = Nothing
+    buffer.Flush
+    Set buffer = Nothing
 End Sub
 
 Public Sub DepositItem(ByVal InvSlot As Long, ByVal Amount As Long)
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CDepositItem
-    Buffer.WriteLong InvSlot
-    Buffer.WriteLong Amount
-    SendData Buffer.ToArray()
-    Buffer.Flush
-    Set Buffer = Nothing
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteLong CDepositItem
+    buffer.WriteLong InvSlot
+    buffer.WriteLong Amount
+    SendData buffer.ToArray()
+    buffer.Flush
+    Set buffer = Nothing
 End Sub
 
 Public Sub WithdrawItem(ByVal BankSlot As Long, ByVal Amount As Long)
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CWithdrawItem
-    Buffer.WriteLong BankSlot
-    Buffer.WriteLong Amount
-    SendData Buffer.ToArray()
-    Buffer.Flush
-    Set Buffer = Nothing
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteLong CWithdrawItem
+    buffer.WriteLong BankSlot
+    buffer.WriteLong Amount
+    SendData buffer.ToArray()
+    buffer.Flush
+    Set buffer = Nothing
 End Sub
 
 Public Sub CloseBank()
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CCloseBank
-    SendData Buffer.ToArray()
-    Buffer.Flush
-    Set Buffer = Nothing
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteLong CCloseBank
+    SendData buffer.ToArray()
+    buffer.Flush
+    Set buffer = Nothing
 
     InBank = False
 End Sub
 
 Public Sub ChangeBankSlots(ByVal OldSlot As Long, ByVal NewSlot As Long)
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CChangeBankSlots
-    Buffer.WriteLong OldSlot
-    Buffer.WriteLong NewSlot
-    SendData Buffer.ToArray()
-    Buffer.Flush
-    Set Buffer = Nothing
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteLong CChangeBankSlots
+    buffer.WriteLong OldSlot
+    buffer.WriteLong NewSlot
+    SendData buffer.ToArray()
+    buffer.Flush
+    Set buffer = Nothing
 
     PlayerSwitchBankSlots OldSlot, NewSlot
 End Sub
@@ -306,11 +306,11 @@ Public Function GetBankItemNum(ByVal BankSlot As Long) As Long
         Exit Function
     End If
 
-    GetBankItemNum = Bank.Item(BankSlot).num
+    GetBankItemNum = Bank.Item(BankSlot).Num
 End Function
 
 Public Sub SetBankItemNum(ByVal BankSlot As Long, ByVal itemNum As Long)
-    Bank.Item(BankSlot).num = itemNum
+    Bank.Item(BankSlot).Num = itemNum
 End Sub
 
 Public Function GetBankItemValue(ByVal BankSlot As Long) As Long

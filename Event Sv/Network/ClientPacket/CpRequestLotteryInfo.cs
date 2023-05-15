@@ -1,5 +1,6 @@
 ﻿using Event_Server.Data;
 using Event_Server.Network.ServerPacket;
+using System.Runtime.InteropServices;
 
 namespace Event_Server.Network.ClientPacket
 {
@@ -7,9 +8,8 @@ namespace Event_Server.Network.ClientPacket
     {
         public void Process(byte[] buffer, IConnection connection)
         {
-            //var msg = new ByteBuffer(buffer);
+            new SpLotteryData(new Lottery().Load()).Send(connection);
 
-            new SpLotteryData().SendPacket();
         }
     }
 }
