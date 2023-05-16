@@ -1457,7 +1457,7 @@ Public Sub DrawInventory()
     Height = Windows(GetWindowIndex("winInventory")).Window.Height
 
     ' render green
-    RenderTexture Tex_GUI(34), xO + 4, yO + 23, 0, 0, Width - 8, Height - 27, 4, 4
+    'RenderTexture Tex_Design(34), xO + 4, yO + 23, 0, 0, Width - 8, Height - 27, 4, 4
 
     Width = 76
     Height = 76
@@ -1509,6 +1509,10 @@ Public Sub DrawInventory()
                     If ItemPic > 0 And ItemPic <= Count_Item Then
                         top = yO + InvTop + ((InvOffsetY + 32) * ((i - 1) \ InvColumns))
                         Left = xO + InvLeft + ((InvOffsetX + 32) * (((i - 1) Mod InvColumns)))
+                        
+                        'Background Item Colour by rarity
+                        Colour = GetItemNameColour(Item(GetPlayerInvItemNum(MyIndex, i)).Rarity, True)
+                        RenderTexture Tex_GUI(34), Left, top, 0, 0, PIC_X, PIC_Y, 4, 4, Colour
 
                         ' draw icon
                         If Options.ItemAnimation = YES Then

@@ -3765,21 +3765,38 @@ Public Sub ShowItemDesc(X As Long, Y As Long, itemNum As Long, SoulBound As Bool
     End Select
 End Sub
 
-Public Function GetItemNameColour(ByVal Rarity As Byte) As Long
-    Select Case Rarity
-    Case 0    ' white
-        GetItemNameColour = White
-    Case 1    ' green
-        GetItemNameColour = Green
-    Case 2    ' blue
-        GetItemNameColour = BrightBlue
-    Case 3    ' maroon
-        GetItemNameColour = Red
-    Case 4    ' purple
-        GetItemNameColour = Pink
-    Case 5    ' orange
-        GetItemNameColour = Brown
-    End Select
+Public Function GetItemNameColour(ByVal Rarity As Byte, Optional ByVal IsDxColour As Boolean = False) As Long
+    If IsDxColour Then
+        Select Case Rarity
+        Case 0    ' white
+            GetItemNameColour = D3DColorRGBA(255, 255, 255, 150)
+        Case 1    ' green
+            GetItemNameColour = D3DColorRGBA(0, 80, 0, 150)
+        Case 2    ' blue
+            GetItemNameColour = D3DColorRGBA(0, 0, 150, 150)
+        Case 3    ' red
+            GetItemNameColour = D3DColorRGBA(255, 0, 0, 150)
+        Case 4    ' pink
+            GetItemNameColour = D3DColorRGBA(255, 100, 203, 150)
+        Case 5    ' gold
+            GetItemNameColour = D3DColorRGBA(255, 215, 0, 150)
+        End Select
+    Else
+        Select Case Rarity
+        Case 0    ' white
+            GetItemNameColour = White
+        Case 1    ' green
+            GetItemNameColour = Green
+        Case 2    ' blue
+            GetItemNameColour = BrightBlue
+        Case 3    ' maroon
+            GetItemNameColour = Red
+        Case 4    ' purple
+            GetItemNameColour = Pink
+        Case 5    ' orange
+            GetItemNameColour = Gold
+        End Select
+    End If
 End Function
 
 Public Sub AddDescInfo(text As String, Optional Colour As Long = White)

@@ -124,6 +124,8 @@ End Function
 Sub SendToEventServer(ByRef Data() As Byte)
     Dim Buffer As clsBuffer
     Dim tempData() As Byte
+    
+    If Options.EVENTSV = NO Then Exit Sub
 
     Set Buffer = New clsBuffer
     tempData = Data

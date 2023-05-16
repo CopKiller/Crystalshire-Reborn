@@ -1,12 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Event Sv",
     "\\Event Sv\\Data",
     "\\Event Sv\\Network",
     "\\Event Sv\\Network\\ClientPacket",
     "\\Event Sv\\Network\\ServerPacket"
   ],
-  "SelectedNode": "\\Event Sv",
   "PreviewInSolutionExplorer": false
 }

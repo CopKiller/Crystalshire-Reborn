@@ -132,6 +132,7 @@ Begin VB.Form frmServer
       _Version        =   393216
       Style           =   1
       Tabs            =   5
+      Tab             =   4
       TabsPerRow      =   5
       TabHeight       =   503
       Enabled         =   0   'False
@@ -146,7 +147,7 @@ Begin VB.Form frmServer
       EndProperty
       TabCaption(0)   =   "Console"
       TabPicture(0)   =   "frmServer.frx":1708A
-      Tab(0).ControlEnabled=   -1  'True
+      Tab(0).ControlEnabled=   0   'False
       Tab(0).Control(0)=   "txtText"
       Tab(0).Control(0).Enabled=   0   'False
       Tab(0).Control(1)=   "txtChat"
@@ -162,33 +163,36 @@ Begin VB.Form frmServer
       TabCaption(2)   =   "Control "
       TabPicture(2)   =   "frmServer.frx":170C2
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "cmdShutDown"
-      Tab(2).Control(1)=   "chkServerLog"
-      Tab(2).Control(2)=   "fraServer"
-      Tab(2).Control(3)=   "fraDatabase"
+      Tab(2).Control(0)=   "fraDatabase"
+      Tab(2).Control(1)=   "fraServer"
+      Tab(2).Control(2)=   "chkServerLog"
+      Tab(2).Control(3)=   "cmdShutDown"
       Tab(2).ControlCount=   4
       TabCaption(3)   =   "Login"
       TabPicture(3)   =   "frmServer.frx":170DE
       Tab(3).ControlEnabled=   0   'False
       Tab(3).Control(0)=   "txtLogin"
+      Tab(3).Control(0).Enabled=   0   'False
       Tab(3).ControlCount=   1
       TabCaption(4)   =   "Event"
       TabPicture(4)   =   "frmServer.frx":170FA
-      Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "chkEventSv"
-      Tab(4).Control(1)=   "txtEvent"
+      Tab(4).ControlEnabled=   -1  'True
+      Tab(4).Control(0)=   "txtEvent"
+      Tab(4).Control(0).Enabled=   0   'False
+      Tab(4).Control(1)=   "chkEventSv"
+      Tab(4).Control(1).Enabled=   0   'False
       Tab(4).ControlCount=   2
       Begin VB.CheckBox chkEventSv 
          Caption         =   "Event Server Enabled?"
          Height          =   255
-         Left            =   -74880
+         Left            =   120
          TabIndex        =   47
          Top             =   3000
          Width           =   2295
       End
       Begin VB.TextBox txtEvent 
          Height          =   2535
-         Left            =   -74880
+         Left            =   120
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   45
@@ -207,7 +211,7 @@ Begin VB.Form frmServer
       Begin VB.CheckBox chkMsgWindow 
          Caption         =   "Msg Window"
          Height          =   375
-         Left            =   5640
+         Left            =   -69360
          TabIndex        =   30
          Top             =   2640
          Width           =   975
@@ -473,14 +477,14 @@ Begin VB.Form frmServer
       End
       Begin VB.TextBox txtChat 
          Height          =   375
-         Left            =   120
+         Left            =   -74880
          TabIndex        =   3
          Top             =   2730
          Width           =   5415
       End
       Begin VB.TextBox txtText 
          Height          =   2175
-         Left            =   120
+         Left            =   -74880
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   2
