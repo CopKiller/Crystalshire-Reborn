@@ -1,4 +1,6 @@
-﻿namespace Event_Server.Communication
+﻿using FluentEmail.Smtp;
+
+namespace Event_Server.Communication
 {
     public static class Constants
     {
@@ -25,9 +27,5 @@
 
         // Events
         public const byte MaxBets = 100;
-
-        // Directories
-        public const string DirLottery = @"~\Lottery";
-        public const string DirItemsPendentes = @"~\ItemsPendentes";
     }
 }

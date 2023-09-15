@@ -172,7 +172,7 @@ End Sub
 ' :: Login packet ::
 ' ::::::::::::::::::
 Private Sub HandleLogin(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim Buffer As clsBuffer, Name As String, I As Long, n As Long, Password As String
+    Dim Buffer As clsBuffer, Name As String, i As Long, n As Long, Password As String
     Dim token As String
 
     If Not IsPlaying(Index) Then
@@ -199,7 +199,13 @@ Private Sub HandleLogin(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAd
             End If
 
             If isShuttingDown Then
-                Call AlertMsg(Index, DIALOGUE_MSG_REBOOTING)
+                Call AlertMsg(Index, DIALOGUE_MSG_REBOOTING, MENU_LOGIN)
+                Exit Sub
+            End If
+
+            'EventSv Is Connected?
+            If Not IsEventServerConnected Then
+                Call AlertMsg(Index, DIALOGUE_MSG_REBOOTING, MENU_LOGIN)
                 Exit Sub
             End If
 
@@ -235,21 +241,21 @@ End Sub
 ' ::::::::::::::::::::
 Private Sub HandleSayMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Msg As String
-    Dim I As Long
+    Dim i As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     Msg = Buffer.ReadString
 
     ' Prevent hacking
-    For I = 1 To Len(Msg)
+    For i = 1 To Len(Msg)
         ' limit the ASCII
-        If AscW(Mid$(Msg, I, 1)) < 32 Or AscW(Mid$(Msg, I, 1)) > 126 Then
+        If AscW(Mid$(Msg, i, 1)) < 32 Or AscW(Mid$(Msg, i, 1)) > 126 Then
             ' limit the extended ASCII
-            If AscW(Mid$(Msg, I, 1)) < 128 Or AscW(Mid$(Msg, I, 1)) > 168 Then
+            If AscW(Mid$(Msg, i, 1)) < 128 Or AscW(Mid$(Msg, i, 1)) > 168 Then
                 ' limit the extended ASCII
-                If AscW(Mid$(Msg, I, 1)) < 224 Or AscW(Mid$(Msg, I, 1)) > 253 Then
-                    Mid$(Msg, I, 1) = ""
+                If AscW(Mid$(Msg, i, 1)) < 224 Or AscW(Mid$(Msg, i, 1)) > 253 Then
+                    Mid$(Msg, i, 1) = ""
                 End If
             End If
         End If
@@ -264,16 +270,16 @@ End Sub
 
 Private Sub HandleEmoteMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Msg As String
-    Dim I As Long
+    Dim i As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     Msg = Buffer.ReadString
 
     ' Prevent hacking
-    For I = 1 To Len(Msg)
+    For i = 1 To Len(Msg)
 
-        If AscW(Mid$(Msg, I, 1)) < 32 Or AscW(Mid$(Msg, I, 1)) > 126 Then
+        If AscW(Mid$(Msg, i, 1)) < 32 Or AscW(Mid$(Msg, i, 1)) > 126 Then
             Exit Sub
         End If
 
@@ -288,7 +294,7 @@ End Sub
 Private Sub HandleBroadcastMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Msg As String
     Dim s As String
-    Dim I As Long
+    Dim i As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -300,9 +306,9 @@ Private Sub HandleBroadcastMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal 
     End If
 
     ' Prevent hacking
-    For I = 1 To Len(Msg)
+    For i = 1 To Len(Msg)
 
-        If AscW(Mid$(Msg, I, 1)) < 32 Or AscW(Mid$(Msg, I, 1)) > 126 Then
+        If AscW(Mid$(Msg, i, 1)) < 32 Or AscW(Mid$(Msg, i, 1)) > 126 Then
             Exit Sub
         End If
 
@@ -320,7 +326,7 @@ End Sub
 Private Sub HandleGuildMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Msg As String
     Dim s As String
-    Dim I As Long
+    Dim i As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -331,9 +337,9 @@ Private Sub HandleGuildMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal Star
     End If
 
     ' Prevent hacking
-    For I = 1 To Len(Msg)
+    For i = 1 To Len(Msg)
 
-        If AscW(Mid$(Msg, I, 1)) < 32 Or AscW(Mid$(Msg, I, 1)) > 126 Then
+        If AscW(Mid$(Msg, i, 1)) < 32 Or AscW(Mid$(Msg, i, 1)) > 126 Then
             Buffer.Flush: Set Buffer = Nothing: Exit Sub
             Exit Sub
         End If
@@ -351,7 +357,7 @@ End Sub
 Private Sub HandlePartyMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Msg As String
     Dim s As String
-    Dim I As Long
+    Dim i As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -362,8 +368,8 @@ Private Sub HandlePartyMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal Star
     End If
 
     ' Prevent hacking
-    For I = 1 To Len(Msg)
-        If AscW(Mid$(Msg, I, 1)) < 32 Or AscW(Mid$(Msg, I, 1)) > 126 Then
+    For i = 1 To Len(Msg)
+        If AscW(Mid$(Msg, i, 1)) < 32 Or AscW(Mid$(Msg, i, 1)) > 126 Then
             Buffer.Flush: Set Buffer = Nothing: Exit Sub
             Exit Sub
         End If
@@ -379,7 +385,7 @@ End Sub
 
 Private Sub HandlePlayerMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Msg As String
-    Dim I As Long
+    Dim i As Long
     Dim MsgTo As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
@@ -388,9 +394,9 @@ Private Sub HandlePlayerMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal Sta
     Msg = Buffer.ReadString
 
     ' Prevent hacking
-    For I = 1 To Len(Msg)
+    For i = 1 To Len(Msg)
 
-        If AscW(Mid$(Msg, I, 1)) < 32 Or AscW(Mid$(Msg, I, 1)) > 126 Then
+        If AscW(Mid$(Msg, i, 1)) < 32 Or AscW(Mid$(Msg, i, 1)) > 126 Then
             Exit Sub
         End If
 
@@ -540,7 +546,7 @@ End Sub
 ' :: Player attack packet ::
 ' ::::::::::::::::::::::::::
 Sub HandleAttack(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim I As Long, n As Long, Damage As Long, TempIndex As Long, X As Long, Y As Long, MapNum As Long, dirReq As Long
+    Dim i As Long, n As Long, Damage As Long, TempIndex As Long, X As Long, Y As Long, MapNum As Long, dirReq As Long
 
     ' can't attack whilst casting
     If TempPlayer(Index).spellBuffer.Spell > 0 Then Exit Sub
@@ -552,18 +558,18 @@ Sub HandleAttack(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As L
     SendAttack Index
 
     ' Try to attack a player
-    For I = 1 To Player_HighIndex
-        TempIndex = I
+    For i = 1 To Player_HighIndex
+        TempIndex = i
 
         ' Make sure we dont try to attack ourselves
         If TempIndex <> Index Then
-            TryPlayerAttackPlayer Index, I
+            TryPlayerAttackPlayer Index, i
         End If
     Next
 
     ' Try to attack a npc
-    For I = 1 To MAX_MAP_NPCS
-        TryPlayerAttackNpc Index, I
+    For i = 1 To MAX_MAP_NPCS
+        TryPlayerAttackNpc Index, i
     Next
 
     ' check if we've got a remote chat tile
@@ -675,14 +681,14 @@ End Sub
 ' ::::::::::::::::::::::::::::::::
 Sub HandlePlayerInfoRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Name As String
-    Dim I As Long
+    Dim i As Long
     Dim n As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     Name = Buffer.ReadString    'Parse(1)
     Buffer.Flush: Set Buffer = Nothing
-    I = FindPlayer(Name)
+    i = FindPlayer(Name)
 End Sub
 
 ' :::::::::::::::::::::::
@@ -833,7 +839,7 @@ End Sub
 ' :: Map data packet ::
 ' :::::::::::::::::::::
 Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim I As Long
+    Dim i As Long
     Dim MapNum As Long
     Dim X As Long
     Dim Y As Long
@@ -882,26 +888,26 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
         
         .DAYNIGHT = Buffer.ReadByte
 
-        For I = 1 To MAX_MAP_NPCS
-            .NPC(I) = Buffer.ReadLong
-            Call ClearMapNpc(I, MapNum)
+        For i = 1 To MAX_MAP_NPCS
+            .NPC(i) = Buffer.ReadLong
+            Call ClearMapNpc(i, MapNum)
         Next
     End With
 
     Map(MapNum).TileData.EventCount = Buffer.ReadLong
     If Map(MapNum).TileData.EventCount > 0 Then
         ReDim Preserve Map(MapNum).TileData.Events(1 To Map(MapNum).TileData.EventCount)
-        For I = 1 To Map(MapNum).TileData.EventCount
-            With Map(MapNum).TileData.Events(I)
+        For i = 1 To Map(MapNum).TileData.EventCount
+            With Map(MapNum).TileData.Events(i)
                 .Name = Buffer.ReadString
                 .X = Buffer.ReadLong
                 .Y = Buffer.ReadLong
                 .PageCount = Buffer.ReadLong
             End With
-            If Map(MapNum).TileData.Events(I).PageCount > 0 Then
-                ReDim Preserve Map(MapNum).TileData.Events(I).EventPage(1 To Map(MapNum).TileData.Events(I).PageCount)
-                For X = 1 To Map(MapNum).TileData.Events(I).PageCount
-                    With Map(MapNum).TileData.Events(I).EventPage(X)
+            If Map(MapNum).TileData.Events(i).PageCount > 0 Then
+                ReDim Preserve Map(MapNum).TileData.Events(i).EventPage(1 To Map(MapNum).TileData.Events(i).PageCount)
+                For X = 1 To Map(MapNum).TileData.Events(i).PageCount
+                    With Map(MapNum).TileData.Events(i).EventPage(X)
                         .chkPlayerVar = Buffer.ReadByte
                         .chkSelfSwitch = Buffer.ReadByte
                         .chkHasItem = Buffer.ReadByte
@@ -924,10 +930,10 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
                         .Trigger = Buffer.ReadByte
                         .CommandCount = Buffer.ReadLong
                     End With
-                    If Map(MapNum).TileData.Events(I).EventPage(X).CommandCount > 0 Then
-                        ReDim Preserve Map(MapNum).TileData.Events(I).EventPage(X).Commands(1 To Map(MapNum).TileData.Events(I).EventPage(X).CommandCount)
-                        For Y = 1 To Map(MapNum).TileData.Events(I).EventPage(X).CommandCount
-                            With Map(MapNum).TileData.Events(I).EventPage(X).Commands(Y)
+                    If Map(MapNum).TileData.Events(i).EventPage(X).CommandCount > 0 Then
+                        ReDim Preserve Map(MapNum).TileData.Events(i).EventPage(X).Commands(1 To Map(MapNum).TileData.Events(i).EventPage(X).CommandCount)
+                        For Y = 1 To Map(MapNum).TileData.Events(i).EventPage(X).CommandCount
+                            With Map(MapNum).TileData.Events(i).EventPage(X).Commands(Y)
                                 .Type = Buffer.ReadByte
                                 .Text = Buffer.ReadString
                                 .colour = Buffer.ReadLong
@@ -946,11 +952,11 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
 
     For X = 0 To Map(MapNum).MapData.MaxX
         For Y = 0 To Map(MapNum).MapData.MaxY
-            For I = 1 To MapLayer.Layer_Count - 1
-                Map(MapNum).TileData.Tile(X, Y).Layer(I).X = Buffer.ReadLong
-                Map(MapNum).TileData.Tile(X, Y).Layer(I).Y = Buffer.ReadLong
-                Map(MapNum).TileData.Tile(X, Y).Layer(I).Tileset = Buffer.ReadLong
-                Map(MapNum).TileData.Tile(X, Y).Autotile(I) = Buffer.ReadByte
+            For i = 1 To MapLayer.Layer_Count - 1
+                Map(MapNum).TileData.Tile(X, Y).Layer(i).X = Buffer.ReadLong
+                Map(MapNum).TileData.Tile(X, Y).Layer(i).Y = Buffer.ReadLong
+                Map(MapNum).TileData.Tile(X, Y).Layer(i).Tileset = Buffer.ReadLong
+                Map(MapNum).TileData.Tile(X, Y).Autotile(i) = Buffer.ReadByte
             Next
             Map(MapNum).TileData.Tile(X, Y).Type = Buffer.ReadByte
             Map(MapNum).TileData.Tile(X, Y).Data1 = Buffer.ReadLong
@@ -966,9 +972,9 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Call SpawnMapNpcs(MapNum)
 
     ' Clear out it all
-    For I = 1 To MAX_MAP_ITEMS
-        Call SpawnItemSlot(I, 0, 0, GetPlayerMap(Index), MapItem(GetPlayerMap(Index), I).X, MapItem(GetPlayerMap(Index), I).Y)
-        Call ClearMapItem(I, GetPlayerMap(Index))
+    For i = 1 To MAX_MAP_ITEMS
+        Call SpawnItemSlot(i, 0, 0, GetPlayerMap(Index), MapItem(GetPlayerMap(Index), i).X, MapItem(GetPlayerMap(Index), i).Y)
+        Call ClearMapItem(i, GetPlayerMap(Index))
     Next
 
     ' Respawn
@@ -981,11 +987,11 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Call GetMapCRC32(MapNum)
 
     ' Refresh map for everyone online
-    For I = 1 To Player_HighIndex
-        If IsPlaying(I) And GetPlayerMap(I) = MapNum Then
-            Call PlayerWarp(I, MapNum, GetPlayerX(I), GetPlayerY(I))
+    For i = 1 To Player_HighIndex
+        If IsPlaying(i) And GetPlayerMap(i) = MapNum Then
+            Call PlayerWarp(i, MapNum, GetPlayerX(i), GetPlayerY(i))
         End If
-    Next I
+    Next i
 
     Buffer.Flush: Set Buffer = Nothing
 End Sub
@@ -996,7 +1002,7 @@ End Sub
 Sub HandleNeedMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim s As String
     Dim Buffer As clsBuffer
-    Dim I As Long
+    Dim i As Long
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     ' Get yes/no value
@@ -1013,8 +1019,8 @@ Sub HandleNeedMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Call SendJoinMap(Index)
 
     'send Resource cache
-    For I = 0 To MapResourceCache(GetPlayerMap(Index)).Resource_Count
-        SendResourceCacheTo Index, I
+    For i = 0 To MapResourceCache(GetPlayerMap(Index)).Resource_Count
+        SendResourceCacheTo Index, i
     Next
 
     TempPlayer(Index).GettingMap = NO
@@ -1063,7 +1069,7 @@ End Sub
 ' :: Respawn map packet ::
 ' ::::::::::::::::::::::::
 Sub HandleMapRespawn(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim I As Long
+    Dim i As Long
 
     ' Prevent hacking
     If GetPlayerAccess(Index) < ADMIN_MAPPER Then
@@ -1071,17 +1077,17 @@ Sub HandleMapRespawn(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
     End If
 
     ' Clear out it all
-    For I = 1 To MAX_MAP_ITEMS
-        Call SpawnItemSlot(I, 0, 0, GetPlayerMap(Index), MapItem(GetPlayerMap(Index), I).X, MapItem(GetPlayerMap(Index), I).Y)
-        Call ClearMapItem(I, GetPlayerMap(Index))
+    For i = 1 To MAX_MAP_ITEMS
+        Call SpawnItemSlot(i, 0, 0, GetPlayerMap(Index), MapItem(GetPlayerMap(Index), i).X, MapItem(GetPlayerMap(Index), i).Y)
+        Call ClearMapItem(i, GetPlayerMap(Index))
     Next
 
     ' Respawn
     Call SpawnMapItems(GetPlayerMap(Index))
 
     ' Respawn NPCS
-    For I = 1 To MAX_MAP_NPCS
-        Call SpawnNpc(I, GetPlayerMap(Index))
+    For i = 1 To MAX_MAP_NPCS
+        Call SpawnNpc(i, GetPlayerMap(Index))
     Next
 
     CacheResources GetPlayerMap(Index)
@@ -1094,7 +1100,7 @@ End Sub
 ' :::::::::::::::::::::::
 Sub HandleMapReport(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim s As String
-    Dim I As Long
+    Dim i As Long
     Dim tMapStart As Long
     Dim tMapEnd As Long
 
@@ -1107,9 +1113,9 @@ Sub HandleMapReport(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     tMapStart = 1
     tMapEnd = 1
 
-    For I = 1 To MAX_MAPS
+    For i = 1 To MAX_MAPS
 
-        If LenB(Trim$(Map(I).MapData.Name)) = 0 Then
+        If LenB(Trim$(Map(i).MapData.Name)) = 0 Then
             tMapEnd = tMapEnd + 1
         Else
 
@@ -1117,8 +1123,8 @@ Sub HandleMapReport(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
                 s = s & Trim$(CStr(tMapStart)) & "-" & Trim$(CStr(tMapEnd - 1)) & ", "
             End If
 
-            tMapStart = I + 1
-            tMapEnd = I + 1
+            tMapStart = i + 1
+            tMapEnd = i + 1
         End If
 
     Next
@@ -1453,7 +1459,7 @@ End Sub
 ' ::::::::::::::::::::::
 Sub HandleSaveShop(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim ShopNum As Long
-    Dim I As Long
+    Dim i As Long
     Dim Buffer As clsBuffer
     Dim ShopSize As Long
     Dim ShopData() As Byte
@@ -1541,7 +1547,7 @@ End Sub
 ' :::::::::::::::::::::::
 Sub HandleSetAccess(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
-    Dim I As Long
+    Dim i As Long
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1554,11 +1560,11 @@ Sub HandleSetAccess(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     ' The index
     n = FindPlayer(Buffer.ReadString)    'Parse(1))
     ' The access
-    I = Buffer.ReadLong    'CLng(Parse(2))
+    i = Buffer.ReadLong    'CLng(Parse(2))
     Buffer.Flush: Set Buffer = Nothing
 
     ' Check for invalid access level
-    If I >= 0 Or I <= 3 Then
+    If i >= 0 Or i <= 3 Then
 
         ' Check if player is on
         If n > 0 Then
@@ -1573,7 +1579,7 @@ Sub HandleSetAccess(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
                 Call GlobalMsg(GetPlayerName(n) & " has been blessed with administrative access.", BrightBlue)
             End If
 
-            Call SetPlayerAccess(n, I)
+            Call SetPlayerAccess(n, i)
             Call SendPlayerData(n)
             Call AddLog(GetPlayerName(Index) & " has modified " & GetPlayerName(n) & "'s access.", ADMIN_LOG)
         Else
@@ -2032,7 +2038,7 @@ End Sub
 
 Sub HandleAcceptTradeRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim tradeTarget As Long
-    Dim I As Long
+    Dim i As Long
 
     tradeTarget = TempPlayer(Index).TradeRequest
 
@@ -2057,11 +2063,11 @@ Sub HandleAcceptTradeRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal St
     TempPlayer(Index).InTrade = tradeTarget
     TempPlayer(tradeTarget).InTrade = Index
     ' clear out their trade offers
-    For I = 1 To MAX_INV
-        TempPlayer(Index).TradeOffer(I).Num = 0
-        TempPlayer(Index).TradeOffer(I).value = 0
-        TempPlayer(tradeTarget).TradeOffer(I).Num = 0
-        TempPlayer(tradeTarget).TradeOffer(I).value = 0
+    For i = 1 To MAX_INV
+        TempPlayer(Index).TradeOffer(i).Num = 0
+        TempPlayer(Index).TradeOffer(i).value = 0
+        TempPlayer(tradeTarget).TradeOffer(i).Num = 0
+        TempPlayer(tradeTarget).TradeOffer(i).value = 0
     Next
     TempPlayer(Index).TradeGold = 0
     TempPlayer(tradeTarget).TradeGold = 0
@@ -2084,7 +2090,7 @@ End Sub
 
 Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim tradeTarget As Long
-    Dim I As Long, X As Long
+    Dim i As Long, X As Long
     Dim tmpTradeItem(1 To MAX_INV) As PlayerInvRec
     Dim tmpTradeItem2(1 To MAX_INV) As PlayerInvRec
     Dim tmpTradeGold As Long, tmpTradeGold2 As Long
@@ -2117,15 +2123,15 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     End If
 
     ' get inventory spaces
-    For I = 1 To MAX_INV
-        If GetPlayerInvItemNum(Index, I) > 0 Then
+    For i = 1 To MAX_INV
+        If GetPlayerInvItemNum(Index, i) > 0 Then
             ' check if we're offering it
             For X = 1 To MAX_INV
-                If TempPlayer(Index).TradeOffer(X).Num = I Then
+                If TempPlayer(Index).TradeOffer(X).Num = i Then
                     ItemNum = Player(Index).Inv(TempPlayer(Index).TradeOffer(X).Num).Num
                     ' if it's a currency then make sure we're offering all of it
                     If Item(ItemNum).Stackable > 0 Then
-                        If TempPlayer(Index).TradeOffer(X).value = GetPlayerInvItemNum(Index, I) Then
+                        If TempPlayer(Index).TradeOffer(X).value = GetPlayerInvItemNum(Index, i) Then
                             yourInvSpace = yourInvSpace + 1
                         End If
                     Else
@@ -2136,14 +2142,14 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
         Else
             yourInvSpace = yourInvSpace + 1
         End If
-        If GetPlayerInvItemNum(tradeTarget, I) > 0 Then
+        If GetPlayerInvItemNum(tradeTarget, i) > 0 Then
             ' check if we're offering it
             For X = 1 To MAX_INV
-                If TempPlayer(tradeTarget).TradeOffer(X).Num = I Then
+                If TempPlayer(tradeTarget).TradeOffer(X).Num = i Then
                     ItemNum = Player(tradeTarget).Inv(TempPlayer(tradeTarget).TradeOffer(X).Num).Num
                     ' if it's a currency then make sure we're offering all of it
                     If Item(ItemNum).Stackable > 0 Then
-                        If TempPlayer(tradeTarget).TradeOffer(X).value = GetPlayerInvItemNum(tradeTarget, I) Then
+                        If TempPlayer(tradeTarget).TradeOffer(X).value = GetPlayerInvItemNum(tradeTarget, i) Then
                             theirInvSpace = theirInvSpace + 1
                         End If
                     Else
@@ -2157,9 +2163,9 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     Next
 
     ' get item count
-    For I = 1 To MAX_INV
-        If TempPlayer(Index).TradeOffer(I).Num > 0 Then
-            ItemNum = Player(Index).Inv(TempPlayer(Index).TradeOffer(I).Num).Num
+    For i = 1 To MAX_INV
+        If TempPlayer(Index).TradeOffer(i).Num > 0 Then
+            ItemNum = Player(Index).Inv(TempPlayer(Index).TradeOffer(i).Num).Num
             If ItemNum > 0 Then
                 If Item(ItemNum).Stackable > 0 Then
                     ' check if the other player has the item
@@ -2171,8 +2177,8 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
                 End If
             End If
         End If
-        If TempPlayer(tradeTarget).TradeOffer(I).Num > 0 Then
-            ItemNum = Player(tradeTarget).Inv(TempPlayer(tradeTarget).TradeOffer(I).Num).Num
+        If TempPlayer(tradeTarget).TradeOffer(i).Num > 0 Then
+            ItemNum = Player(tradeTarget).Inv(TempPlayer(tradeTarget).TradeOffer(i).Num).Num
             If ItemNum > 0 Then
                 If Item(ItemNum).Stackable > 0 Then
                     ' check if the other player has the item
@@ -2211,27 +2217,27 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     End If
 
     ' take their items
-    For I = 1 To MAX_INV
+    For i = 1 To MAX_INV
         ' player
-        If TempPlayer(Index).TradeOffer(I).Num > 0 Then
-            ItemNum = Player(Index).Inv(TempPlayer(Index).TradeOffer(I).Num).Num
+        If TempPlayer(Index).TradeOffer(i).Num > 0 Then
+            ItemNum = Player(Index).Inv(TempPlayer(Index).TradeOffer(i).Num).Num
             If ItemNum > 0 Then
                 ' store temp
-                tmpTradeItem(I).Num = ItemNum
-                tmpTradeItem(I).value = TempPlayer(Index).TradeOffer(I).value
+                tmpTradeItem(i).Num = ItemNum
+                tmpTradeItem(i).value = TempPlayer(Index).TradeOffer(i).value
                 ' take item
-                TakeInvSlot Index, TempPlayer(Index).TradeOffer(I).Num, tmpTradeItem(I).value
+                TakeInvSlot Index, TempPlayer(Index).TradeOffer(i).Num, tmpTradeItem(i).value
             End If
         End If
         ' target
-        If TempPlayer(tradeTarget).TradeOffer(I).Num > 0 Then
-            ItemNum = GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(I).Num)
+        If TempPlayer(tradeTarget).TradeOffer(i).Num > 0 Then
+            ItemNum = GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).Num)
             If ItemNum > 0 Then
                 ' store temp
-                tmpTradeItem2(I).Num = ItemNum
-                tmpTradeItem2(I).value = TempPlayer(tradeTarget).TradeOffer(I).value
+                tmpTradeItem2(i).Num = ItemNum
+                tmpTradeItem2(i).value = TempPlayer(tradeTarget).TradeOffer(i).value
                 ' take item
-                TakeInvSlot tradeTarget, TempPlayer(tradeTarget).TradeOffer(I).Num, tmpTradeItem2(I).value
+                TakeInvSlot tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).Num, tmpTradeItem2(i).value
             End If
         End If
     Next
@@ -2243,16 +2249,16 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     Call SetPlayerGold(tradeTarget, GetPlayerGold(tradeTarget) - tmpTradeGold2)
 
     ' taken all items. now they can't not get items because of no inventory space.
-    For I = 1 To MAX_INV
+    For i = 1 To MAX_INV
         ' player
-        If tmpTradeItem2(I).Num > 0 Then
+        If tmpTradeItem2(i).Num > 0 Then
             ' give away!
-            GiveInvItem Index, tmpTradeItem2(I).Num, tmpTradeItem2(I).value, 0, False
+            GiveInvItem Index, tmpTradeItem2(i).Num, tmpTradeItem2(i).value, 0, False
         End If
         ' target
-        If tmpTradeItem(I).Num > 0 Then
+        If tmpTradeItem(i).Num > 0 Then
             ' give away!
-            GiveInvItem tradeTarget, tmpTradeItem(I).Num, tmpTradeItem(I).value, 0, False
+            GiveInvItem tradeTarget, tmpTradeItem(i).Num, tmpTradeItem(i).value, 0, False
         End If
     Next
     
@@ -2266,11 +2272,11 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     SendInventory tradeTarget
 
     ' they now have all the items. Clear out values + let them out of the trade.
-    For I = 1 To MAX_INV
-        TempPlayer(Index).TradeOffer(I).Num = 0
-        TempPlayer(Index).TradeOffer(I).value = 0
-        TempPlayer(tradeTarget).TradeOffer(I).Num = 0
-        TempPlayer(tradeTarget).TradeOffer(I).value = 0
+    For i = 1 To MAX_INV
+        TempPlayer(Index).TradeOffer(i).Num = 0
+        TempPlayer(Index).TradeOffer(i).value = 0
+        TempPlayer(tradeTarget).TradeOffer(i).Num = 0
+        TempPlayer(tradeTarget).TradeOffer(i).value = 0
     Next
     TempPlayer(Index).TradeGold = 0
     TempPlayer(tradeTarget).TradeGold = 0
@@ -2286,7 +2292,7 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
 End Sub
 
 Sub HandleDeclineTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim I As Long
+    Dim i As Long
     Dim tradeTarget As Long
 
     tradeTarget = TempPlayer(Index).InTrade
@@ -2296,11 +2302,11 @@ Sub HandleDeclineTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAdd
         Exit Sub
     End If
 
-    For I = 1 To MAX_INV
-        TempPlayer(Index).TradeOffer(I).Num = 0
-        TempPlayer(Index).TradeOffer(I).value = 0
-        TempPlayer(tradeTarget).TradeOffer(I).Num = 0
-        TempPlayer(tradeTarget).TradeOffer(I).value = 0
+    For i = 1 To MAX_INV
+        TempPlayer(Index).TradeOffer(i).Num = 0
+        TempPlayer(Index).TradeOffer(i).value = 0
+        TempPlayer(tradeTarget).TradeOffer(i).Num = 0
+        TempPlayer(tradeTarget).TradeOffer(i).value = 0
     Next
     
     TempPlayer(Index).TradeGold = 0
@@ -2322,7 +2328,7 @@ Sub HandleTradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Dim Amount As Long
     Dim EmptySlot As Long
     Dim ItemNum As Long
-    Dim I As Long
+    Dim i As Long
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -2355,13 +2361,13 @@ Sub HandleTradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
 
     If Item(ItemNum).Stackable > 0 Then
         ' check if already offering same currency item
-        For I = 1 To MAX_INV
-            If TempPlayer(Index).TradeOffer(I).Num = InvSlot Then
+        For i = 1 To MAX_INV
+            If TempPlayer(Index).TradeOffer(i).Num = InvSlot Then
                 ' add amount
-                TempPlayer(Index).TradeOffer(I).value = TempPlayer(Index).TradeOffer(I).value + Amount
+                TempPlayer(Index).TradeOffer(i).value = TempPlayer(Index).TradeOffer(i).value + Amount
                 ' clamp to limits
-                If TempPlayer(Index).TradeOffer(I).value > GetPlayerInvItemValue(Index, InvSlot) Then
-                    TempPlayer(Index).TradeOffer(I).value = GetPlayerInvItemValue(Index, InvSlot)
+                If TempPlayer(Index).TradeOffer(i).value > GetPlayerInvItemValue(Index, InvSlot) Then
+                    TempPlayer(Index).TradeOffer(i).value = GetPlayerInvItemValue(Index, InvSlot)
                 End If
                 ' cancel any trade agreement
                 TempPlayer(Index).AcceptTrade = False
@@ -2378,8 +2384,8 @@ Sub HandleTradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
         Next
     Else
         ' make sure they're not already offering it
-        For I = 1 To MAX_INV
-            If TempPlayer(Index).TradeOffer(I).Num = InvSlot Then
+        For i = 1 To MAX_INV
+            If TempPlayer(Index).TradeOffer(i).Num = InvSlot Then
                 PlayerMsg Index, "You've already offered this item.", BrightRed
                 Exit Sub
             End If
@@ -2387,9 +2393,9 @@ Sub HandleTradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     End If
 
     ' not already offering - find earliest empty slot
-    For I = 1 To MAX_INV
-        If TempPlayer(Index).TradeOffer(I).Num = 0 Then
-            EmptySlot = I
+    For i = 1 To MAX_INV
+        If TempPlayer(Index).TradeOffer(i).Num = 0 Then
+            EmptySlot = i
             Exit For
         End If
     Next
@@ -2523,7 +2529,7 @@ End Sub
 Sub HandleHotbarUse(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
     Dim Slot As Long
-    Dim I As Long
+    Dim i As Long
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -2532,19 +2538,19 @@ Sub HandleHotbarUse(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
 
     Select Case Player(Index).Hotbar(Slot).sType
     Case 1    ' inventory
-        For I = 1 To MAX_INV
-            If Player(Index).Inv(I).Num > 0 Then
-                If Player(Index).Inv(I).Num = Player(Index).Hotbar(Slot).Slot Then
-                    UseItem Index, I
+        For i = 1 To MAX_INV
+            If Player(Index).Inv(i).Num > 0 Then
+                If Player(Index).Inv(i).Num = Player(Index).Hotbar(Slot).Slot Then
+                    UseItem Index, i
                     Exit Sub
                 End If
             End If
         Next
     Case 2    ' spell
-        For I = 1 To MAX_PLAYER_SPELLS
-            If Player(Index).Spell(I).Spell > 0 Then
-                If Player(Index).Spell(I).Spell = Player(Index).Hotbar(Slot).Slot Then
-                    BufferSpell Index, I
+        For i = 1 To MAX_PLAYER_SPELLS
+            If Player(Index).Spell(i).Spell > 0 Then
+                If Player(Index).Spell(i).Spell = Player(Index).Hotbar(Slot).Slot Then
+                    BufferSpell Index, i
                     Exit Sub
                 End If
             End If
@@ -2611,7 +2617,7 @@ End Sub
 Sub HandleSaveConv(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim convNum As Long
     Dim Buffer As clsBuffer
-    Dim I As Long
+    Dim i As Long
     Dim X As Long
 
     ' Prevent hacking
@@ -2632,16 +2638,16 @@ Sub HandleSaveConv(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
         .Name = Buffer.ReadString
         .chatCount = Buffer.ReadLong
         ReDim .Conv(1 To .chatCount)
-        For I = 1 To .chatCount
-            .Conv(I).Conv = Buffer.ReadString
+        For i = 1 To .chatCount
+            .Conv(i).Conv = Buffer.ReadString
             For X = 1 To 4
-                .Conv(I).rText(X) = Buffer.ReadString
-                .Conv(I).rTarget(X) = Buffer.ReadLong
+                .Conv(i).rText(X) = Buffer.ReadString
+                .Conv(i).rTarget(X) = Buffer.ReadLong
             Next
-            .Conv(I).Event = Buffer.ReadLong
-            .Conv(I).Data1 = Buffer.ReadLong
-            .Conv(I).Data2 = Buffer.ReadLong
-            .Conv(I).Data3 = Buffer.ReadLong
+            .Conv(i).Event = Buffer.ReadLong
+            .Conv(i).Data1 = Buffer.ReadLong
+            .Conv(i).Data2 = Buffer.ReadLong
+            .Conv(i).Data3 = Buffer.ReadLong
         Next
     End With
 
@@ -2660,7 +2666,7 @@ End Sub
 
 Sub HandleChatOption(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-    Dim I As Long
+    Dim i As Long
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()

@@ -2,7 +2,7 @@ Attribute VB_Name = "modPlayerMapItem"
 Option Explicit
 
 Sub PlayerMapGetItem(ByVal Index As Long)
-    Dim I As Long
+    Dim i As Long
     Dim MapNum As Long
     Dim Msg As String
 
@@ -11,32 +11,31 @@ Sub PlayerMapGetItem(ByVal Index As Long)
 
     If MapNum = 0 Then Exit Sub
 
-    For I = 1 To MAX_MAP_ITEMS
+    For i = 1 To MAX_MAP_ITEMS
         ' See if theres even an item here
-        If (MapItem(MapNum, I).Num > 0) And (MapItem(MapNum, I).Num <= MAX_ITEMS) Then
+        If (MapItem(MapNum, i).Num > 0) And (MapItem(MapNum, i).Num <= MAX_ITEMS) Then
             ' our drop?
-            If CanPlayerPickupItem(Index, I) Then
+            If CanPlayerPickupItem(Index, i) Then
                 ' Check if item is at the same location as the player
-                If (MapItem(MapNum, I).X = GetPlayerX(Index)) Then
-                    If (MapItem(MapNum, I).Y = GetPlayerY(Index)) Then
+                If (MapItem(MapNum, i).X = GetPlayerX(Index)) Then
+                    If (MapItem(MapNum, i).Y = GetPlayerY(Index)) Then
 
                         ' Set item in players inventor
-                        If GiveInvItem(Index, MapItem(MapNum, I).Num, MapItem(MapNum, I).Value, MapItem(MapNum, I).Bound) Then
-                            Msg = MapItem(MapNum, I).Value & "x " & Trim$(Item(MapItem(MapNum, I).Num).Name)
+                        If GiveInvItem(Index, MapItem(MapNum, i).Num, MapItem(MapNum, i).value, MapItem(MapNum, i).Bound) Then
+                            Msg = MapItem(MapNum, i).value & "x " & Trim$(Item(MapItem(MapNum, i).Num).Name)
                             
                             ' check tasks
-                            Call CheckTasks(Index, QUEST_TYPE_GOGATHER, MapItem(MapNum, I).Num)
-                            SendActionMsg GetPlayerMap(Index), Msg, GetItemNameColour(Item(MapItem(MapNum, I).Num).Rarity), 1, (GetPlayerX(Index) * 32), (GetPlayerY(Index) * 32)
+                            Call CheckTasks(Index, QUEST_TYPE_GOGATHER, MapItem(MapNum, i).Num)
+                            SendActionMsg GetPlayerMap(Index), Msg, GetItemNameColour(Item(MapItem(MapNum, i).Num).Rarity), 1, (GetPlayerX(Index) * 32), (GetPlayerY(Index) * 32)
 
                             ' is it bind on pickup?
                             ' Erase item from the map
-                            ClearMapItem I, MapNum
+                            ClearMapItem i, MapNum
 
                             ' Call SendInventoryUpdate(Index, n)
-                            Call SpawnItemSlot(I, 0, 0, GetPlayerMap(Index), 0, 0)
+                            Call SpawnItemSlot(i, 0, 0, GetPlayerMap(Index), 0, 0)
                             Exit For
                         Else
-                            Call PlayerMsg(Index, "Your inventory is full.", BrightRed)
                             Exit For
                         End If
                     End If
@@ -64,7 +63,7 @@ Public Function GetItemNameColour(ByVal Rarity As Byte) As Long
 End Function
 
 Function CanPlayerPickupItem(ByVal Index As Long, ByVal mapItemNum As Long)
-    Dim MapNum As Long, tmpIndex As Long, I As Long
+    Dim MapNum As Long, tmpIndex As Long, i As Long
 
     MapNum = GetPlayerMap(Index)
 
@@ -76,8 +75,8 @@ Function CanPlayerPickupItem(ByVal Index As Long, ByVal mapItemNum As Long)
 
     ' if in party show their party member's drops
     If TempPlayer(Index).inParty > 0 Then
-        For I = 1 To MAX_PARTY_MEMBERS
-            tmpIndex = Party(TempPlayer(Index).inParty).Member(I)
+        For i = 1 To MAX_PARTY_MEMBERS
+            tmpIndex = Party(TempPlayer(Index).inParty).Member(i)
             If tmpIndex > 0 Then
                 If Trim$(GetPlayerName(tmpIndex)) = MapItem(MapNum, mapItemNum).PlayerName Then
                     If MapItem(MapNum, mapItemNum).Bound = 0 Then
@@ -94,7 +93,7 @@ Function CanPlayerPickupItem(ByVal Index As Long, ByVal mapItemNum As Long)
 End Function
 
 Sub PlayerMapDropItem(ByVal Index As Long, ByVal InvNum As Long, ByVal Amount As Long)
-    Dim I As Long
+    Dim i As Long
     Dim MapNum As Long
     Dim ItemNum As Long
 
@@ -132,17 +131,17 @@ Sub PlayerMapDropItem(ByVal Index As Long, ByVal InvNum As Long, ByVal Amount As
                 Exit Sub
             End If
 
-            I = FindOpenMapItemSlot(GetPlayerMap(Index))
+            i = FindOpenMapItemSlot(GetPlayerMap(Index))
 
-            If I <> 0 Then
-                MapItem(GetPlayerMap(Index), I).Num = GetPlayerInvItemNum(Index, InvNum)
-                MapItem(GetPlayerMap(Index), I).Bound = GetPlayerInvItemBound(Index, InvNum)
-                MapItem(GetPlayerMap(Index), I).X = GetPlayerX(Index)
-                MapItem(GetPlayerMap(Index), I).Y = GetPlayerY(Index)
-                MapItem(GetPlayerMap(Index), I).PlayerName = Trim$(GetPlayerName(Index))
-                MapItem(GetPlayerMap(Index), I).playerTimer = getTime + ITEM_SPAWN_TIME
-                MapItem(GetPlayerMap(Index), I).canDespawn = True
-                MapItem(GetPlayerMap(Index), I).despawnTimer = getTime + ITEM_DESPAWN_TIME
+            If i <> 0 Then
+                MapItem(GetPlayerMap(Index), i).Num = GetPlayerInvItemNum(Index, InvNum)
+                MapItem(GetPlayerMap(Index), i).Bound = GetPlayerInvItemBound(Index, InvNum)
+                MapItem(GetPlayerMap(Index), i).X = GetPlayerX(Index)
+                MapItem(GetPlayerMap(Index), i).Y = GetPlayerY(Index)
+                MapItem(GetPlayerMap(Index), i).PlayerName = Trim$(GetPlayerName(Index))
+                MapItem(GetPlayerMap(Index), i).playerTimer = getTime + ITEM_SPAWN_TIME
+                MapItem(GetPlayerMap(Index), i).canDespawn = True
+                MapItem(GetPlayerMap(Index), i).despawnTimer = getTime + ITEM_DESPAWN_TIME
 
                 If Item(GetPlayerInvItemNum(Index, InvNum)).Stackable > 0 Then
 
@@ -150,17 +149,17 @@ Sub PlayerMapDropItem(ByVal Index As Long, ByVal InvNum As Long, ByVal Amount As
                     If Amount >= GetPlayerInvItemValue(Index, InvNum) Then
                         Amount = GetPlayerInvItemValue(Index, InvNum)
 
-                        MapItem(GetPlayerMap(Index), I).Value = Amount
+                        MapItem(GetPlayerMap(Index), i).value = Amount
                         Call SetPlayerInvItemNum(Index, InvNum, 0)
                         Call SetPlayerInvItemValue(Index, InvNum, 0)
                         Call SetPlayerInvItemBound(Index, InvNum, 0)
                     Else
-                        MapItem(GetPlayerMap(Index), I).Value = Amount
+                        MapItem(GetPlayerMap(Index), i).value = Amount
                         Call SetPlayerInvItemValue(Index, InvNum, GetPlayerInvItemValue(Index, InvNum) - Amount)
                     End If
 
                 Else
-                    MapItem(GetPlayerMap(Index), I).Value = 1
+                    MapItem(GetPlayerMap(Index), i).value = 1
                     Call SetPlayerInvItemNum(Index, InvNum, 0)
                     Call SetPlayerInvItemValue(Index, InvNum, 0)
                     Call SetPlayerInvItemBound(Index, InvNum, 0)
@@ -169,7 +168,7 @@ Sub PlayerMapDropItem(ByVal Index As Long, ByVal InvNum As Long, ByVal Amount As
                 ' Send inventory update
                 Call SendInventoryUpdate(Index, InvNum)
                 ' Spawn the item before we set the num or we'll get a different free map item slot
-                Call SpawnItemSlot(I, MapItem(MapNum, I).Num, Amount, MapNum, GetPlayerX(Index), GetPlayerY(Index), Trim$(GetPlayerName(Index)), MapItem(MapNum, I).canDespawn, MapItem(MapNum, I).Bound)
+                Call SpawnItemSlot(i, MapItem(MapNum, i).Num, Amount, MapNum, GetPlayerX(Index), GetPlayerY(Index), Trim$(GetPlayerName(Index)), MapItem(MapNum, i).canDespawn, MapItem(MapNum, i).Bound)
             Else
                 Call PlayerMsg(Index, "Há muitos itens no chão.", BrightRed)
             End If
@@ -179,7 +178,7 @@ Sub PlayerMapDropItem(ByVal Index As Long, ByVal InvNum As Long, ByVal Amount As
 End Sub
 
 Sub DropItemOnDead(ByVal Index As Long, ByVal ItemNum As Long, ByVal Amount As Long, Optional ByVal IsEquipped As Boolean = False)
-    Dim I As Long
+    Dim i As Long
     Dim MapNum As Long
     Dim InvNum As Long
     Dim tradeTarget As Long
@@ -207,11 +206,11 @@ Sub DropItemOnDead(ByVal Index As Long, ByVal ItemNum As Long, ByVal Amount As L
         PlayerMsg tradeTarget, Trim$(GetPlayerName(Index)) & " has declined the trade.", BrightRed
         PlayerMsg Index, Trim$(GetPlayerName(tradeTarget)) & " has declined the trade.", BrightRed
         ' clear out trade
-        For I = 1 To MAX_INV
-            TempPlayer(tradeTarget).TradeOffer(I).Num = 0
-            TempPlayer(tradeTarget).TradeOffer(I).Value = 0
-            TempPlayer(Index).TradeOffer(I).Num = 0
-            TempPlayer(Index).TradeOffer(I).Value = 0
+        For i = 1 To MAX_INV
+            TempPlayer(tradeTarget).TradeOffer(i).Num = 0
+            TempPlayer(tradeTarget).TradeOffer(i).value = 0
+            TempPlayer(Index).TradeOffer(i).Num = 0
+            TempPlayer(Index).TradeOffer(i).value = 0
         Next
         TempPlayer(tradeTarget).TradeGold = 0
         TempPlayer(Index).TradeGold = 0
@@ -223,11 +222,11 @@ Sub DropItemOnDead(ByVal Index As Long, ByVal ItemNum As Long, ByVal Amount As L
 
     ' Realiza as verificações entre item equipado ou se está na bolsa!
     If Not IsEquipped Then ' Ação na mochila
-        For I = 1 To MAX_INV
-            If GetPlayerInvItemNum(Index, I) = ItemNum Then
-                InvNum = I
+        For i = 1 To MAX_INV
+            If GetPlayerInvItemNum(Index, i) = ItemNum Then
+                InvNum = i
             End If
-        Next I
+        Next i
 
         Bound = GetPlayerInvItemBound(Index, InvNum)
 
@@ -238,11 +237,11 @@ Sub DropItemOnDead(ByVal Index As Long, ByVal ItemNum As Long, ByVal Amount As L
         Call SetPlayerInvItemBound(Index, InvNum, 0)
         Call SendInventoryUpdate(Index, InvNum)
     Else ' Ação nos items equipados
-        For I = 1 To Equipment.Equipment_Count - 1
-            If GetPlayerEquipmentNum(Index, I) = ItemNum Then
-                InvNum = I
+        For i = 1 To Equipment.Equipment_Count - 1
+            If GetPlayerEquipmentNum(Index, i) = ItemNum Then
+                InvNum = i
             End If
-        Next I
+        Next i
 
         Bound = GetPlayerEquipmentBound(Index, InvNum)
 
@@ -253,20 +252,20 @@ Sub DropItemOnDead(ByVal Index As Long, ByVal ItemNum As Long, ByVal Amount As L
 
     MapNum = GetPlayerMap(Index)
 
-    I = FindOpenMapItemSlot(MapNum)
+    i = FindOpenMapItemSlot(MapNum)
 
-    If I <> 0 Then
-        MapItem(MapNum, I).Num = ItemNum
-        MapItem(MapNum, I).Value = Amount
-        MapItem(MapNum, I).Bound = Bound
-        MapItem(MapNum, I).X = GetPlayerX(Index)
-        MapItem(MapNum, I).Y = GetPlayerY(Index)
-        MapItem(MapNum, I).PlayerName = Trim$(GetPlayerName(Index))
-        MapItem(MapNum, I).playerTimer = getTime + ITEM_SPAWN_TIME
-        MapItem(MapNum, I).canDespawn = True
-        MapItem(MapNum, I).despawnTimer = getTime + ITEM_DESPAWN_TIME
+    If i <> 0 Then
+        MapItem(MapNum, i).Num = ItemNum
+        MapItem(MapNum, i).value = Amount
+        MapItem(MapNum, i).Bound = Bound
+        MapItem(MapNum, i).X = GetPlayerX(Index)
+        MapItem(MapNum, i).Y = GetPlayerY(Index)
+        MapItem(MapNum, i).PlayerName = Trim$(GetPlayerName(Index))
+        MapItem(MapNum, i).playerTimer = getTime + ITEM_SPAWN_TIME
+        MapItem(MapNum, i).canDespawn = True
+        MapItem(MapNum, i).despawnTimer = getTime + ITEM_DESPAWN_TIME
         ' Spawn the item before we set the num or we'll get a different free map item slot
-        Call SpawnItemSlot(I, MapItem(MapNum, I).Num, MapItem(MapNum, I).Value, MapNum, GetPlayerX(Index), GetPlayerY(Index), Trim$(GetPlayerName(Index)), MapItem(MapNum, I).canDespawn, MapItem(MapNum, I).Bound)
+        Call SpawnItemSlot(i, MapItem(MapNum, i).Num, MapItem(MapNum, i).value, MapNum, GetPlayerX(Index), GetPlayerY(Index), Trim$(GetPlayerName(Index)), MapItem(MapNum, i).canDespawn, MapItem(MapNum, i).Bound)
     End If
 
 

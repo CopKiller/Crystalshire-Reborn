@@ -121,7 +121,7 @@ Public Sub sendChat(ByVal Index As Long)
     Dim P_GENDER As String
     Dim P_NAME As String
     Dim P_CLASS As String
-    Dim I As Long
+    Dim i As Long
 
     If TempPlayer(Index).inChatWith > 0 Then
         convNum = NPC(TempPlayer(Index).inChatWith).Conv
@@ -214,8 +214,8 @@ Continue:
         P_CLASS = Trim$(Class(Player(Index).Class).Name)
 
         mainText = Conv(convNum).Conv(curChat).Conv
-        For I = 1 To 4
-            optText(I) = Conv(convNum).Conv(curChat).rText(I)
+        For i = 1 To 4
+            optText(i) = Conv(convNum).Conv(curChat).rText(i)
         Next
     End If
 
@@ -253,7 +253,7 @@ Sub UseChar(ByVal Index As Long)
 End Sub
 
 Sub JoinGame(ByVal Index As Long)
-    Dim I As Long
+    Dim i As Long
     ' Set the flag so we know the person is in the game
     TempPlayer(Index).InGame = True
     'Update the log
@@ -300,10 +300,10 @@ Sub JoinGame(ByVal Index As Long)
     Call CheckConjunto(Index)
 
     ' Send Spells Cooldown
-    For I = 1 To MAX_PLAYER_SPELLS
-        If Player(Index).Spell(I).Spell > 0 Then
-            If Player(Index).SpellCD(I) > 0 Then
-                Call SendPlayerSpellsCD(Index, I)
+    For i = 1 To MAX_PLAYER_SPELLS
+        If Player(Index).Spell(i).Spell > 0 Then
+            If Player(Index).SpellCD(i) > 0 Then
+                Call SendPlayerSpellsCD(Index, i)
             End If
         End If
     Next
@@ -335,10 +335,10 @@ Sub JoinGame(ByVal Index As Long)
                 If Guild(Player(Index).Guild_ID).GuildDisponivel = False Then
                     GuildMembers(Player(Index).Guild_ID).Membro(Player(Index).Guild_MembroID).Online = True
 
-                    For I = 1 To Player_HighIndex
-                        If IsPlaying(I) And I <> Index Then
-                            If Player(I).Guild_ID = Player(Index).Guild_ID Then
-                                SendUpdateGuildTo I, Player(Index).Guild_ID
+                    For i = 1 To Player_HighIndex
+                        If IsPlaying(i) And i <> Index Then
+                            If Player(i).Guild_ID = Player(Index).Guild_ID Then
+                                SendUpdateGuildTo i, Player(Index).Guild_ID
                             End If
                         End If
                     Next
@@ -350,8 +350,8 @@ Sub JoinGame(ByVal Index As Long)
     Call SendGuilds(Index)
 
     ' send vitals, exp + stats
-    For I = 1 To Vitals.Vital_Count - 1
-        Call SendVital(Index, I)
+    For i = 1 To Vitals.Vital_Count - 1
+        Call SendVital(Index, i)
     Next
     SendEXP Index
     Call SendStats(Index)
@@ -367,8 +367,8 @@ Sub JoinGame(ByVal Index As Long)
 
     ' Send Resource cache
     If GetPlayerMap(Index) > 0 And GetPlayerMap(Index) <= MAX_MAPS Then
-        For I = 0 To MapResourceCache(GetPlayerMap(Index)).Resource_Count
-            SendResourceCacheTo Index, I
+        For i = 0 To MapResourceCache(GetPlayerMap(Index)).Resource_Count
+            SendResourceCacheTo Index, i
         Next
     End If
 
@@ -378,9 +378,6 @@ Sub JoinGame(ByVal Index As Long)
     SendTimeToBirthday Index
     
     Call PlayerMsg(Index, Day(GetPlayerLastCheckIn(Index)) & "/" & Month(GetPlayerLastCheckIn(Index)) & "/" & Year(GetPlayerLastCheckIn(Index)), Yellow)
-    
-    'Player(Index).CheckIn = 31
-    'Player(Index).LastCheckIn = DateSerial(2023, 5, 17)
 
     ' Verifica se o jogador pode fazer o check-in diário de recompensa
     If Player(Index).CheckIn <= UBound(MonthReward(Month(Date)).DayReward) Then
@@ -392,9 +389,6 @@ Sub JoinGame(ByVal Index As Long)
             If DateDiff("d", GetPlayerLastCheckIn(Index), Date) > 1 Then
                 ' Se a diferença for maior que 1 dia, redefine o contador de check-in para 1
                 Player(Index).CheckIn = 1
-            'ElseIf DateDiff("d", GetPlayerLastCheckIn(Index), Date) = 1 Then
-                ' Se a diferença for igual a 1 dia, incrementa o contador de check-in em 1
-                'Player(Index).CheckIn = Player(Index).CheckIn + 1
             End If
 
             ' Envia a recompensa diária ao jogador
@@ -411,7 +405,9 @@ Sub JoinGame(ByVal Index As Long)
 
     ' DiscordMsg
     Call SendDiscordMsg(Entrou, Index)
-
+    
+    ' Solicitação de items que não foram entregues ao jogador!
+    Call PendingItem(GetPlayerName(Index), Request)
 
     ' tell them to do the damn tutorial
     If Player(Index).TutorialState = 0 Then SendStartTutorial Index
@@ -452,21 +448,21 @@ Public Function Ceil(valor As Double)
 End Function
 
 Public Function GetBirthDaySerialNum(ByVal Index As Long) As String
-    Dim I As Integer
+    Dim i As Integer
     Dim Count As Integer
 
-    For I = 1 To MAX_SERIAL_NUMBER
-        If Trim$(Serial(I).Name) <> vbNullString Then
-            If Serial(I).BirthDay > 0 Then
+    For i = 1 To MAX_SERIAL_NUMBER
+        If Trim$(Serial(i).Name) <> vbNullString Then
+            If Serial(i).BirthDay > 0 Then
                 Count = Count + 1
                 If Count = 1 Then
-                    GetBirthDaySerialNum = "Serial " & Count & ":" & Trim$(Serial(I).Serial)
+                    GetBirthDaySerialNum = "Serial " & Count & ":" & Trim$(Serial(i).Serial)
                 Else
-                    GetBirthDaySerialNum = GetBirthDaySerialNum & ", Serial " & Count & ":" & Trim$(Serial(I).Serial)
+                    GetBirthDaySerialNum = GetBirthDaySerialNum & ", Serial " & Count & ":" & Trim$(Serial(i).Serial)
                 End If
             End If
         End If
-    Next I
+    Next i
 End Function
 
 Public Function GetPlayerBirthDay(ByVal Index As Long) As Date
@@ -479,7 +475,7 @@ Public Function GetPlayerBirthDay(ByVal Index As Long) As Date
 End Function
 
 Sub LeftGame(ByVal Index As Long)
-    Dim n As Long, I As Long
+    Dim n As Long, i As Long
     Dim tradeTarget As Long
 
     If TempPlayer(Index).InGame Then
@@ -496,9 +492,9 @@ Sub LeftGame(ByVal Index As Long)
             tradeTarget = TempPlayer(Index).InTrade
             PlayerMsg tradeTarget, Trim$(GetPlayerName(Index)) & " has declined the trade.", BrightRed
             ' clear out trade
-            For I = 1 To MAX_INV
-                TempPlayer(tradeTarget).TradeOffer(I).Num = 0
-                TempPlayer(tradeTarget).TradeOffer(I).value = 0
+            For i = 1 To MAX_INV
+                TempPlayer(tradeTarget).TradeOffer(i).Num = 0
+                TempPlayer(tradeTarget).TradeOffer(i).value = 0
             Next
             TempPlayer(tradeTarget).TradeGold = 0
             TempPlayer(tradeTarget).InTrade = 0
@@ -513,10 +509,10 @@ Sub LeftGame(ByVal Index As Long)
             If Guild(Player(Index).Guild_ID).GuildDisponivel = False Then
                 GuildMembers(Player(Index).Guild_ID).Membro(Player(Index).Guild_MembroID).Online = False
 
-                For I = 1 To Player_HighIndex
-                    If IsPlaying(I) And I <> Index Then
-                        If Player(I).Guild_ID = Player(Index).Guild_ID Then
-                            SendUpdateGuildTo I, Player(Index).Guild_ID
+                For i = 1 To Player_HighIndex
+                    If IsPlaying(i) And i <> Index Then
+                        If Player(i).Guild_ID = Player(Index).Guild_ID Then
+                            SendUpdateGuildTo i, Player(Index).Guild_ID
                         End If
                     End If
                 Next
@@ -564,7 +560,7 @@ End Function
 Sub PlayerWarp(ByVal Index As Long, ByVal MapNum As Long, ByVal X As Long, ByVal Y As Long)
     Dim ShopNum As Long
     Dim OldMap As Long
-    Dim I As Long
+    Dim i As Long
     Dim Buffer As clsBuffer
 
     ' Check for subscript out of range
@@ -606,10 +602,10 @@ Sub PlayerWarp(ByVal Index As Long, ByVal MapNum As Long, ByVal X As Long, ByVal
 
     ' send equipment of all people on new map
     If GetTotalMapPlayers(MapNum) > 0 Then
-        For I = 1 To Player_HighIndex
-            If IsPlaying(I) Then
-                If GetPlayerMap(I) = MapNum Then
-                    SendMapEquipmentTo I, Index
+        For i = 1 To Player_HighIndex
+            If IsPlaying(i) Then
+                If GetPlayerMap(i) = MapNum Then
+                    SendMapEquipmentTo i, Index
                 End If
             End If
         Next
@@ -619,10 +615,10 @@ Sub PlayerWarp(ByVal Index As Long, ByVal MapNum As Long, ByVal X As Long, ByVal
     If GetTotalMapPlayers(OldMap) = 0 Then
         PlayersOnMap(OldMap) = NO
         ' Regenerate all NPCs' Health and Spirit
-        For I = 1 To MAX_MAP_NPCS
-            If MapNpc(OldMap).NPC(I).Num > 0 Then
-                MapNpc(OldMap).NPC(I).Vital(Vitals.HP) = GetNpcMaxVital(MapNpc(OldMap).NPC(I).Num, Vitals.HP)
-                MapNpc(OldMap).NPC(I).Vital(Vitals.MP) = GetNpcMaxVital(MapNpc(OldMap).NPC(I).Num, Vitals.MP)
+        For i = 1 To MAX_MAP_NPCS
+            If MapNpc(OldMap).NPC(i).Num > 0 Then
+                MapNpc(OldMap).NPC(i).Vital(Vitals.HP) = GetNpcMaxVital(MapNpc(OldMap).NPC(i).Num, Vitals.HP)
+                MapNpc(OldMap).NPC(i).Vital(Vitals.MP) = GetNpcMaxVital(MapNpc(OldMap).NPC(i).Num, Vitals.MP)
             End If
         Next
     End If
@@ -720,7 +716,7 @@ Function CanMove(Index As Long, dir As Long) As Byte
 End Function
 
 Function CheckDirection(Index As Long, direction As Long) As Boolean
-    Dim X As Long, Y As Long, I As Long, EventCount As Long, MapNum As Long, page As Long
+    Dim X As Long, Y As Long, i As Long, EventCount As Long, MapNum As Long, page As Long
 
     CheckDirection = False
 
@@ -754,13 +750,13 @@ Function CheckDirection(Index As Long, direction As Long) As Boolean
     ' Check to make sure that any events on that space aren't blocked
     MapNum = GetPlayerMap(Index)
     EventCount = Map(MapNum).TileData.EventCount
-    For I = 1 To EventCount
-        With Map(MapNum).TileData.Events(I)
+    For i = 1 To EventCount
+        With Map(MapNum).TileData.Events(i)
             If .X = X And .Y = Y Then
                 ' Get the active event page
-                page = ActiveEventPage(Index, I)
+                page = ActiveEventPage(Index, i)
                 If page > 0 Then
-                    If Map(MapNum).TileData.Events(I).EventPage(page).WalkThrough = 0 Then
+                    If Map(MapNum).TileData.Events(i).EventPage(page).WalkThrough = 0 Then
                         CheckDirection = True
                         Exit Function
                     End If
@@ -771,23 +767,23 @@ Function CheckDirection(Index As Long, direction As Long) As Boolean
 
     ' Check to see if a player is already on that tile
     If Map(GetPlayerMap(Index)).MapData.Moral = 0 Then
-        For I = 1 To Player_HighIndex
-            If IsPlaying(I) And GetPlayerMap(I) = GetPlayerMap(Index) Then
-                If GetPlayerX(I) = X Then
-                    If GetPlayerY(I) = Y Then
+        For i = 1 To Player_HighIndex
+            If IsPlaying(i) And GetPlayerMap(i) = GetPlayerMap(Index) Then
+                If GetPlayerX(i) = X Then
+                    If GetPlayerY(i) = Y Then
                         CheckDirection = True
                         Exit Function
                     End If
                 End If
             End If
-        Next I
+        Next i
     End If
 
     ' Check to see if a npc is already on that tile
-    For I = 1 To MAX_MAP_NPCS
-        If MapNpc(GetPlayerMap(Index)).NPC(I).Num > 0 Then
-            If MapNpc(GetPlayerMap(Index)).NPC(I).X = X Then
-                If MapNpc(GetPlayerMap(Index)).NPC(I).Y = Y Then
+    For i = 1 To MAX_MAP_NPCS
+        If MapNpc(GetPlayerMap(Index)).NPC(i).Num > 0 Then
+            If MapNpc(GetPlayerMap(Index)).NPC(i).X = X Then
+                If MapNpc(GetPlayerMap(Index)).NPC(i).Y = Y Then
                     CheckDirection = True
                     Exit Function
                 End If
@@ -798,7 +794,7 @@ End Function
 
 Sub PlayerMove(ByVal Index As Long, ByVal dir As Long, ByVal movement As Long, Optional ByVal sendToSelf As Boolean = False)
     Dim Buffer As clsBuffer, MapNum As Long, X As Long, Y As Long, moved As Byte, MovedSoFar As Boolean, newMapX As Byte, newMapY As Byte
-    Dim TileType As Long, vitalType As Long, colour As Long, Amount As Long, canMoveResult As Long, I As Long
+    Dim TileType As Long, vitalType As Long, colour As Long, Amount As Long, canMoveResult As Long, i As Long
 
     ' Check for subscript out of range
     If IsPlaying(Index) = False Or dir < DIR_UP Or dir > DIR_RIGHT Or movement < 1 Or movement > 2 Then
@@ -939,8 +935,8 @@ Sub PlayerMove(ByVal Index As Long, ByVal dir As Long, ByVal movement As Long, O
 
     ' check for events
     If Map(GetPlayerMap(Index)).TileData.EventCount > 0 Then
-        For I = 1 To Map(GetPlayerMap(Index)).TileData.EventCount
-            CheckPlayerEvent Index, I
+        For i = 1 To Map(GetPlayerMap(Index)).TileData.EventCount
+            CheckPlayerEvent Index, i
         Next
     End If
 
@@ -951,7 +947,7 @@ Sub PlayerMove(ByVal Index As Long, ByVal dir As Long, ByVal movement As Long, O
 End Sub
 
 Sub CheckPlayerEvent(Index As Long, eventNum As Long)
-    Dim Count As Long, MapNum As Long, I As Long
+    Dim Count As Long, MapNum As Long, i As Long
     ' find the page to process
     MapNum = GetPlayerMap(Index)
     ' make sure it's in the same spot
@@ -960,15 +956,15 @@ Sub CheckPlayerEvent(Index As Long, eventNum As Long)
     ' loop
     Count = Map(MapNum).TileData.Events(eventNum).PageCount
     ' get the active page
-    I = ActiveEventPage(Index, eventNum)
+    i = ActiveEventPage(Index, eventNum)
     ' exit out early
-    If I = 0 Then Exit Sub
+    If i = 0 Then Exit Sub
     ' make sure the page has actual commands
-    If Map(MapNum).TileData.Events(eventNum).EventPage(I).CommandCount = 0 Then Exit Sub
+    If Map(MapNum).TileData.Events(eventNum).EventPage(i).CommandCount = 0 Then Exit Sub
     ' set event
     TempPlayer(Index).inEvent = True
     TempPlayer(Index).eventNum = eventNum
-    TempPlayer(Index).pageNum = I
+    TempPlayer(Index).pageNum = i
     TempPlayer(Index).commandNum = 1
     ' send it to the player
     SendEvent Index
@@ -1022,46 +1018,46 @@ End Sub
 Sub CheckEquippedItems(ByVal Index As Long)
     Dim Slot As Long
     Dim ItemNum As Long
-    Dim I As Long
+    Dim i As Long
 
     ' We want to check incase an admin takes away an object but they had it equipped
-    For I = 1 To Equipment.Equipment_Count - 1
-        ItemNum = GetPlayerEquipmentNum(Index, I)
+    For i = 1 To Equipment.Equipment_Count - 1
+        ItemNum = GetPlayerEquipmentNum(Index, i)
 
         If ItemNum > 0 Then
 
-            Select Case I
+            Select Case i
             Case Equipment.Weapon
 
-                If Item(ItemNum).Type <> ITEM_TYPE_WEAPON Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_WEAPON Then SetPlayerEquipment Index, 0, i
             Case Equipment.Armor
 
-                If Item(ItemNum).Type <> ITEM_TYPE_ARMOR Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_ARMOR Then SetPlayerEquipment Index, 0, i
             Case Equipment.Helmet
 
-                If Item(ItemNum).Type <> ITEM_TYPE_HELMET Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_HELMET Then SetPlayerEquipment Index, 0, i
             Case Equipment.Shield
 
-                If Item(ItemNum).Type <> ITEM_TYPE_SHIELD Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_SHIELD Then SetPlayerEquipment Index, 0, i
             Case Equipment.Legs
 
-                If Item(ItemNum).Type <> ITEM_TYPE_LEGS Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_LEGS Then SetPlayerEquipment Index, 0, i
             Case Equipment.Boots
 
-                If Item(ItemNum).Type <> ITEM_TYPE_BOOTS Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_BOOTS Then SetPlayerEquipment Index, 0, i
             Case Equipment.Amulet
 
-                If Item(ItemNum).Type <> ITEM_TYPE_AMULET Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_AMULET Then SetPlayerEquipment Index, 0, i
             Case Equipment.RingLeft
 
-                If Item(ItemNum).Type <> ITEM_TYPE_RINGLEFT Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_RINGLEFT Then SetPlayerEquipment Index, 0, i
             Case Equipment.RingLeft
 
-                If Item(ItemNum).Type <> ITEM_TYPE_RINGRIGHT Then SetPlayerEquipment Index, 0, I
+                If Item(ItemNum).Type <> ITEM_TYPE_RINGRIGHT Then SetPlayerEquipment Index, 0, i
             End Select
 
         Else
-            SetPlayerEquipment Index, 0, I
+            SetPlayerEquipment Index, 0, i
         End If
 
     Next
@@ -1069,11 +1065,11 @@ Sub CheckEquippedItems(ByVal Index As Long)
 End Sub
 
 Function HasSpell(ByVal Index As Long, ByVal SpellNum As Long) As Boolean
-    Dim I As Long
+    Dim i As Long
 
-    For I = 1 To MAX_PLAYER_SPELLS
+    For i = 1 To MAX_PLAYER_SPELLS
 
-        If Player(Index).Spell(I).Spell = SpellNum Then
+        If Player(Index).Spell(i).Spell = SpellNum Then
             HasSpell = True
             Exit Function
         End If
@@ -1083,12 +1079,12 @@ Function HasSpell(ByVal Index As Long, ByVal SpellNum As Long) As Boolean
 End Function
 
 Function FindOpenSpellSlot(ByVal Index As Long) As Long
-    Dim I As Long
+    Dim i As Long
 
-    For I = 1 To MAX_PLAYER_SPELLS
+    For i = 1 To MAX_PLAYER_SPELLS
 
-        If Player(Index).Spell(I).Spell = 0 Then
-            FindOpenSpellSlot = I
+        If Player(Index).Spell(i).Spell = 0 Then
+            FindOpenSpellSlot = i
             Exit Function
         End If
 
@@ -1097,7 +1093,7 @@ Function FindOpenSpellSlot(ByVal Index As Long) As Long
 End Function
 
 Sub CheckPlayerLevelUp(ByVal Index As Long, Optional ByVal level_count As Long)
-    Dim I As Long, PontosPorLevel As Byte
+    Dim i As Long, PontosPorLevel As Byte
     Dim expRollover As Long
 
     PontosPorLevel = 3
@@ -1252,18 +1248,18 @@ Sub SetPlayerVital(ByVal Index As Long, ByVal Vital As Vitals, ByVal value As Lo
 End Sub
 
 Public Function GetPlayerStat(ByVal Index As Long, ByVal Stat As Stats) As Long
-    Dim X As Long, I As Long
+    Dim X As Long, i As Long
     If Index > Player_HighIndex Then Exit Function
 
     X = Player(Index).Stat(Stat)
 
-    For I = 1 To Equipment.Equipment_Count - 1
-        If Player(Index).Equipment(I).Num > 0 Then
-            If Item(Player(Index).Equipment(I).Num).Add_Stat(Stat) > 0 Then
-                If Item(Player(Index).Equipment(I).Num).Stat_Percent(Stat) > 0 Then
-                    X = X + ((Player(Index).Stat(Stat) / 100) * Item(Player(Index).Equipment(I).Num).Add_Stat(Stat))
+    For i = 1 To Equipment.Equipment_Count - 1
+        If Player(Index).Equipment(i).Num > 0 Then
+            If Item(Player(Index).Equipment(i).Num).Add_Stat(Stat) > 0 Then
+                If Item(Player(Index).Equipment(i).Num).Stat_Percent(Stat) > 0 Then
+                    X = X + ((Player(Index).Stat(Stat) / 100) * Item(Player(Index).Equipment(i).Num).Add_Stat(Stat))
                 Else
-                    X = X + Item(Player(Index).Equipment(I).Num).Add_Stat(Stat)
+                    X = X + Item(Player(Index).Equipment(i).Num).Add_Stat(Stat)
                 End If
             End If
         End If
@@ -1349,7 +1345,7 @@ End Function
 
 ' ToDo
 Sub OnDeath(ByVal Index As Long)
-    Dim I As Long
+    Dim i As Long
     Dim Count As Long
     Dim Random As Byte
 
@@ -1361,13 +1357,13 @@ Sub OnDeath(ByVal Index As Long)
     ' Verifica se tem proteção divina!
     If GetPlayerProtectDrop(Index) = NO Then
         ' dropa os items equipados
-        For I = 1 To Equipment.Equipment_Count - 1
-            If GetPlayerEquipmentNum(Index, I) > 0 Then
-                If Item(GetPlayerEquipmentNum(Index, I)).DropDead > 0 Then
+        For i = 1 To Equipment.Equipment_Count - 1
+            If GetPlayerEquipmentNum(Index, i) > 0 Then
+                If Item(GetPlayerEquipmentNum(Index, i)).DropDead > 0 Then
                     ' Random Drop Chance
                     Random = Rand(0, 100)
-                    If Item(GetPlayerEquipmentNum(Index, I)).DropDeadChance >= Random Then
-                        DropItemOnDead Index, GetPlayerEquipmentNum(Index, I), 1, True
+                    If Item(GetPlayerEquipmentNum(Index, i)).DropDeadChance >= Random Then
+                        DropItemOnDead Index, GetPlayerEquipmentNum(Index, i), 1, True
                         Count = Count + 1
                     End If
                 End If
@@ -1378,18 +1374,18 @@ Sub OnDeath(ByVal Index As Long)
         Call CheckConjunto(Index)
 
         ' dropa os items da bolsa
-        For I = 1 To MAX_INV
-            If GetPlayerInvItemNum(Index, I) > 0 Then
-                If Item(GetPlayerInvItemNum(Index, I)).DropDead > 0 Then
+        For i = 1 To MAX_INV
+            If GetPlayerInvItemNum(Index, i) > 0 Then
+                If Item(GetPlayerInvItemNum(Index, i)).DropDead > 0 Then
                     ' Random Drop Chance
                     Random = Rand(0, 100)
-                    If Item(GetPlayerInvItemNum(Index, I)).DropDeadChance >= Random Then
-                        DropItemOnDead Index, GetPlayerInvItemNum(Index, I), GetPlayerInvItemValue(Index, I)
+                    If Item(GetPlayerInvItemNum(Index, i)).DropDeadChance >= Random Then
+                        DropItemOnDead Index, GetPlayerInvItemNum(Index, i), GetPlayerInvItemValue(Index, i)
                         Count = Count + 1
                     End If
                 End If
             End If
-        Next I
+        Next i
 
         Call PlayerMsg(Index, "Você estava sem proteção divina e perdeu " & Count & " pertences!", BrightRed)
 
@@ -1417,8 +1413,8 @@ Sub OnDeath(ByVal Index As Long)
     End With
 
     ' clear all DoTs and HoTs
-    For I = 1 To MAX_DOTS
-        With TempPlayer(Index).DoT(I)
+    For i = 1 To MAX_DOTS
+        With TempPlayer(Index).DoT(i)
             .Used = False
             .Spell = 0
             .Timer = 0
@@ -1426,7 +1422,7 @@ Sub OnDeath(ByVal Index As Long)
             .StartTime = 0
         End With
 
-        With TempPlayer(Index).HoT(I)
+        With TempPlayer(Index).HoT(i)
             .Used = False
             .Spell = 0
             .Timer = 0
@@ -1467,7 +1463,7 @@ Sub CheckResource(ByVal Index As Long, ByVal X As Long, ByVal Y As Long)
     Dim Resource_num As Long
     Dim Resource_index As Long
     Dim rX As Long, rY As Long
-    Dim I As Long
+    Dim i As Long
     Dim Damage As Long
 
     If Map(GetPlayerMap(Index)).TileData.Tile(X, Y).Type = TILE_TYPE_RESOURCE Then
@@ -1475,11 +1471,11 @@ Sub CheckResource(ByVal Index As Long, ByVal X As Long, ByVal Y As Long)
         Resource_index = Map(GetPlayerMap(Index)).TileData.Tile(X, Y).Data1
 
         ' Get the cache number
-        For I = 0 To MapResourceCache(GetPlayerMap(Index)).Resource_Count
+        For i = 0 To MapResourceCache(GetPlayerMap(Index)).Resource_Count
 
-            If MapResourceCache(GetPlayerMap(Index)).ResourceData(I).X = X Then
-                If MapResourceCache(GetPlayerMap(Index)).ResourceData(I).Y = Y Then
-                    Resource_num = I
+            If MapResourceCache(GetPlayerMap(Index)).ResourceData(i).X = X Then
+                If MapResourceCache(GetPlayerMap(Index)).ResourceData(i).Y = Y Then
+                    Resource_num = i
                 End If
             End If
 

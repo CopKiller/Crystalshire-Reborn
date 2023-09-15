@@ -35,6 +35,12 @@ End Type
 
 Private Sub AddBetValue(ByVal Index As Long, ByVal BetID As Byte, ByVal BetValue As Long)
 
+    'EventSv Is Connected?
+    If Not IsEventServerConnected Then
+        Call AlertMsg(Index, DIALOGUE_LOTTERY_CLOSED, , False)
+        Exit Sub
+    End If
+    
     'Lottery On?
     If Not VerifyBetStatus Then
         Call AlertMsg(Index, DIALOGUE_LOTTERY_CLOSED, , False)
@@ -85,6 +91,11 @@ End Sub
 
 Public Sub SendLotteryInfosTo(ByVal Index As Long)
     Dim Buffer As clsBuffer, Tmr As Currency
+    
+    'EventSv Is Connected?
+    If Not IsEventServerConnected Then
+        Exit Sub
+    End If
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SLotteryInfo
@@ -120,6 +131,11 @@ End Sub
 
 Public Sub SendLotteryInfosAll()
     Dim Buffer As clsBuffer, Tmr As Currency
+    
+    'EventSv Is Connected?
+    If Not IsEventServerConnected Then
+        Exit Sub
+    End If
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SLotteryInfo
@@ -159,84 +175,104 @@ Public Sub CheckBetLoop()
     Dim I As Byte
     Dim Accumulated As Long, Tmr As Currency, BackupLastWinner As String
 
-    If VerifyLotteryStatus Then    'Lottery On?
+    'EventSv Is Connected?
+    If IsEventServerConnected Then
+        'Lottery On?
+        If VerifyLotteryStatus Then
+            'Bets On?
+            If VerifyBetStatus Then
+                ' Avisos - 1 (last is diferent message!)
+                For I = 1 To MAX_AVISOS - 1
+                    If Not lottery.Aviso(I) Then
+                        If lottery.BetTmr + ((LOTTERY_TIME_BET / MAX_AVISOS) * 1000) <= getTime Then
+                            lottery.Aviso(I) = True
+                            lottery.BetTmr = getTime
+                            Call SendEventMsgAll("[Lottery]", "bets close in " & SecondsToHMS(LOTTERY_TIME_BET - ((getTime - lottery.Started) / 1000)), Yellow)
+                        End If
+                    End If
+                Next I
 
-        If VerifyBetStatus Then ' Bets On?
-            ' Avisos - 1 (last is diferent message!)
-            For I = 1 To MAX_AVISOS - 1
-                If Not lottery.Aviso(I) Then
-                    If lottery.BetTmr + ((LOTTERY_TIME_BET / MAX_AVISOS) * 1000) <= getTime Then
-                        lottery.Aviso(I) = True
-                        lottery.BetTmr = getTime
-                        Call SendEventMsgAll("[Lottery]", "bets close in " & SecondsToHMS(LOTTERY_TIME_BET - ((getTime - lottery.Started) / 1000)), Yellow)
+                ' Last Aviso
+                If Not lottery.Aviso(MAX_AVISOS) Then
+                    If lottery.Started + (LOTTERY_TIME_BET * 1000) <= getTime Then
+                        Call SendEventMsgAll("[Lottery]", " Bets closed, Good Luck!!!", Green)
+                        Call CloseBets
+                        lottery.Aviso(MAX_AVISOS) = True
+                        Call SendLotteryInfosAll
+
+                        SendLotterySaves Saves
                     End If
                 End If
-            Next I
-
-            ' Last Aviso
-            If Not lottery.Aviso(MAX_AVISOS) Then
-                If lottery.Started + (LOTTERY_TIME_BET * 1000) <= getTime Then
-                    Call SendEventMsgAll("[Lottery]", " Bets closed, Good Luck!!!", Green)
-                    Call CloseBets
-                    lottery.Aviso(MAX_AVISOS) = True
-                    Call SendLotteryInfosAll
-
-                    SendLotterySaves Saves
-                End If
             End If
-        End If
 
-        If ((getTime - lottery.Started) / 1000) > LOTTERY_SECS_DURATION Then    ' Time End?
-            Number = ChooseLoteryNumber
-            Accumulated = GetBetsAccumulated + lottery.Acumulado
+            If ((getTime - lottery.Started) / 1000) > LOTTERY_SECS_DURATION Then    ' Time End?
+                Number = ChooseLoteryNumber
+                Accumulated = GetBetsAccumulated + lottery.Acumulado
 
-            Call SendEventMsgAll("[Lottery]", "Drawn Number is " & Number, Yellow)
+                Call SendEventMsgAll("[Lottery]", "Drawn Number is " & Number, Yellow)
 
-            If LenB(Trim$(lottery.Bet(Number).Owner)) > 0 Then
-                PlayerID = FindPlayer(Trim$(lottery.Bet(Number).Owner))
-                If PlayerID > 0 Then
-                    Call SetPlayerGold(PlayerID, Accumulated)
-                    Call SendGoldUpdate(PlayerID)
-                    Call SendEventMsgAll("[Lottery]", "The winner is " & Trim$(lottery.Bet(Number).Owner) & " Congratulations!!!", Green)
-
-                    lottery.Acumulado = 0
+                If LenB(Trim$(lottery.Bet(Number).Owner)) > 0 Then
                     BackupLastWinner = Trim$(lottery.Bet(Number).Owner)
+                    
+                    PlayerID = FindPlayer(Trim$(lottery.Bet(Number).Owner))
+                    If PlayerID > 0 Then
+                        Call SetPlayerGold(PlayerID, Accumulated)
+                        Call SendGoldUpdate(PlayerID)
+                    Else
+                        Call PendingItem(BackupLastWinner, Save, GetMoneyID, Accumulated, "Voce recebeu uma recompensa de ganhador da loteria, seu numero " & Number & " foi sorteado enquanto estava offline!")
+                    End If
+                    
+                    lottery.Acumulado = 0
+                    Call SendEventMsgAll("[Lottery]", "The winner is " & BackupLastWinner & " Congratulations!!!", Green)
+                    Call ClearBets    ' Remove all apostas e all owners
+                    Call ClearLottery
+
+                    lottery.LastBetWinner = BackupLastWinner
                 Else
-                    Call SendEventMsgAll("[Lottery]", "Player " & Trim$(lottery.Bet(Number).Owner) & " OFFLINE, jackpot in " & Accumulated, Green)
                     lottery.Acumulado = Accumulated
+                    Call SendEventMsgAll("[Lottery]", "There were no winners, jackpot in " & lottery.Acumulado, Green)
+                    Call ClearBets    ' Remove all apostas e all owners
+                    Call ClearLottery
                 End If
 
-                Call ClearBets    ' Remove all apostas e all owners
-                Call ClearLottery
+                lottery.LastBetNum = Number
 
-                lottery.LastBetWinner = BackupLastWinner
-            Else
-                lottery.Acumulado = Accumulated
-                Call SendEventMsgAll("[Lottery]", "There were no winners, jackpot in " & lottery.Acumulado, Green)
-                Call ClearBets    ' Remove all apostas e all owners
-                Call ClearLottery
+                SendLotterySaves Saves    ' Faz a limpeza no servidor de eventos
+
+                Call SendEventMsgAll("[Lottery]", "The lottery has ended, next lottery starts in " & LOTTERY_START_HOURS & " hours", BrightRed)
+
+                Call SendLotteryInfosAll
             End If
-
-            lottery.LastBetNum = Number
-            
-            SendLotterySaves Saves    ' Faz a limpeza no servidor de eventos
-
-            Call SendEventMsgAll("[Lottery]", "The lottery has ended, next lottery starts in " & LOTTERY_START_HOURS & " hours", BrightRed)
-
-            Call SendLotteryInfosAll
-        End If
-    Else    ' Get Off?? take on
-        Tmr = LOTTERY_START_HOURS    ' 3 hrs
-        Tmr = (Tmr * 60)    ' 180 min
-        Tmr = (Tmr * 60)    ' 10.800 segs
-        Tmr = (Tmr * 1000)    ' 10.800.000 Milisegundos
-        Tmr = (Tmr + lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
-        'Debug.Print Tmr
-        If Tmr <= getTime Then
-            Call StartLottery
+        Else    ' Get Off?? take on
+            Tmr = LOTTERY_START_HOURS    ' 3 hrs
+            Tmr = (Tmr * 60)    ' 180 min
+            Tmr = (Tmr * 60)    ' 10.800 segs
+            Tmr = (Tmr * 1000)    ' 10.800.000 Milisegundos
+            Tmr = (Tmr + lottery.Ended)    ' Soma o tempo que a loteria acabou com o tempo dela abrir novamente.
+            'Debug.Print Tmr
+            If Tmr <= getTime Then
+                Call StartLottery
+            End If
         End If
     End If
 End Sub
+
+Private Function GetMoneyID() As Integer
+    Dim I As Integer
+    ' Is Gold? Process first!
+    For I = 1 To MAX_ITEMS
+        If LenB(Trim$(Item(I).Name)) > 0 Then
+            If Item(I).Type = ITEM_TYPE_CURRENCY Then
+                If Item(I).price = 1 Then
+                    If Item(I).Stackable > 0 Then
+                        GetMoneyID = I
+                        Exit Function
+                    End If
+                End If
+            End If
+        End If
+    Next I
+End Function
 
 Public Sub CloseBets()
     lottery.BetEnabled = False
@@ -244,7 +280,13 @@ Public Sub CloseBets()
 End Sub
 
 Public Sub StartLottery()
+    
     Dim Accumulated As Long
+    
+    If Not IsEventServerConnected Then
+        Call SendEventMsgAll("[Lottery]", "Houve um problema com a loteria, aguarde até se resolver.", BrightRed)
+        Exit Sub
+    End If
     
     lottery.Enabled = True
     lottery.BetEnabled = True
@@ -278,6 +320,11 @@ End Sub
 Public Sub SendLotteryWindow(ByVal Index As Long)
     Dim Buffer As clsBuffer
 
+    'EventSv Is Connected?
+    If Not IsEventServerConnected Then
+        Call SendEventMsgTo(Index, "[Lottery]", "Houve um problema com a loteria, aguarde até se resolver.", BrightRed)
+        Exit Sub
+    End If
     Set Buffer = New clsBuffer
     Buffer.WriteLong SLotteryWindow
     SendDataTo Index, Buffer.ToArray()
@@ -382,7 +429,7 @@ Public Sub SendLotterySaves(ByVal Save As EventOptions)
 
     If Save = Saves Then
         If Options.EVENTSV = YES And IsEventServerConnected Then
-            Buffer.WriteLong SeLotteryData
+            Buffer.WriteLong LotteryData
             Buffer.WriteByte ConvertBooleanToByte(lottery.Enabled)
             Buffer.WriteByte ConvertBooleanToByte(lottery.BetEnabled)
             Buffer.WriteLong lottery.Acumulado
@@ -428,7 +475,7 @@ Public Sub SendLotterySaves(ByVal Save As EventOptions)
         End If
 
     Else
-        Buffer.WriteLong SeLotteryData
+        Buffer.WriteLong LotteryData
         SendToEventServer Buffer.ToArray
     End If
 
@@ -439,7 +486,7 @@ Public Sub RequestLotteryData()
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
 
-    Buffer.WriteLong SeReqLotteryInfo
+    Buffer.WriteLong ReqLotteryInfo
 
     SendToEventServer Buffer.ToArray
     Set Buffer = Nothing
@@ -492,8 +539,6 @@ Public Sub HandleLotteryData(ByVal Index As Long, ByRef Data() As Byte, ByVal St
             Next I
         End If
     End If
-
-    'lottery = lot
 
     Call TextEventAdd("Lottery Data Received!")
 End Sub

@@ -3,6 +3,8 @@
         LotteryData = 1,
         LotteryInfo,
         Ping,
-        DiscordMsg
+        ItemsPendentes,
+        DiscordMsg,
+        AccountRecovery
     }
 }

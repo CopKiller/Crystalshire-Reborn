@@ -128,6 +128,7 @@ Public Enum ClientPackets
     CNewAccount = 1
     CAuthLogin
     CAuthAddChar
+    CAuthAccountRecovery
     CLogin
     CSayMsg
     CEmoteMsg

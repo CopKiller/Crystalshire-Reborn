@@ -484,6 +484,15 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
             ' labels
         Case EntityTypes.entLabel
             If Len(.text) > 0 Then
+
+                If .state = hover Then
+                    Colour = .textColour_Hover
+                ElseIf .state = MouseDown Then
+                    Colour = .textColour_Click
+                Else
+                    Colour = .textColour
+                End If
+
                 Select Case .align
                 Case Alignment.alignLeft
                     ' check if need to word wrap
@@ -493,12 +502,12 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                         ' render text
                         Count = UBound(textArray)
                         For i = 1 To Count
-                            RenderText font(.font), textArray(i), .Left + xO, .top + yO + yOffset, .textColour, .Alpha
+                            RenderText font(.font), textArray(i), .Left + xO, .top + yO + yOffset, Colour, .Alpha
                             yOffset = yOffset + 14
                         Next
                     Else
                         ' just one line
-                        RenderText font(.font), .text, .Left + xO, .top + yO, .textColour, .Alpha
+                        RenderText font(.font), .text, .Left + xO, .top + yO, Colour, .Alpha
                     End If
                 Case Alignment.alignRight
                     ' check if need to word wrap
@@ -509,13 +518,13 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                         Count = UBound(textArray)
                         For i = 1 To Count
                             Left = .Left + .Width - TextWidth(font(.font), textArray(i))
-                            RenderText font(.font), textArray(i), Left + xO, .top + yO + yOffset, .textColour, .Alpha
+                            RenderText font(.font), textArray(i), Left + xO, .top + yO + yOffset, Colour, .Alpha
                             yOffset = yOffset + 14
                         Next
                     Else
                         ' just one line
                         Left = .Left + .Width - TextWidth(font(.font), .text)
-                        RenderText font(.font), .text, Left + xO, .top + yO, .textColour, .Alpha
+                        RenderText font(.font), .text, Left + xO, .top + yO, Colour, .Alpha
                     End If
                 Case Alignment.alignCentre
                     ' check if need to word wrap
@@ -526,13 +535,13 @@ Public Sub RenderEntity(winNum As Long, entNum As Long)
                         Count = UBound(textArray)
                         For i = 1 To Count
                             Left = .Left + (.Width \ 2) - (TextWidth(font(.font), textArray(i)) \ 2)
-                            RenderText font(.font), textArray(i), Left + xO, .top + yO + yOffset, .textColour, .Alpha
+                            RenderText font(.font), textArray(i), Left + xO, .top + yO + yOffset, Colour, .Alpha
                             yOffset = yOffset + 14
                         Next
                     Else
                         ' just one line
                         Left = .Left + (.Width \ 2) - (TextWidth(font(.font), .text) \ 2)
-                        RenderText font(.font), .text, Left + xO, .top + yO, .textColour, .Alpha
+                        RenderText font(.font), .text, Left + xO, .top + yO, Colour, .Alpha
                     End If
                 End Select
             End If
@@ -1052,7 +1061,8 @@ End Sub
 
 Public Sub CreateLabel(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Optional Height As Long, Optional text As String, Optional font As Fonts = Fonts.georgia_16, _
                        Optional textColour As Long = White, Optional align As Byte = Alignment.alignLeft, Optional visible As Boolean = True, Optional Alpha As Long = 255, Optional clickThrough As Boolean, _
-                       Optional entCallBack_norm As Long, Optional entCallBack_hover As Long, Optional entCallBack_mousedown As Long, Optional entCallBack_mousemove As Long, Optional entCallBack_dblclick As Long)
+                       Optional entCallBack_norm As Long, Optional entCallBack_hover As Long, Optional entCallBack_mousedown As Long, Optional entCallBack_mousemove As Long, Optional entCallBack_dblclick As Long, _
+                       Optional textColour_Hover As Long, Optional textColour_Click As Long)
     Dim design(0 To entStates.state_Count - 1) As Long
     Dim image(0 To entStates.state_Count - 1) As Long
     Dim EntCallBack(0 To entStates.state_Count - 1) As Long
@@ -1063,7 +1073,7 @@ Public Sub CreateLabel(winNum As Long, Name As String, Left As Long, top As Long
     EntCallBack(entStates.MouseMove) = entCallBack_mousemove
     EntCallBack(entStates.DblClick) = entCallBack_dblclick
     ' create the box
-    CreateEntity winNum, zOrder_Con, Name, entLabel, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , , , , text, align, font, textColour, Alpha, clickThrough
+    CreateEntity winNum, zOrder_Con, Name, entLabel, design(), image(), EntCallBack(), Left, top, Width, Height, visible, , , , , text, align, font, textColour, Alpha, clickThrough, , , , , , , , textColour_Hover, textColour_Click
 End Sub
 
 Public Sub CreateCheckbox(winNum As Long, Name As String, Left As Long, top As Long, Width As Long, Optional Height As Long = 15, Optional Value As Long, Optional text As String, _
@@ -1216,8 +1226,28 @@ Public Sub CreateWindow_Login()
 
     ' Register Button
     CreateButton WindowCount, "btnRegister", 12, Windows(WindowCount).Window.Height - 35, 252, 22, "Create Account", rockwellDec_15, White, , , , , , , DesignTypes.desGreen, DesignTypes.desGreen_Hover, DesignTypes.desGreen_Click, , , GetAddress(AddressOf btnRegister_Click)
-
+    
+    ' Recovery Account
+    CreateLabel WindowCount, "lblRecovery", 0, 28, 142, 16, "Recovery Account", rockwellDec_15, White, Alignment.alignCentre, , , , , , GetAddress(AddressOf lblRecovery_Click), , , Yellow, Black
 End Sub
+
+Private Sub lblRecovery_Click()
+    Dim Email As String
+    ' Inputbox provisorio, pois causa travamento do loop.
+    Email = InputBox("Digite seu e-mail", "Esqueci minha senha")
+    
+    TcpInit AUTH_SERVER_IP, AUTH_SERVER_PORT
+
+    If ConnectToServer Then
+        Call SetStatus("Sending email informations.")
+        Call SendAccountRecovery(Email)
+    Else
+        ShowWindow GetWindowIndex("winregister")
+        Dialogue "Connection Problem", "Cannot connect to login server.", "Please try again later.", TypeALERT
+    End If
+End Sub
+
+'Email = InputBox("Digite seu e-mail", "Esqueci minha senha")
 
 Public Sub CreateWindow_Register()
 

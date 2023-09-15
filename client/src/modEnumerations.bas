@@ -127,6 +127,7 @@ Public Enum ClientPackets
     CNewAccount = 1
     CAuthLogin
     CAuthAddChar
+    CAuthAccountRecovery
     CLogin
     CSayMsg
     CEmoteMsg
@@ -342,6 +343,8 @@ Public Enum DialogueMsg
     MsgWRONGPASS
     MsgCreated
     MsgEMAILINVALID
+    MsgEMAILTAKEN
+    MsgEMAILSUCCESS
     MsgPASSLENGTH
     MsgPASSNULL
     MsgUSERNULL

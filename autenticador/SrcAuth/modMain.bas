@@ -37,7 +37,7 @@ Sub ClearPlayer(ByVal Index As Long)
 End Sub
 
 Sub Main()
-Dim i As Long
+Dim I As Long
 Dim F As Long
 
     InitCryptographyKey
@@ -68,12 +68,14 @@ Dim F As Long
     InitMessages                                                                ' Need to init messages for packets
     GS_InitMessages
     
-    For i = 1 To MAX_PLAYERS
-        ClearPlayer i
-        Load frmMain.Socket(i)                                                ' load sockets
+    For I = 1 To MAX_PLAYERS
+        ClearPlayer I
+        Load frmMain.Socket(I)                                                ' load sockets
     Next
     
     LoadSystemTray
+    
+    CreateEmailObject
       
     SetStatus "Initialization complete. AuthServer loaded."
     
@@ -81,32 +83,34 @@ Dim F As Long
 End Sub
 
 Public Sub DestroyServer()
-Dim i As Long
+Dim I As Long
 
     On Error Resume Next
     
     ServerOnline = False
     
-    For i = 1 To MAX_PLAYERS
-        Set TempPlayer(i).Buffer = Nothing
-        Unload frmMain.Socket(i)
+    For I = 1 To MAX_PLAYERS
+        Set TempPlayer(I).Buffer = Nothing
+        Unload frmMain.Socket(I)
     Next
     
     DestroySystemTray
+    
+    DestroyEmailObject
     
     Unload frmMain
     End
 End Sub
 
 Function RandomString(ByVal mask As String) As String
-Dim i As Integer, acode As Integer, options As String, char As String
+Dim I As Integer, acode As Integer, options As String, char As String
     
     ' initialize result with proper lenght
     RandomString = mask
     
-    For i = 1 To Len(mask)
+    For I = 1 To Len(mask)
         ' get the character
-        char = Mid$(mask, i, 1)
+        char = Mid$(mask, I, 1)
         Select Case char
             Case "?"
                 char = Chr$(1 + Rnd * 127)
@@ -133,7 +137,7 @@ Dim i As Integer, acode As Integer, options As String, char As String
         End If
         
         ' insert the character in result string
-        Mid(RandomString, i, 1) = char
+        Mid(RandomString, I, 1) = char
     Next
 End Function
 

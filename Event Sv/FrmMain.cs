@@ -9,9 +9,11 @@ using Event_Server.Server;
 using Event_Server.Communication;
 using Event_Server.Network.ServerPacket;
 using Event_Server.Data;
-using System.Net;
 using Event_Server.Network;
 using System.Threading.Tasks;
+using FluentEmail.Smtp;
+using FluentEmail.Core;
+using static System.Net.WebRequestMethods;
 
 namespace Event_Server
 {
@@ -80,27 +82,37 @@ namespace Event_Server
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            InitServer();
+            InitServerAsync();
         }
 
-        private void InitServer()
+        private async Task InitServerAsync()
         {
-            InitLogs();
-            InitDiscordBotAsync();
+            await InitLogs();
+            await InitDiscordBotAsync();
+            await InitEmailSenderAsync();
             Server = new DataServer();
             Server.UpdateUps += UpdateUps;
             Server.InitServer();
         }
 
-        private async Task InitDiscordBotAsync()
+        private async Task InitEmailSenderAsync()
         {
-            Global.DiscordBot = new DiscordBot();
-            await Global.DiscordBot.Start();
+            //Inicializa por padrão no servidor do outlook.
+            var _emailServer = EmailServer.Outlook;
 
-            Global.SystemLogs.Write("DiscordBot Ready...", LogColor.Green);
+            Global.SystemLogs.Write($"Initializing Email Server SMTP({Enum.GetName(typeof(EmailServer), _emailServer)})...", LogColor.Coral);
+            Global.EmailSender = await new EmailSender().InitEmailServerByServerIDAsync(_emailServer);
+
         }
 
-        private void InitLogs()
+        private async Task InitDiscordBotAsync()
+        {
+            Global.SystemLogs.Write("Initializing DiscordBot...", LogColor.Coral);
+            Global.DiscordBot = new DiscordBot();
+            await Global.DiscordBot.Start();
+        }
+
+        private Task InitLogs()
         {
             //System
             Global.SystemLogs = new Log("System")
@@ -160,6 +172,7 @@ namespace Event_Server
             }
 
             Global.WriteLog(LogType.System, $"Initializing Logs...", LogColor.Coral);
+            return Task.CompletedTask;
         }
         private void WriteLog(object sender, LogEventArgs e)
         {
@@ -267,10 +280,17 @@ namespace Event_Server
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Connection.HighIndex > 0)
-            {
-                new SpLotteryData(new Lottery().Load()).Send(Connection.Connections[Connection.HighIndex]);
-            }
+            //if (Connection.HighIndex > 0)
+            //{
+            //    new SpLotteryData(new Lottery().Load()).Send(Connection.Connections[Connection.HighIndex]);
+            //}
+
+            EmailSender.SendEmail(_from: "felipe_157@windowslive.com",
+                                  _to: "feliposos22@gmail.com",
+                                  _subtitle: "Exemplo de e-mail com FluentEmail",
+                                  _body: "Testandooo");
+
+                                 //Exemplo Html:  _body: "< !DOCTYPE html >< html >< head >< meta http - equiv =\"Content-Type\" content=\"text/html; charset=UTF-8\"><link rel=\"stylesheet\" type=\"text/css\" id=\"u0\" href=\"https://pt.rakko.tools/tools/129/lib/tinymce/skins/ui/oxide/content.min.css\"><link rel=\"stylesheet\" type=\"text/css\" id=\"u1\" href=\"https://pt.rakko.tools/tools/129/lib/tinymce/skins/content/default/content.min.css\"></head><body id=\"tinymce\" class=\"mce-content-body \" data-id=\"content\" contenteditable=\"true\" spellcheck=\"false\"><p><img src=\"https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTQwNjk1NjI2NzZjMDcxMTBkMmIwOGE5N2NlZjY3ZWNmOWE5MDJjYiZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PXM/wh5frFkevniZXJpYgd/giphy.gif\" data-mce-src=\"https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTQwNjk1NjI2NzZjMDcxMTBkMmIwOGE5N2NlZjY3ZWNmOWE5MDJjYiZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PXM/wh5frFkevniZXJpYgd/giphy.gif\"> Olá, este é um email utilizando HTML.</p></body></html>", true);
         }
     }
 }

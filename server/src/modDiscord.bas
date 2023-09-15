@@ -18,7 +18,7 @@ Public Sub SendDiscordMsg(ByVal DscMsgType As DiscordMsgType, _
     Dim Buffer As clsBuffer
 
     Set Buffer = New clsBuffer
-    Buffer.WriteLong SeDiscordMsg
+    Buffer.WriteLong DiscordMsg
 
     Buffer.WriteByte DscMsgType
     If DscMsgType = Entrou Then

@@ -9,6 +9,7 @@ Public Sub InitMessages()
     HandleDataSub(CNewAccount) = GetAddress(AddressOf HandleNewAccount)
     HandleDataSub(CAuthLogin) = GetAddress(AddressOf HandleLogin)
     HandleDataSub(CAuthAddChar) = GetAddress(AddressOf HandleAddChar)
+    HandleDataSub(CAuthAccountRecovery) = GetAddress(AddressOf HandleAccountRecovery)
 End Sub
 
 Sub HandleData(ByVal Index As Long, ByRef Data() As Byte)
@@ -36,6 +37,40 @@ Sub HandleData(ByVal Index As Long, ByRef Data() As Byte)
     
     Buffer.Flush
     Set Buffer = Nothing
+End Sub
+
+' ::::::::::::::::::::::::::
+' :: Account Recovery packet ::
+' ::::::::::::::::::::::::::
+Private Sub HandleAccountRecovery(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+    Dim Buffer As clsBuffer
+    Dim sEmail As String
+    Dim vMAJOR As Long, vMINOR As Long, vREVISION As Long
+    
+    Set Buffer = New clsBuffer
+    Buffer.WriteBytes Data()
+    
+    vMAJOR = Buffer.ReadLong
+    vMINOR = Buffer.ReadLong
+    vREVISION = Buffer.ReadLong
+    
+    sEmail = Buffer.ReadString
+    
+    Buffer.Flush: Set Buffer = Nothing
+    
+    ' right version
+    If vMAJOR <> CLIENT_MAJOR Or vMINOR <> CLIENT_MINOR Or vREVISION <> CLIENT_REVISION Then
+        SendAlertMsg Index, DIALOGUE_MSG_OUTDATED, MenuCount.menuLogin
+        Exit Sub
+    End If
+
+   If FindEmail(sEmail) = False Then
+        SendAlertMsg Index, DIALOGUE_ACCOUNT_EMAILINVALID, MenuCount.menuLogin
+        Exit Sub
+    End If
+
+    Call SendEmail(Index, sEmail)
+    
 End Sub
 
 ' ::::::::::::::::::::::::::
@@ -82,13 +117,13 @@ Private Sub HandleAddChar(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
     Next
 
     If Password = vbNullString Then
-        SendAlertMsg Index, DIALOGUE_MSG_CONNECTION
+        SendAlertMsg Index, DIALOGUE_MSG_CONNECTION, MenuCount.menuLogin
         Exit Sub
     End If
 
     ' right version
     If vMAJOR <> CLIENT_MAJOR Or vMINOR <> CLIENT_MINOR Or vREVISION <> CLIENT_REVISION Then
-        SendAlertMsg Index, DIALOGUE_MSG_OUTDATED
+        SendAlertMsg Index, DIALOGUE_MSG_OUTDATED, MenuCount.menuLogin
         Exit Sub
     End If
 
@@ -301,7 +336,7 @@ Private Sub HandleNewAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal St
         Call SendAlertMsg(Index, DIALOGUE_ACCOUNT_EMAILINVALID, MenuCount.menuRegister)
         Exit Sub
     End If
-    
+
     If Not IsDate(BirthDay) Then
         Call SendAlertMsg(Index, DIALOGUE_BIRTHDAY_INCORRECT, MenuCount.menuRegister)
         Exit Sub
@@ -316,6 +351,12 @@ Private Sub HandleNewAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal St
         End If
     Next
 
+    ' Check if email is already in use
+    If FindEmail(mail) Then
+        Call SendAlertMsg(Index, DIALOGUE_ACCOUNT_EMAILTAKEN, MenuCount.menuRegister)
+        Exit Sub
+    End If
+
     If AccountExist(Name) Then
         Call SendAlertMsg(Index, DIALOGUE_MSG_NAMETAKEN, MenuCount.menuRegister)
         Exit Sub
@@ -325,166 +366,4 @@ Private Sub HandleNewAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal St
         Call SendAlertMsg(Index, DIALOGUE_ACCOUNT_CREATED, MenuCount.menuLogin)
     End If
     Exit Sub
-End Sub
-
-' Convert date string to long value
-Private Function ConvertBirthDayToLng(ByVal BirthDay As String) As Long
-    Dim tmpString() As String, tmpChar As String
-    Dim i As Integer, CountCharacters As Integer
-
-    ' Return 0 if have a problem in format
-    ConvertBirthDayToLng = 0
-
-    '00/00/0000 <- Length = 10, Verify if is a valid Date Format!   '
-    If Len(BirthDay) < 10 Or Len(BirthDay) > 10 Then Exit Function  '
-
-    ' Verify if have 8 numerics characters! \
-    For i = 1 To Len(BirthDay)                 '\
-        If IsNumeric(Mid$(BirthDay, i, 1)) Then    '\
-            CountCharacters = CountCharacters + 1       '\
-        End If                                              '\
-    Next i                                                      '\
-    If CountCharacters < 8 Or CountCharacters > 8 Then Exit Function    '\
-
-    ' Verify if have 3 "/" or "\" or "-"
-    If InStr(1, BirthDay, "/") = 3 Then
-        tmpChar = "/"
-    ElseIf InStr(1, BirthDay, "\") = 3 Then
-        tmpChar = "\"
-    ElseIf InStr(1, BirthDay, "-") = 3 Then
-        tmpChar = "-"
-    Else: Exit Function
-    End If
-    
-    ' All OK, Go Split the string, to convert to long!
-    tmpString = Split(BirthDay, tmpChar)
-
-    tmpChar = vbNullString
-    For i = 0 To UBound(tmpString)
-        tmpChar = tmpChar + tmpString(i)
-    Next i
-
-    ConvertBirthDayToLng = CLng(tmpChar)
-
-End Function
-
-Function FindChar(ByVal Name As String) As Boolean
-    Dim F As Long
-    Dim s As String
-    F = FreeFile
-    Open App.Path & "\_charlist.txt" For Input As #F
-
-    Do While Not EOF(F)
-        Input #F, s
-
-        If Trim$(LCase$(s)) = Trim$(LCase$(Name)) Then
-            FindChar = True
-            Close #F
-            Exit Function
-        End If
-
-    Loop
-
-    Close #F
-End Function
-
-Function CharExist(ByVal Index As Long) As Boolean
-    If LenB(Trim$(Player(Index).Name)) > 0 Then
-        CharExist = True
-    End If
-End Function
-
-Sub AddAccount(ByVal Index As Long, ByVal Name As String, ByVal Password As String, ByVal Code As String, ByVal BirthDay As Date)
-    Dim i As Long
-    Dim F As Long, filename As String
-    
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Sub
-    
-    ClearPlayer Index
-
-    Player(Index).Login = Name
-    Player(Index).Password = Password
-    Player(Index).mail = Code
-    Player(Index).BirthDay = BirthDay
-
-    ' Append name to file
-    filename = App.Path & "\emailList.txt"
-    F = FreeFile
-    Open filename For Append As #F
-    Print #F, Code & ":" & Password
-    Close #F
-    
-    ' Save Player archive
-    filename = App.Path & "\accounts\" & SanitiseString(Trim$(Player(Index).Login)) & ".bin"
-    F = FreeFile
-    Open filename For Binary As #F
-    Put #F, , Player(Index)
-    Close #F
-
-End Sub
-
-Sub AddChar(ByVal Index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal ClassNum As Long, ByVal Sprite As Long)
-    Dim F As Long
-    Dim n As Long
-
-    If LenB(Trim$(Player(Index).Name)) = 0 Then
-
-        Player(Index).Name = Name
-        Player(Index).Sex = Sex
-        Player(Index).Class = ClassNum
-        Player(Index).Premium = NO
-        Player(Index).StartPremium = vbNullString
-        Player(Index).DaysPremium = 0
-
-        If Player(Index).Sex = SEX_MALE Then
-            Player(Index).Sprite = Class(ClassNum).MaleSprite(Sprite)
-        Else
-            Player(Index).Sprite = Class(ClassNum).FemaleSprite(Sprite)
-        End If
-
-        Player(Index).Level = 1
-
-        For n = 1 To Stats.Stat_Count - 1
-            Player(Index).Stat(n) = Class(ClassNum).Stat(n)
-        Next n
-
-        Player(Index).Map = Class(ClassNum).START_MAP
-        Player(Index).x = Class(ClassNum).START_X
-        Player(Index).Y = Class(ClassNum).START_Y
-        Player(Index).dir = 0
-        Player(Index).Vital(Vitals.HP) = Class(ClassNum).MaxHP
-        Player(Index).Vital(Vitals.MP) = Class(ClassNum).MaxMP
-
-        ' set starter equipment
-        If Class(ClassNum).startItemCount > 0 Then
-            For n = 1 To Class(ClassNum).startItemCount
-                If Class(ClassNum).StartItem(n) > 0 Then
-                    ' item exist?
-                    Player(Index).Inv(n).Num = Class(ClassNum).StartItem(n)
-                    Player(Index).Inv(n).value = Class(ClassNum).StartValue(n)
-                End If
-            Next
-        End If
-
-        ' set start spells
-        If Class(ClassNum).startSpellCount > 0 Then
-            For n = 1 To Class(ClassNum).startSpellCount
-                If Class(ClassNum).StartSpell(n) > 0 Then
-                    ' spell exist?
-                    Player(Index).Spell(n).Spell = Class(ClassNum).StartSpell(n)
-                    Player(Index).Hotbar(n).Slot = Class(ClassNum).StartSpell(n)
-                    Player(Index).Hotbar(n).sType = 2    ' spells
-                End If
-            Next
-        End If
-
-        ' Append name to file
-        F = FreeFile
-        Open App.Path & "\_charlist.txt" For Append As #F
-        Print #F, Name
-        Close #F
-        Call SavePlayer_ByGameServer(Trim$(Player(Index).Login), Player(Index))
-        Exit Sub
-    End If
-
 End Sub

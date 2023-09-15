@@ -189,7 +189,7 @@ Public Sub GameLoop()
                 For i = 1 To MAX_MAP_ITEMS
                     If MapItem(i).Num > 0 Then
                         ItemPic = Item(MapItem(i).Num).Pic
-                        If ItemPic > 0 Or ItemPic <= Count_Item Then
+                        If ItemPic > 0 And ItemPic <= Count_Item Then
                             MaxFrames = (mTexture(Tex_Item(ItemPic)).w) / PIC_X
                             If MaxFrames > 1 Then
                                 If MapItem(i).Frame < MaxFrames Then
@@ -3228,9 +3228,16 @@ Public Sub DialogueAlert(ByVal Index As Long)
 
     Case MsgEMAILINVALID
         header = "Email Invalido"
-        body = "Use o modelo ####@email.com."
-        body2 = "Por Favor corrigir!"
-
+        body = "Formato errado ou nao existe!"
+        body2 = "Por Favor, insira um email valido."
+    Case MsgEMAILTAKEN
+        header = "Email em uso"
+        body = "Ja possui um cadastro com o mesmo"
+        body2 = "Por Favor adicionar outro!"
+    Case MsgEMAILSUCCESS
+        header = "Sucesso"
+        body = "Senha enviada para o email"
+        body2 = "Verifique sua caixa de entrada."
     Case MsgPASSLENGTH
         header = "Senha muito grande ou muito pequena"
         body = "Senha MIN 3 MAX " & NAME_LENGTH & " Caracteres!"

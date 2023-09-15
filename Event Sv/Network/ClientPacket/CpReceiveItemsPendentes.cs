@@ -21,7 +21,9 @@ namespace Event_Server.Network.ClientPacket
         {
             var msg = new ByteBuffer(buffer);
 
-            var ItemsPendentes = new ItemsPendentes().Load();
+            var ItemsPendentes = new ItemsPendentes();
+
+            var ItemsLoad = ItemsPendentes.Load();
 
             var Operacao = msg.ReadByte();
 
@@ -30,14 +32,16 @@ namespace Event_Server.Network.ClientPacket
                 case 1: //Operação pra Salvar um novo item pendente!
                     {
                         //Cria uma Tupla de items a serem recebidos pra depois passar pro método!
-                        var items = (msg.ReadString(), msg.ReadInt32(), msg.ReadInt32());
+                        var items = (msg.ReadString(), msg.ReadInt32(), msg.ReadInt32(), msg.ReadString());
 
-                        ItemsPendentes.Items.Add(items);
+                        ItemsLoad.Items.Add(items);
 
-                        ItemsPendentes.Save(ItemsPendentes);
+                        ItemsPendentes.Save(ItemsLoad);
+
                         break;
+
                     }
-                    case 2: //Operação pra Excluir um item que estava pendente e ja foi entregue!
+                case 2: //Operação pra Excluir um item que estava pendente e ja foi entregue!
                     {
                         var Nome = msg.ReadString().Trim();
                         var ItemID = msg.ReadInt32();
@@ -45,28 +49,28 @@ namespace Event_Server.Network.ClientPacket
 
                         //Consegue buscar uma area da lista que contenham os 3 valores recebidos
                         //Em seguida ele vai pegar este indice e remover!
-                        int Indice = ItemsPendentes.Items.FindIndex(t => t.Item1 == Nome &&
-                                                       t.Item2 == ItemID && 
+                        int Indice = ItemsLoad.Items.FindIndex(t => t.Item1 == Nome &&
+                                                       t.Item2 == ItemID &&
                                                        t.Item3 == ItemValue);
                         if (Indice != -1)
                         {
-                            ItemsPendentes.Items.RemoveAt(Indice);
+                            ItemsLoad.Items.RemoveAt(Indice);
 
-                            ItemsPendentes.Save(ItemsPendentes);
+                            ItemsPendentes.Save(ItemsLoad);
                         }
                         break;
                     }
-                    case 3: //Operação pra Solicitar um item pendente e quantidade apartir do nome do jogador!
+                case 3: //Operação pra Solicitar um item pendente e quantidade apartir do nome do jogador!
                     {
                         var Nome = msg.ReadString().Trim();
 
                         // Cria uma nova lista contendo apenas as tuplas que contêm a string "item1"
-                        List<(string, int, int)> novaLista = ItemsPendentes.Items.Where(t => t.Item1 == Nome).ToList();
-                        SpItemsPendentes.SendPacket(ItemsPendentes);
-                        
+                        List<(string, int, int, string)> novaLista = ItemsLoad.Items.Where(t => t.Item1 == Nome).ToList();
+                        SpItemsPendentes.SendPacket(ItemsLoad);
+
                         break;
                     }
-                    default: //Caso receba uma operação nula ou com valores indevidos!
+                default: //Caso receba uma operação nula ou com valores indevidos!
                     {
                         Global.WriteLog(LogType.System, $"Operação recebida invalida: {Operacao}", LogColor.Red);
                         break;

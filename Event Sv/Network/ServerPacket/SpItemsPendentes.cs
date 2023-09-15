@@ -7,7 +7,7 @@ namespace Event_Server.Network.ServerPacket
 {
     public sealed class SpItemsPendentes : SendPacket
     {
-        public SpItemsPendentes(ItemsPendentes Items)
+        public SpItemsPendentes(ItemsPendentesData Items)
         {
 
             msg = new ByteBuffer();
@@ -27,12 +27,14 @@ namespace Event_Server.Network.ServerPacket
                     msg.Write(Items.Items[i].Item2);
                     //Quantidade
                     msg.Write(Items.Items[i].Item3);
+                    //Mensagem
+                    msg.Write(Items.Items[i].Item4);
                 }
             }
         }
 
         // Exemplo de como enviar uma packet pro client sem precisar do servidor principal acioná-la!
-        public static void SendPacket(ItemsPendentes Items)
+        public static void SendPacket(ItemsPendentesData Items)
         {
             if (Connection.HighIndex > 0)
             {

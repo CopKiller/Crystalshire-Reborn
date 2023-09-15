@@ -10,8 +10,12 @@ using System.Net;
 
 namespace Event_Server.Data
 {
+
     public sealed class Lottery
     {
+        // Directory
+        private const string DirLottery = @"~\Lottery";
+
         public bool LotteryStatus { get; set; }
         public bool BetStatus { get; set; }
         public int Acumulado { get; set; }
@@ -25,9 +29,9 @@ namespace Event_Server.Data
         public void Save(Lottery lottery)
         {
             // Cria o diretório se não existir
-            if (!Directory.Exists(Constants.DirLottery.MyDir()))
+            if (!Directory.Exists(DirLottery.MyDir()))
             {
-                Directory.CreateDirectory(Constants.DirLottery.MyDir());
+                Directory.CreateDirectory(DirLottery.MyDir());
             }
 
             // Adiciona o conversor de tuplas
@@ -38,11 +42,11 @@ namespace Event_Server.Data
             };
 
             string json = JsonSerializer.Serialize(lottery, options);
-            File.WriteAllText(Constants.DirLottery.MyDir() + ArchiveName, json);
+            File.WriteAllText(DirLottery.MyDir() + ArchiveName, json);
         }
         public Lottery Load()
         {
-            string filePath = Constants.DirLottery.MyDir() + ArchiveName;
+            string filePath = DirLottery.MyDir() + ArchiveName;
             if (!File.Exists(filePath)) return null;
 
             var options = new JsonSerializerOptions

@@ -20,6 +20,7 @@ Public Enum ClientPackets
     CNewAccount = 1
     CAuthLogin
     CAuthAddChar
+    CAuthAccountRecovery
     ' Make sure CMSG_COUNT is below everything else
     CMSG_COUNT
 End Enum

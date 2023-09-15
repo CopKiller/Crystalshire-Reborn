@@ -1,1 +1,3 @@
-Line 476: Class MSComctlLib.ListView of control lvwInfo was not a loaded control class.
+Line 102: Class MSWinsockLib.Winsock of control EventSocket was not a loaded control class.
+Line 109: Class MSWinsockLib.Winsock of control AuthSocket was not a loaded control class.
+Line 116: Class MSWinsockLib.Winsock of control Socket was not a loaded control class.

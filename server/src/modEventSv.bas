@@ -6,23 +6,16 @@ Private Event_DataTimer As Long
 Private Event_DataBytes As Long
 Private Event_DataPackets As Long
 
-' Handle
-Public Enum HEventPackets
-    HaLotteryData = 1
-    HaPing
-    HaItemsPendentes
-    
-    HEMSG_COUNT
-End Enum
-
 ' Send
-Public Enum SEventPackets
-    SeLotteryData = 1
-    SeReqLotteryInfo
-    SeItemsPendentes
-    SeDiscordMsg
+Public Enum EventPackets
+    LotteryData = 1
+    ReqLotteryInfo
+    Ping
+    ItemsPendentes
+    DiscordMsg
+    AccountRecovery
     
-    SEMSG_COUNT
+    EVMSG_COUNT
 End Enum
 
 ' Utilidade
@@ -31,15 +24,17 @@ Public Enum EventOptions
     Clear
 End Enum
 
-Public Event_HandleDataSub(HEMSG_COUNT) As Long
+Public IsEventServerConnected As Boolean
+
+Public Event_HandleDataSub(EVMSG_COUNT) As Long
 
 Private Function Event_GetAddress(FunAddr As Long) As Long
     Event_GetAddress = FunAddr
 End Function
 
 Public Sub Event_InitMessages()
-    Event_HandleDataSub(HaLotteryData) = Event_GetAddress(AddressOf HandleLotteryData)
-    Event_HandleDataSub(HaLotteryData) = Event_GetAddress(AddressOf HandleItemsPendentes)
+    Event_HandleDataSub(LotteryData) = Event_GetAddress(AddressOf HandleLotteryData)
+    Event_HandleDataSub(ItemsPendentes) = Event_GetAddress(AddressOf HandleItemsPendentes)
 End Sub
 
 Sub Event_HandleData(ByRef Data() As Byte)
@@ -55,7 +50,7 @@ Sub Event_HandleData(ByRef Data() As Byte)
         Exit Sub
     End If
 
-    If MsgType >= HEMSG_COUNT Then
+    If MsgType >= EVMSG_COUNT Then
         Exit Sub
     End If
 
@@ -107,19 +102,11 @@ Sub Event_IncomingData(ByVal DataLength As Long)
 End Sub
 
 Public Sub Event_AcceptConnection(ByVal SocketId As Long)
-    frmServer.EventSocket.Close
-    frmServer.EventSocket.Accept SocketId
-
-    Call TextAdd("Event Server Connected")
+    'frmServer.EventSocket.Close
+    'frmServer.EventSocket.Accept SocketId
+    'IsEventServerConnected = True
+    'Call TextAdd("Event Server Connected")
 End Sub
-
-Function IsEventServerConnected() As Boolean
-
-    If frmServer.EventSocket.State = sckConnected Then
-        IsEventServerConnected = True
-    End If
-
-End Function
 
 Sub SendToEventServer(ByRef Data() As Byte)
     Dim Buffer As clsBuffer

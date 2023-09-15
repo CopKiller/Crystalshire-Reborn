@@ -53,6 +53,12 @@
     <Reference Include="Discord.Net.WebSocket, Version=3.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Discord.Net.WebSocket.3.10.0\lib\net461\Discord.Net.WebSocket.dll</HintPath>
     </Reference>
+    <Reference Include="FluentEmail.Core, Version=3.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\FluentEmail.Core.3.0.2\lib\netstandard2.0\FluentEmail.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentEmail.Smtp, Version=3.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\FluentEmail.Smtp.3.0.2\lib\netstandard2.0\FluentEmail.Smtp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -126,12 +132,14 @@
     <Compile Include="Network\ClientPacket\CpReceiveDiscordMsg.cs" />
     <Compile Include="Network\ClientPacket\CpPing.cs" />
     <Compile Include="Network\ClientPacket\CpReceiveItemsPendentes.cs" />
+    <Compile Include="Network\ClientPacket\CpReceiveAccountRecovery .cs" />
     <Compile Include="Network\ClientPacket\CpRequestLotteryInfo.cs" />
     <Compile Include="Network\Conversoes.cs" />
     <Compile Include="Network\ImplementJson.cs" />
     <Compile Include="Network\ServerPacket\SpItemsPendentes.cs" />
     <Compile Include="Network\ServerPacket\SpPing.cs" />
     <Compile Include="Server\DiscordBot.cs" />
+    <Compile Include="Server\EmailSender.cs" />
     <Compile Include="Util\ExtensionString.cs" />
     <Compile Include="Util\LogType.cs" />
     <Compile Include="Server\Expired.cs" />

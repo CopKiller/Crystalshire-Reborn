@@ -189,7 +189,9 @@ Public Sub TakeInvSlot(ByVal Index As Long, ByVal InvSlot As Long, ByVal ItemVal
 
 End Sub
 
-Function GiveInvItem(ByVal Index As Long, ByVal ItemNum As Long, ByVal ItemValue As Long, ByVal ItemBound As Byte, Optional ByVal sendUpdate As Boolean = True) As Boolean
+Function GiveInvItem(ByVal Index As Long, ByVal ItemNum As Long, ByVal ItemValue As Long, ByVal ItemBound As Byte, _
+                     Optional ByVal sendUpdate As Boolean = True, _
+                     Optional ByPending As Boolean = False) As Boolean
     Dim i As Long
 
     ' Check for subscript out of range
@@ -197,7 +199,7 @@ Function GiveInvItem(ByVal Index As Long, ByVal ItemNum As Long, ByVal ItemValue
         GiveInvItem = False
         Exit Function
     End If
-    
+
     ' Is Gold? Process first!
     If Item(ItemNum).Type = ITEM_TYPE_CURRENCY Then
         If Item(ItemNum).price > 0 Then
@@ -206,7 +208,7 @@ Function GiveInvItem(ByVal Index As Long, ByVal ItemNum As Long, ByVal ItemValue
             Else
                 Call SetPlayerGold(Index, GetPlayerGold(Index) + Item(ItemNum).price)
             End If
-            
+
             Call SendGoldUpdate(Index)
         End If
         GiveInvItem = True
@@ -235,8 +237,16 @@ Function GiveInvItem(ByVal Index As Long, ByVal ItemNum As Long, ByVal ItemValue
 
         GiveInvItem = True
     Else
-        Call PlayerMsg(Index, "O inventário esta cheio.", BrightRed)
-        GiveInvItem = False
+        If Not ByPending Then
+            Call PlayerMsg(Index, "O inventário esta cheio.", BrightRed)
+            GiveInvItem = False
+        Else
+            If GiveBankItem(Index, ItemNum, ItemValue, ByPending) Then
+                Call PlayerMsg(Index, "O inventário e banco esta cheio.", BrightRed)
+            Else
+                GiveInvItem = False
+            End If
+        End If
     End If
 
 End Function
@@ -255,11 +265,11 @@ End Sub
 Function GetPlayerInvItemValue(ByVal Index As Long, ByVal InvSlot As Long) As Long
 
     If Index > Player_HighIndex Then Exit Function
-    GetPlayerInvItemValue = Player(Index).Inv(InvSlot).Value
+    GetPlayerInvItemValue = Player(Index).Inv(InvSlot).value
 End Function
 
 Sub SetPlayerInvItemValue(ByVal Index As Long, ByVal InvSlot As Long, ByVal ItemValue As Long)
-    Player(Index).Inv(InvSlot).Value = ItemValue
+    Player(Index).Inv(InvSlot).value = ItemValue
 End Sub
 
 Function GetPlayerInvItemBound(ByVal Index As Long, ByVal InvSlot As Long) As Byte

@@ -137,40 +137,40 @@ Sub PlayerSwitchBankSlots(ByVal Index As Long, ByVal OldSlot As Long, ByVal NewS
 End Sub
 
 Function FindOpenBankSlot(ByVal Index As Long, ByVal ItemNum As Long) As Long
-    Dim I As Long
+    Dim i As Long
 
     If ItemNum <= 0 Or ItemNum > MAX_ITEMS Then
         Exit Function
     End If
 
     If Item(ItemNum).Stackable > 0 Then
-        For I = 1 To MAX_BANK
-            If GetPlayerBankItemNum(Index, I) = ItemNum Then
-                FindOpenBankSlot = I
+        For i = 1 To MAX_BANK
+            If GetPlayerBankItemNum(Index, i) = ItemNum Then
+                FindOpenBankSlot = i
                 Exit Function
             End If
-        Next I
+        Next i
     End If
 
-    For I = 1 To MAX_BANK
-        If GetPlayerBankItemNum(Index, I) = 0 Then
-            FindOpenBankSlot = I
+    For i = 1 To MAX_BANK
+        If GetPlayerBankItemNum(Index, i) = 0 Then
+            FindOpenBankSlot = i
             Exit Function
         End If
-    Next I
+    Next i
 
 End Function
 
 Sub SendBank(ByVal Index As Long)
     Dim Buffer As clsBuffer
-    Dim I As Long
+    Dim i As Long
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SBank
 
-    For I = 1 To MAX_BANK
-        Buffer.WriteInteger Player(Index).Bank(I).Num
-        Buffer.WriteLong Player(Index).Bank(I).Value
+    For i = 1 To MAX_BANK
+        Buffer.WriteInteger Player(Index).Bank(i).Num
+        Buffer.WriteLong Player(Index).Bank(i).value
     Next
 
     SendDataTo Index, Buffer.ToArray()
@@ -178,46 +178,72 @@ Sub SendBank(ByVal Index As Long)
     Buffer.Flush: Set Buffer = Nothing
 End Sub
 
-Function GiveBankItem(ByVal Index As Long, ByVal InvSlot As Long, ByVal Amount As Long) As Boolean
+Function GiveBankItem(ByVal Index As Long, ByVal InvSlot As Long, ByVal Amount As Long, Optional ByVal ByPending As Boolean = False) As Boolean
     Dim BankSlot As Long, ItemNum As Long
 
-    If InvSlot <= 0 Or InvSlot > MAX_INV Then
-        Exit Function
-    End If
+    If Not ByPending Then
+        If InvSlot <= 0 Or InvSlot > MAX_INV Then
+            Exit Function
+        End If
 
-    ItemNum = GetPlayerInvItemNum(Index, InvSlot)
+        ItemNum = GetPlayerInvItemNum(Index, InvSlot)
 
-    If ItemNum <= 0 Or ItemNum > MAX_ITEMS Then
-        Exit Function
-    End If
+        If ItemNum <= 0 Or ItemNum > MAX_ITEMS Then
+            Exit Function
+        End If
 
-    ' If there's nothing to get, exit
-    If Amount < 1 Then Exit Function
+        ' If there's nothing to get, exit
+        If Amount < 1 Then Exit Function
 
-    ' check values
-    If Item(ItemNum).Stackable > 0 Then
-        ' If value is more than in inventory, set to real value
-        If Amount > GetPlayerInvItemValue(Index, InvSlot) Then
-            Amount = GetPlayerInvItemValue(Index, InvSlot)
+        ' check values
+        If Item(ItemNum).Stackable > 0 Then
+            ' If value is more than in inventory, set to real value
+            If Amount > GetPlayerInvItemValue(Index, InvSlot) Then
+                Amount = GetPlayerInvItemValue(Index, InvSlot)
+            End If
+        Else
+            Amount = 1
+        End If
+
+        BankSlot = FindOpenBankSlot(Index, ItemNum)
+
+        If BankSlot <> 0 Then
+
+            Call SetPlayerBankItemNum(Index, BankSlot, GetPlayerInvItemNum(Index, InvSlot))
+            Call SetPlayerBankItemBound(Index, BankSlot, GetPlayerInvItemBound(Index, InvSlot))
+            Call SetPlayerBankItemValue(Index, BankSlot, Amount)
+
+            Call TakeInvSlot(Index, InvSlot, Amount)
+
+            SendBankUpdate Index, BankSlot
+            SendInventoryUpdate Index, InvSlot
+
+            GiveBankItem = True
+        Else
+            Call PlayerMsg(Index, "O banco esta cheio", BrightRed)
+            GiveBankItem = False
         End If
     Else
-        Amount = 1
-    End If
+        ' If there's nothing to get, exit
+        If Amount < 1 Then Exit Function
+        
+        ItemNum = InvSlot
+        
+        BankSlot = FindOpenBankSlot(Index, ItemNum)
 
-    BankSlot = FindOpenBankSlot(Index, ItemNum)
+        If BankSlot <> 0 Then
 
-    If BankSlot <> 0 Then
+            Call SetPlayerBankItemNum(Index, BankSlot, ItemNum)
+            Call SetPlayerBankItemBound(Index, BankSlot, 0)
+            Call SetPlayerBankItemValue(Index, BankSlot, Amount)
 
-        Call SetPlayerBankItemNum(Index, BankSlot, GetPlayerInvItemNum(Index, InvSlot))
-        Call SetPlayerBankItemBound(Index, BankSlot, GetPlayerInvItemBound(Index, InvSlot))
-        Call SetPlayerBankItemValue(Index, BankSlot, Amount)
-
-        Call TakeInvSlot(Index, InvSlot, Amount)
-
-        SendBankUpdate Index, BankSlot
-        SendInventoryUpdate Index, InvSlot
-    Else
-        Call PlayerMsg(Index, "O banco esta cheio", BrightRed)
+            SendBankUpdate Index, BankSlot
+            
+            GiveBankItem = True
+        Else
+            Call PlayerMsg(Index, "O banco esta cheio", BrightRed)
+            GiveBankItem = False
+        End If
     End If
 
 End Function
@@ -277,12 +303,12 @@ End Sub
 
 Function GetPlayerBankItemValue(ByVal Index As Long, ByVal BankSlot As Long) As Long
     If BankSlot = 0 Then Exit Function
-    GetPlayerBankItemValue = Player(Index).Bank(BankSlot).Value
+    GetPlayerBankItemValue = Player(Index).Bank(BankSlot).value
 End Function
 
 Sub SetPlayerBankItemValue(ByVal Index As Long, ByVal BankSlot As Long, ByVal ItemValue As Long)
     If BankSlot = 0 Then Exit Sub
-    Player(Index).Bank(BankSlot).Value = ItemValue
+    Player(Index).Bank(BankSlot).value = ItemValue
 End Sub
 
 Function GetPlayerBankItemBound(ByVal Index As Long, ByVal BankSlot As Long) As Byte

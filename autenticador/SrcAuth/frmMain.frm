@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "Mswinsck.ocx"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "mswinsck.ocx"
 Begin VB.Form frmMain 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Authentication Server"
@@ -89,8 +89,8 @@ Private Sub ServerSocket_Close()
 End Sub
 
 Private Sub ServerSocket_Connect()
-lblGameState.Caption = "Game Server State: Connected"
-lblGameState.ForeColor = &HC000&
+    lblGameState.Caption = "Game Server State: Connected"
+    lblGameState.ForeColor = &HC000&
 End Sub
 
 Private Sub ServerSocket_Error(ByVal Number As Integer, Description As String, ByVal Scode As Long, ByVal Source As String, ByVal HelpFile As String, ByVal HelpContext As Long, CancelDisplay As Boolean)
@@ -118,9 +118,9 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y A
     lmsg = X / Screen.TwipsPerPixelX
 
     Select Case lmsg
-        Case WM_LBUTTONDBLCLK
-            frmMain.WindowState = vbNormal
-            frmMain.Show
+    Case WM_LBUTTONDBLCLK
+        frmMain.WindowState = vbNormal
+        frmMain.Show
     End Select
 End Sub
 

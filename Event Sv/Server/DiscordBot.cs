@@ -51,16 +51,7 @@ namespace Event_Server.Server
 
             await _client.LoginAsync(TokenType.Bot, _token);
             await _client.StartAsync();
-
-            //_client.Ready += DiscordClient_Ready;
         }
-
-        //private Task Log(LogMessage arg)
-        //{
-        //    Global.SystemLogs.Write(arg.ToString(), LogColor.Green);
-
-        //    return Task.CompletedTask;
-        //}
 
         public async void SendEmbed(DscMsgType channelID, Embed receiveEmbed)
         {

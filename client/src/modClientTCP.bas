@@ -186,6 +186,18 @@ Public Sub SendAddChar(ByVal Name As String, ByVal sex As Long, ByVal ClassNum A
     Set buffer = Nothing
 End Sub
 
+Public Sub SendAccountRecovery(ByVal Email As String)
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteLong CAuthAccountRecovery
+    buffer.WriteLong CLIENT_MAJOR
+    buffer.WriteLong CLIENT_MINOR
+    buffer.WriteLong CLIENT_REVISION
+    buffer.WriteString Email
+    SendData buffer.ToArray()
+    Set buffer = Nothing
+End Sub
+
 Public Sub SayMsg(ByVal text As String)
     Dim buffer As clsBuffer
     Set buffer = New clsBuffer

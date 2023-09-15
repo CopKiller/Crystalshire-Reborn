@@ -139,10 +139,7 @@ End Sub
 Public Sub SendAllSaves()
     Dim sPath As String, sFile As String, sCount As Integer
     If IsConnectedAuthServer Then
-
-        'Dim fso As Object
-
-
+    
         ' ACCOUNT
         sPath = App.Path & "\data\accounts\"
         sFile = dir(sPath & "*.bin", vbDirectory)
@@ -285,13 +282,13 @@ End Sub
 
 Sub SetHighIndex()
     Dim i As Integer
-    Dim x As Integer
+    Dim X As Integer
 
     For i = 0 To MAX_PLAYERS
-        x = MAX_PLAYERS - i
+        X = MAX_PLAYERS - i
 
-        If IsConnected(x) = True Then
-            Player_HighIndex = x
+        If IsConnected(X) = True Then
+            Player_HighIndex = X
             Exit Sub
         End If
 
@@ -309,7 +306,7 @@ Public Sub TextAdd(Msg As String)
         NumLines = 0
     End If
 
-    frmServer.txtText.Text = frmServer.txtText.Text & vbNewLine & Msg
+    frmServer.txtText.Text = frmServer.txtText.Text & vbNewLine & CStr(Hour(Time)) & ":" & CStr(Minute(Time)) & " " & Msg
     frmServer.txtText.SelStart = Len(frmServer.txtText.Text)
 End Sub
 
@@ -321,7 +318,7 @@ Public Sub TextLoginAdd(Msg As String)
         LoginNumLines = 0
     End If
 
-    frmServer.txtLogin.Text = frmServer.txtLogin.Text & vbNewLine & Msg
+    frmServer.txtLogin.Text = frmServer.txtLogin.Text & vbNewLine & CStr(Hour(Time)) & ":" & CStr(Minute(Time)) & " " & Msg
     frmServer.txtLogin.SelStart = Len(frmServer.txtLogin.Text)
 End Sub
 
@@ -333,7 +330,7 @@ Public Sub TextEventAdd(Msg As String)
         LoginNumLines = 0
     End If
 
-    frmServer.txtEvent.Text = frmServer.txtEvent.Text & vbNewLine & Msg
+    frmServer.txtEvent.Text = frmServer.txtEvent.Text & vbNewLine & CStr(Hour(Time)) & ":" & CStr(Minute(Time)) & " " & Msg
     frmServer.txtEvent.SelStart = Len(frmServer.txtEvent.Text)
 End Sub
 

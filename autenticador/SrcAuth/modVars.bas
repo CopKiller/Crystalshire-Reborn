@@ -15,7 +15,7 @@ Public Const MAX_BANK As Integer = 100
 
 ' Constantes que precisam ser alteradas aqui e no servidor!
 Public Const MAX_PLAYERS As Byte = 50
-Public Const GAME_NAME As String = "Crystalshire"
+Public Const GAME_NAME As String = "Crystalshire Reborn"
 Public Const GAME_WEBSITE As String = "http://www.crystalshire.com"
 
 ' Sex constants
@@ -40,7 +40,7 @@ Public Const TASK_DEFEAT_LENGTH As Byte = 100
 
 Public Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 Public Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
-Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Const CLIENT_MAJOR As Byte = 1
 Public Const CLIENT_MINOR As Byte = 8
@@ -69,7 +69,6 @@ Public AuthCode As String
 
 Public HandleDataSub(CMSG_COUNT) As Long
 
-' dialogue alert strings
 Public Const DIALOGUE_MSG_CONNECTION As Byte = 1
 Public Const DIALOGUE_MSG_BANNED As Byte = 2
 Public Const DIALOGUE_MSG_KICKED As Byte = 3
@@ -83,11 +82,20 @@ Public Const DIALOGUE_MSG_NAMEILLEGAL As Byte = 10
 Public Const DIALOGUE_MSG_WRONGPASS As Byte = 11
 Public Const DIALOGUE_ACCOUNT_CREATED As Byte = 12
 Public Const DIALOGUE_ACCOUNT_EMAILINVALID As Byte = 13
-Public Const DIALOGUE_ACCOUNT_PASSLENGTH As Byte = 14
-Public Const DIALOGUE_ACCOUNT_PASSNULL As Byte = 15
-Public Const DIALOGUE_ACCOUNT_USERNULL As Byte = 16
-Public Const DIALOGUE_ACCOUNT_PASSCONFIRM As Byte = 17
-Public Const DIALOGUE_ACCOUNT_CAPTCHAINCORRECT As Byte = 18
-Public Const DIALOGUE_SERIAL_INCORRECT As Byte = 19
-Public Const DIALOGUE_SERIAL_CLAIMED As Byte = 20
-Public Const DIALOGUE_BIRTHDAY_INCORRECT As Byte = 21
+Public Const DIALOGUE_ACCOUNT_EMAILTAKEN As Byte = 14
+Public Const DIALOGUE_ACCOUNT_EMAILSUCCESS As Byte = 15
+Public Const DIALOGUE_ACCOUNT_PASSLENGTH As Byte = 16
+Public Const DIALOGUE_ACCOUNT_PASSNULL As Byte = 17
+Public Const DIALOGUE_ACCOUNT_USERNULL As Byte = 18
+Public Const DIALOGUE_ACCOUNT_PASSCONFIRM As Byte = 19
+Public Const DIALOGUE_ACCOUNT_CAPTCHAINCORRECT As Byte = 20
+Public Const DIALOGUE_SERIAL_INCORRECT As Byte = 21
+Public Const DIALOGUE_SERIAL_CLAIMED As Byte = 22
+Public Const DIALOGUE_BIRTHDAY_INCORRECT As Byte = 23
+Public Const DIALOGUE_LOTTERY_MAXBID As Byte = 24
+Public Const DIALOGUE_LOTTERY_MINBID As Byte = 25
+Public Const DIALOGUE_LOTTERY_NUMBERS As Byte = 26
+Public Const DIALOGUE_LOTTERY_NUMBERALREADY As Byte = 27
+Public Const DIALOGUE_LOTTERY_CLOSED As Byte = 28
+Public Const DIALOGUE_LOTTERY_GOLD As Byte = 29
+Public Const DIALOGUE_LOTTERY_SUCCESS As Byte = 30

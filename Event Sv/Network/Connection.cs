@@ -139,27 +139,10 @@ namespace Event_Server.Network {
                     }
                 }
 
-                //int encrypted_length;
-                //byte key;
-                //int keyIndex;
-                //byte iv;
-                //int ivIndex;
-
                 while (pLength > 0 && pLength <= msg.Length() - 4) {
                     if (pLength <= msg.Length() - 4) {
                         // Remove the first packet (Size of Packet).
                         msg.ReadInt32();
-
-                        //  decrypt
-                        //encrypted_length = msg.ReadInt32();
-                        //key = msg.ReadByte();
-                        //keyIndex = msg.ReadByte();
-                        //iv = msg.ReadByte();
-                        //ivIndex = msg.ReadByte();
-                        //var _key = ConnectionPassword.CreateKey(CryptographyKeyType.Key, keyIndex, key);
-                        //var _iv = ConnectionPassword.CreateKey(CryptographyKeyType.Iv, ivIndex, iv);
-                        //decryptedBytes = aes.Decrypt(msg.ReadBytes(encrypted_length), _key, _iv);
-                        //.Write(decryptedBytes);
 
                         // Remove the header.
                         var header = msg.ReadInt32();
@@ -168,6 +151,7 @@ namespace Event_Server.Network {
 
                         if (OpCode.RecvPacket.ContainsKey(header)) {
                             ((IRecvPacket)Activator.CreateInstance(OpCode.RecvPacket[header])).Process(msg.ReadBytes(pLength), this);
+                            Global.WriteLog(LogType.System, $"Recebido: {Enum.GetName(typeof(Packet), header)}", LogColor.Black);
                         }
                         else {
                             Global.WriteLog(LogType.System, $"Header: {header} was not found", LogColor.Red);

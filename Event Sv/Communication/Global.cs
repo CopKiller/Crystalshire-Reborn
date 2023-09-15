@@ -1,6 +1,10 @@
-﻿using Event_Server.Server;
+﻿using Event_Server.Cryptography;
+using Event_Server.Server;
 using Event_Server.Util;
-using System;
+using FluentEmail.Core;
+using FluentEmail.Smtp;
+using System.Net;
+using System.Net.Mail;
 
 namespace Event_Server.Communication
 {
@@ -11,6 +15,7 @@ namespace Event_Server.Communication
         public static Log SystemLogs { get; set; }
         public static Log DebugLogs { get; set; }
         public static DiscordBot DiscordBot { get; set; }
+        public static SmtpSender EmailSender { get; set; }
 
         public static void WriteLog(LogType type, string text, LogColor color)
         {

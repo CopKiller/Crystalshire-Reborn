@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "Mswinsck.ocx"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "Tabctl32.ocx"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL32.OCX"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "mswinsck.ocx"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "tabctl32.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmServer 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Loading..."
@@ -132,7 +132,7 @@ Begin VB.Form frmServer
       _Version        =   393216
       Style           =   1
       Tabs            =   5
-      Tab             =   4
+      Tab             =   1
       TabsPerRow      =   5
       TabHeight       =   503
       Enabled         =   0   'False
@@ -149,16 +149,14 @@ Begin VB.Form frmServer
       TabPicture(0)   =   "frmServer.frx":1708A
       Tab(0).ControlEnabled=   0   'False
       Tab(0).Control(0)=   "txtText"
-      Tab(0).Control(0).Enabled=   0   'False
       Tab(0).Control(1)=   "txtChat"
-      Tab(0).Control(1).Enabled=   0   'False
       Tab(0).Control(2)=   "chkMsgWindow"
-      Tab(0).Control(2).Enabled=   0   'False
       Tab(0).ControlCount=   3
       TabCaption(1)   =   "Players"
       TabPicture(1)   =   "frmServer.frx":170A6
-      Tab(1).ControlEnabled=   0   'False
+      Tab(1).ControlEnabled=   -1  'True
       Tab(1).Control(0)=   "lvwInfo"
+      Tab(1).Control(0).Enabled=   0   'False
       Tab(1).ControlCount=   1
       TabCaption(2)   =   "Control "
       TabPicture(2)   =   "frmServer.frx":170C2
@@ -172,11 +170,10 @@ Begin VB.Form frmServer
       TabPicture(3)   =   "frmServer.frx":170DE
       Tab(3).ControlEnabled=   0   'False
       Tab(3).Control(0)=   "txtLogin"
-      Tab(3).Control(0).Enabled=   0   'False
       Tab(3).ControlCount=   1
       TabCaption(4)   =   "Event"
       TabPicture(4)   =   "frmServer.frx":170FA
-      Tab(4).ControlEnabled=   -1  'True
+      Tab(4).ControlEnabled=   0   'False
       Tab(4).Control(0)=   "txtEvent"
       Tab(4).Control(0).Enabled=   0   'False
       Tab(4).Control(1)=   "chkEventSv"
@@ -184,15 +181,16 @@ Begin VB.Form frmServer
       Tab(4).ControlCount=   2
       Begin VB.CheckBox chkEventSv 
          Caption         =   "Event Server Enabled?"
+         Enabled         =   0   'False
          Height          =   255
-         Left            =   120
+         Left            =   -74880
          TabIndex        =   47
          Top             =   3000
          Width           =   2295
       End
       Begin VB.TextBox txtEvent 
          Height          =   2535
-         Left            =   120
+         Left            =   -74880
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
          TabIndex        =   45
@@ -493,7 +491,7 @@ Begin VB.Form frmServer
       End
       Begin MSComctlLib.ListView lvwInfo 
          Height          =   2775
-         Left            =   -74880
+         Left            =   120
          TabIndex        =   4
          Top             =   480
          Width           =   6495
@@ -573,14 +571,14 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub chkEventSv_Click()
-    Options.EVENTSV = chkEventSv.value
-    SaveOptions
+  '  Options.EVENTSV = chkEventSv.value
+  '  SaveOptions
 
-    If Options.EVENTSV = NO Then
-        EventSocket_Close
-    Else
-        ConnectToEventServer
-    End If
+  '  If Options.EVENTSV = NO Then
+  '      EventSocket_Close
+  '  Else
+  '      ConnectToEventServer
+  '  End If
 End Sub
 
 Private Sub cmdCheckIn_Click()
@@ -635,7 +633,7 @@ End Sub
 Private Sub EventSocket_Close()
     EventSocket.Close
     EventSocket.Listen
-    
+    IsEventServerConnected = False
     lblSvEvent = "Event: Off"
     lblSvEvent.ForeColor = &HFF&
     
@@ -647,12 +645,15 @@ Private Sub EventSocket_Connect()
     
     lblSvEvent = "Event: On"
     lblSvEvent.ForeColor = &HC000&
+    IsEventServerConnected = True
     
     ' Enviar os dados perdidos.
     Diretorio = App.Path & "/data/EventsData.ini"
     If FileExist(Diretorio, True) Then
         Call SendLotterySaves(Save)
         Call Kill(Diretorio)
+    Else
+        Call RequestLotteryData
     End If
 End Sub
 
@@ -669,7 +670,7 @@ Private Sub EventSocket_Error(ByVal Number As Integer, Description As String, By
     
     EventSocket.Close
     EventSocket.Listen
-    
+    IsEventServerConnected = False
     lblSvEvent = "Event: Off"
     lblSvEvent.ForeColor = &HFF&
     
